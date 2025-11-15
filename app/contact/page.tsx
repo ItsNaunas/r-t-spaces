@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { FinalCtaSection, SiteFooter } from "@/components/StudioSections";
 import { BookingForm } from "@/components/BookingForm";
 
@@ -27,7 +28,15 @@ export default function ContactPage() {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <BookingForm />
+          <Suspense
+            fallback={
+              <div className="flex h-full items-center justify-center rounded-[32px] border border-zinc-200 p-6 text-sm text-zinc-600">
+                Loading form…
+              </div>
+            }
+          >
+            <BookingForm />
+          </Suspense>
 
           <div className="space-y-6 rounded-[32px] border border-zinc-200 p-6">
             <div className="rounded-2xl bg-[#f7f7f4] p-6">
