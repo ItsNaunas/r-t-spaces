@@ -1,79 +1,110 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-
-const heroImages = [
-  {
-    src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
-    label: "Content Days",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=800&q=80",
-    label: "Studio Hire",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
-    label: "Neon Booth",
-  },
-];
+import { useEffect, useState } from "react";
 
 export function HeroSection() {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const parallaxOffset = scrollY * 0.5;
+
   return (
-    <section className="bg-white px-2 py-10 sm:px-4 lg:px-0">
-      <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:gap-16">
-        <div className="flex-1 space-y-6">
-          <h1 className="font-heading text-[clamp(3.5rem,8vw,7.5rem)] leading-[0.9] text-black">
-            R&amp;T Spaces
-          </h1>
-          <p className="max-w-xl text-lg text-zinc-600">
-            Hire a polished, daylight studio by the hour or day, bring in your
-            own crew, or tap our resident team for tethered shoots and
-            photobooth add-ons.
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-full border border-black bg-black px-6 py-3 text-sm font-semibold uppercase tracking-widest text-white transition-transform transition-colors hover:-translate-y-0.5 hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-            >
-              Book studio
-            </Link>
-            <Link
-              href="/services"
-              className="inline-flex items-center justify-center rounded-full border border-black bg-white px-6 py-3 text-sm font-semibold uppercase tracking-widest text-black transition-transform transition-colors hover:-translate-y-0.5 hover:bg-black hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-            >
-              View packages
-            </Link>
-          </div>
-        </div>
-        <div className="flex flex-col items-start gap-3 text-left text-xs uppercase text-zinc-600 lg:w-64">
-          <span className="font-semibold text-black">#rtspaces</span>
-          <p className="text-zinc-500">
-            Rose &amp; Teddy&apos;s daylight-ready studio hire in East London,
-            open daily 8 AM – 11 PM with photobooth packages on request.
-          </p>
-        </div>
+    <section className="relative h-screen min-h-[700px] overflow-hidden -mt-[73px] pt-[73px] bg-black w-full max-w-full">
+      {/* Hero Image Background with Parallax */}
+      <div
+        className="absolute inset-0"
+        style={{
+          transform: `translateY(${parallaxOffset}px)`,
+          willChange: "transform",
+        }}
+      >
+        <Image
+          src="/assets/9664d1b7-9f9a-4c82-bf63-5befb91b0102(1).jpg"
+          alt="R&T Spaces studio"
+          fill
+          className="object-cover scale-110"
+          priority
+        />
       </div>
 
-      <div className="mt-12 grid gap-4 md:grid-cols-3">
-        {heroImages.map((image) => (
-          <figure
-            key={image.label}
-            className="relative overflow-hidden rounded-3xl bg-zinc-100"
+      {/* Subtle overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50" />
+
+      {/* Centered content with massive spacing */}
+      <div className="relative flex h-full flex-col items-center justify-center px-4 text-center text-white z-10">
+        <div className="flex flex-col items-center animate-fade-in-up">
+          <h1 
+            className="font-heading text-6xl font-bold leading-[1.1] sm:text-7xl md:text-8xl lg:text-9xl max-w-6xl mx-auto mb-8"
+            style={{
+              transform: `translateY(${scrollY * 0.2}px)`,
+              opacity: Math.max(0, 1 - scrollY / 400),
+            }}
           >
-            <Image
-              src={image.src}
-              alt={image.label}
-              width={600}
-              height={800}
-              className="h-full w-full object-cover transition duration-500 hover:scale-105"
-              priority
-            />
-            <figcaption className="pointer-events-none absolute inset-0 flex items-end justify-start bg-gradient-to-t from-black/60 to-transparent p-6 text-lg font-semibold text-white">
-              {image.label}
-            </figcaption>
-          </figure>
-        ))}
+            Book your perfect studio space
+          </h1>
+          <p className="mt-8 text-xl font-medium uppercase tracking-[0.25em] sm:text-2xl md:text-3xl max-w-3xl mx-auto leading-relaxed opacity-95">
+            Professional studio hire for your creative projects
+          </p>
+          <div className="mt-16">
+            <Link
+              href="/contact"
+              className="btn-primary group relative overflow-hidden text-lg px-8 py-4"
+              style={{
+                background: 'var(--accent)',
+                borderColor: 'var(--accent)',
+                color: 'var(--base)',
+              }}
+            >
+              <span className="relative z-10 flex items-center gap-3">
+                BOOK YOUR SESSION
+                <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </span>
+            </Link>
+          </div>
+
+          {/* Subtle Trust Indicator - positioned below CTA in normal flow */}
+          <div className="mt-12 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-white/70">
+            {/* Star Rating */}
+            <div className="flex items-center gap-2">
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <svg
+                    key={i}
+                    className="h-4 w-4 sm:h-5 sm:w-5 fill-current"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                  </svg>
+                ))}
+              </div>
+              <span className="text-sm sm:text-base font-medium">4.9/5</span>
+            </div>
+            
+            {/* Separator - hidden on mobile */}
+            <span className="hidden sm:inline text-white/30">•</span>
+            
+            {/* Trust Quote - subtle and minimal */}
+            <div className="text-center sm:text-left max-w-xs sm:max-w-md">
+              <p className="text-xs sm:text-sm italic leading-relaxed text-white/80">
+                &quot;Professional equipment, amazing lighting&quot;
+              </p>
+              <p className="text-xs text-white/50 mt-1">— 500+ Creators</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
-

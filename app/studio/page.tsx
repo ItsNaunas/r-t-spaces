@@ -2,9 +2,8 @@ import Image from "next/image";
 import {
   FinalCtaSection,
   SiteFooter,
-  studioGallery,
-  studioServices,
 } from "@/components/StudioSections";
+import { studioGallery, studioServices } from "@/lib/studioData";
 
 const studioHighlights = [
   {
@@ -41,16 +40,16 @@ const availabilityBlocks = [
 
 export default function StudioPage() {
   return (
-    <div className="bg-white">
+    <div className="bg-[var(--base)]">
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         <section className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-zinc-500">
+          <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
             Studio
           </p>
-          <h1 className="font-heading text-4xl text-black sm:text-5xl">
+          <h1 className="font-heading text-4xl text-[var(--accent)] sm:text-5xl">
             Take a tour of R&amp;T Spaces
           </h1>
-          <p className="max-w-3xl text-lg text-zinc-600">
+          <p className="max-w-3xl text-lg text-[var(--accent)]/80">
             Designed for content days, lookbooks, and community events, our East
             London studio mixes daylight with controlled lighting so you can
             pivot between clean commercial looks and warm lifestyle scenes.
@@ -58,9 +57,9 @@ export default function StudioPage() {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="overflow-hidden rounded-[32px] bg-zinc-100">
+          <div className="overflow-hidden bg-[var(--accent)]/5">
             <Image
-              src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1600&q=80"
+              src="/assets/44919513-a2a5-4595-af6d-e23e0acb2a87.jpg"
               alt="R&T Spaces studio overview"
               width={1400}
               height={900}
@@ -68,11 +67,11 @@ export default function StudioPage() {
               priority
             />
           </div>
-          <div className="space-y-6 rounded-[32px] border border-zinc-200 p-6">
-            <h2 className="font-heading text-2xl text-black">
+          <div className="space-y-6 border border-[var(--accent)]/20 p-6">
+            <h2 className="font-heading text-2xl text-[var(--accent)]">
               Ready before you arrive
             </h2>
-            <p className="text-zinc-600">
+            <p className="text-[var(--accent)]/80">
               Send through a mood board and we&apos;ll stage the space, pre-light
               sets, and prepare any photobooth wraps or props ahead of call time.
             </p>
@@ -80,12 +79,12 @@ export default function StudioPage() {
               {studioHighlights.map((item) => (
                 <div
                   key={item.title}
-                  className="rounded-2xl border border-zinc-200 p-4"
+                  className="border border-[var(--accent)]/20 p-4"
                 >
-                  <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">
+                  <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60">
                     {item.title}
                   </p>
-                  <p className="text-base text-black">{item.detail}</p>
+                  <p className="text-base text-[var(--accent)]">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -96,10 +95,10 @@ export default function StudioPage() {
           {availabilityBlocks.map((item) => (
             <div
               key={item.label}
-              className="rounded-3xl border border-zinc-200 p-6 text-sm uppercase tracking-[0.3em] text-zinc-500"
+              className="border border-[var(--accent)]/20 p-6 text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60"
             >
               <p>{item.label}</p>
-              <p className="mt-3 text-base text-black normal-case">
+              <p className="mt-3 text-base text-[var(--accent)] normal-case">
                 {item.value}
               </p>
             </div>
@@ -107,40 +106,40 @@ export default function StudioPage() {
         </section>
 
         <section className="space-y-6">
-          <h2 className="font-heading text-3xl text-black">Studio services</h2>
+          <h2 className="font-heading text-3xl text-[var(--accent)]">Studio services</h2>
           <div className="grid gap-6 md:grid-cols-2">
             {studioServices.map((service) => (
               <article
                 key={service.title}
-                className="rounded-3xl border border-zinc-200 p-6"
+                className="border border-[var(--accent)]/20 p-6"
               >
-                <p className="text-sm uppercase tracking-[0.4em] text-zinc-500">
+                <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
                   {service.title}
                 </p>
-                <p className="mt-3 text-lg text-black">{service.meta}</p>
+                <p className="mt-3 text-lg text-[var(--accent)]">{service.meta}</p>
               </article>
             ))}
           </div>
         </section>
 
         <section className="space-y-6">
-          <h2 className="font-heading text-3xl text-black">
+          <h2 className="font-heading text-3xl text-[var(--accent)]">
             Corners ready for your lens
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
             {studioGallery.slice(0, 4).map((item) => (
               <figure
                 key={item.artist}
-                className="space-y-3 rounded-3xl border border-zinc-100 bg-[#f7f7f4] p-4"
+                className="space-y-3 border border-[var(--accent)]/10 bg-[var(--base)] p-4"
               >
                 <Image
                   src={item.src}
                   alt={item.focus}
                   width={1000}
                   height={800}
-                  className="h-64 w-full rounded-2xl object-cover"
+                  className="h-64 w-full object-cover"
                 />
-                <figcaption className="text-sm text-zinc-600">
+                <figcaption className="text-sm text-[var(--accent)]/80">
                   {item.focus}
                 </figcaption>
               </figure>

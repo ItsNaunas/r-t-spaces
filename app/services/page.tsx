@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { FinalCtaSection, SiteFooter, studioServices } from "@/components/StudioSections";
+import { FinalCtaSection, SiteFooter } from "@/components/StudioSections";
+import { studioServices } from "@/lib/studioData";
 
 const packages = [
   {
@@ -60,7 +61,7 @@ export default function ServicesPage() {
           {packages.map((pkg) => (
             <article
               key={pkg.title}
-              className="flex flex-col rounded-3xl border border-zinc-200 p-6"
+              className="flex flex-col  border border-zinc-200 p-6"
             >
               <p className="text-sm uppercase tracking-[0.4em] text-zinc-500">
                 {pkg.title}
@@ -74,11 +75,8 @@ export default function ServicesPage() {
                 ))}
               </ul>
               <Link
-                href={{
-                  pathname: "/contact",
-                  query: { package: pkg.title },
-                }}
-                className="mt-auto inline-flex items-center justify-center rounded-full border border-black bg-white px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-black transition-colors hover:bg-black hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                href={`/contact?package=${encodeURIComponent(pkg.title)}`}
+                className="mt-auto inline-flex items-center justify-center  border border-black bg-white px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-black transition-colors hover:bg-black hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
               >
                 Enquire
               </Link>
@@ -87,7 +85,7 @@ export default function ServicesPage() {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-[32px] border border-zinc-200 p-6">
+          <div className=" border border-zinc-200 p-6">
             <p className="text-sm uppercase tracking-[0.4em] text-zinc-500">
               Studio support
             </p>
@@ -95,7 +93,7 @@ export default function ServicesPage() {
               {studioServices.map((service) => (
                 <article
                   key={service.title}
-                  className="rounded-2xl border border-zinc-200 p-4"
+                  className=" border border-zinc-200 p-4"
                 >
                   <p className="text-xs uppercase tracking-[0.4em] text-zinc-500">
                     {service.title}
@@ -105,13 +103,13 @@ export default function ServicesPage() {
               ))}
             </div>
           </div>
-          <div className="rounded-[32px] border border-zinc-200 p-6">
+          <div className=" border border-zinc-200 p-6">
             <p className="text-sm uppercase tracking-[0.4em] text-zinc-500">
               Add-ons
             </p>
             <ul className="mt-6 space-y-3 text-base text-black">
               {addOns.map((addon) => (
-                <li key={addon} className="rounded-2xl bg-[#f8f8f5] p-4">
+                <li key={addon} className=" bg-[#f8f8f5] p-4">
                   {addon}
                 </li>
               ))}

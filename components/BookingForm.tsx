@@ -85,26 +85,30 @@ export function BookingForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 rounded-[32px] border border-zinc-200 p-6"
+      className="space-y-4  border border-[var(--accent)]/20 p-6"
     >
-      <Field
-        label="Name"
-        name="name"
-        type="text"
-        placeholder="Rose and Teddy"
-        value={formData.name}
-        onChange={handleChange}
-        required
-      />
-      <Field
-        label="Email"
-        name="email"
-        type="email"
-        placeholder="you@email.com"
-        value={formData.email}
-        onChange={handleChange}
-        required
-      />
+      <div className="transition-all duration-300">
+        <Field
+          label="Name"
+          name="name"
+          type="text"
+          placeholder="Rose and Teddy"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div className="transition-all duration-300">
+        <Field
+          label="Email"
+          name="email"
+          type="email"
+          placeholder="you@email.com"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
@@ -136,9 +140,26 @@ export function BookingForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-full border border-black bg-black px-6 py-3 text-xs font-semibold uppercase tracking-[0.4em] text-white transition-colors hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:border-black/50 disabled:bg-black/50 disabled:text-white"
+        className="btn-primary btn-full relative overflow-hidden group"
       >
-        {isSubmitting ? "Sending..." : "Send enquiry"}
+        <span className="relative z-10 flex items-center justify-center gap-2">
+          {isSubmitting ? (
+            <>
+              <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              Sending...
+            </>
+          ) : (
+            <>
+              Send enquiry
+              <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </>
+          )}
+        </span>
       </button>
 
       {message && (
@@ -151,13 +172,13 @@ export function BookingForm() {
         </p>
       )}
 
-      <p className="text-xs text-zinc-500">
+      <p className="text-xs text-[var(--accent)]/60">
         We respond within 24 hours. For last-minute bookings, DM{" "}
         <a
           href="https://www.instagram.com/randtspace"
           target="_blank"
           rel="noreferrer"
-          className="font-semibold text-black"
+          className="font-semibold text-[var(--primary)]"
         >
           @randtspace
         </a>
@@ -174,12 +195,12 @@ type FieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
 function Field({ label, ...props }: FieldProps) {
   return (
     <div>
-      <label className="text-xs font-semibold uppercase tracking-[0.4em] text-zinc-500">
+      <label className="text-xs font-semibold uppercase tracking-[0.4em] text-[var(--accent)]/60">
         {label}
       </label>
       <input
         {...props}
-        className="mt-2 w-full rounded-2xl border border-zinc-200 px-4 py-3 text-sm text-black outline-none transition focus:border-black"
+        className="mt-2 w-full  border border-[var(--accent)]/20 px-4 py-3 text-sm text-[var(--accent)] outline-none transition focus:border-[var(--primary)]"
       />
     </div>
   );
@@ -192,12 +213,12 @@ type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
 function Textarea({ label, ...props }: TextareaProps) {
   return (
     <div>
-      <label className="text-xs font-semibold uppercase tracking-[0.4em] text-zinc-500">
+      <label className="text-xs font-semibold uppercase tracking-[0.4em] text-[var(--accent)]/60">
         {label}
       </label>
       <textarea
         {...props}
-        className="mt-2 w-full rounded-2xl border border-zinc-200 px-4 py-3 text-sm text-black outline-none transition focus:border-black"
+        className="mt-2 w-full  border border-[var(--accent)]/20 px-4 py-3 text-sm text-[var(--accent)] outline-none transition focus:border-[var(--primary)]"
       />
     </div>
   );
