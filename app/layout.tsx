@@ -3,6 +3,7 @@ import { Playfair_Display, Raleway } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { Analytics } from "@vercel/analytics/next";
 
 const playfairDisplay = Playfair_Display({
   variable: "--font-heading",
@@ -35,6 +36,7 @@ export default function RootLayout({
         <ScrollProgress />
         <SiteHeader />
         {children}
+        <Analytics />
       </body>
     </html>
   );
