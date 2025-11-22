@@ -41,7 +41,7 @@ const addOns = [
 
 export default function ServicesPage() {
   return (
-    <div className="bg-white">
+    <div className="bg-[var(--primary)]">
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         <section className="space-y-6">
           <p className="text-sm uppercase tracking-[0.4em] text-zinc-500">
