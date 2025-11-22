@@ -9,12 +9,14 @@ const playfairDisplay = Playfair_Display({
   variable: "--font-heading",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
+  display: 'swap',
 });
 
 const raleway = Raleway({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {

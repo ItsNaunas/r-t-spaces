@@ -32,8 +32,10 @@ export function HeroSection() {
           src="/assets/9664d1b7-9f9a-4c82-bf63-5befb91b0102(1).jpg"
           alt="R&T Spaces studio"
           fill
+          sizes="100vw"
           className="object-cover scale-110"
           priority
+          quality={90}
         />
       </div>
 
