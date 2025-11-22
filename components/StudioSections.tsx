@@ -358,6 +358,34 @@ const instagramImages = [
 
 export function StudioPreviewsGrid() {
   const { ref, isVisible } = useScrollAnimation();
+  const [visibleVideos, setVisibleVideos] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = parseInt(entry.target.getAttribute('data-video-index') || '0');
+            setVisibleVideos((prev) => new Set([...prev, index]));
+          }
+        });
+      },
+      { rootMargin: '100px' } // Start loading 100px before visible
+    );
+
+    // Use a small delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      const videoElements = document.querySelectorAll('[data-video-index]');
+      videoElements.forEach((el) => observer.observe(el));
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      const videoElements = document.querySelectorAll('[data-video-index]');
+      videoElements.forEach((el) => observer.unobserve(el));
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <section className="bg-[var(--base)] px-4 py-32 sm:px-6 lg:px-8">
@@ -381,45 +409,61 @@ export function StudioPreviewsGrid() {
           <div className="flex animate-marquee gap-6">
             {/* First set of videos */}
             {studioPreviewVideos.map((src, index) => (
-              <div key={`first-${index}`} className="flex-shrink-0 group relative">
+              <div key={`first-${index}`} className="flex-shrink-0 group relative" data-video-index={index}>
                 <video
-                  autoPlay
+                  autoPlay={visibleVideos.has(index)}
                   loop
                   muted
                   playsInline
+                  preload="metadata"
                   className="h-[400px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                   onMouseEnter={(e) => {
                     const video = e.currentTarget;
-                    video.playbackRate = 0.5;
+                    if (visibleVideos.has(index)) {
+                      video.playbackRate = 0.5;
+                    }
                   }}
                   onMouseLeave={(e) => {
                     const video = e.currentTarget;
-                    video.playbackRate = 1;
+                    if (visibleVideos.has(index)) {
+                      video.playbackRate = 1;
+                    }
+                  }}
+                  onError={(e) => {
+                    console.error('Video load error:', e);
                   }}
                 >
-                  <source src={src} type="video/mp4" />
+                  {visibleVideos.has(index) && <source src={src} type="video/mp4" />}
                 </video>
               </div>
             ))}
             {/* Duplicate set for seamless loop */}
             {studioPreviewVideos.map((src, index) => (
-              <div key={`second-${index}`} className="flex-shrink-0 group relative">
+              <div key={`second-${index}`} className="flex-shrink-0 group relative" data-video-index={index}>
                 <video
-                  autoPlay
+                  autoPlay={visibleVideos.has(index)}
                   loop
                   muted
                   playsInline
+                  preload="metadata"
                   className="h-[400px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                   onMouseEnter={(e) => {
                     const video = e.currentTarget;
-                    video.playbackRate = 0.5;
+                    if (visibleVideos.has(index)) {
+                      video.playbackRate = 0.5;
+                    }
                   }}
                   onMouseLeave={(e) => {
                     const video = e.currentTarget;
-                    video.playbackRate = 1;
+                    if (visibleVideos.has(index)) {
+                      video.playbackRate = 1;
+                    }
+                  }}
+                  onError={(e) => {
+                    console.error('Video load error:', e);
                   }}
                 >
-                  <source src={src} type="video/mp4" />
+                  {visibleVideos.has(index) && <source src={src} type="video/mp4" />}
                 </video>
               </div>
             ))}
