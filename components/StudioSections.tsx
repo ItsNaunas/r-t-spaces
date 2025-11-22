@@ -140,7 +140,10 @@ export function MissionSection() {
             alt="Creative direction"
             width={800}
             height={600}
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="h-[360px] w-full object-cover sm:h-[420px]"
+            loading="lazy"
+            quality={85}
           />
         </div>
         <div className="border border-[var(--accent)]/20 p-6">
@@ -177,8 +180,10 @@ export function FeaturedWorkSection() {
           alt="Featured project"
           width={1400}
           height={800}
+          sizes="(max-width: 768px) 100vw, 100vw"
           className="h-[320px] w-full object-cover sm:h-[420px]"
           priority
+          quality={85}
         />
       </div>
 
@@ -250,7 +255,10 @@ export function GallerySection() {
                   alt={item.artist}
                   width={500}
                   height={500}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
+                  quality={85}
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
                   <svg 
@@ -445,7 +453,10 @@ export function VideoCarouselSection() {
                 src={src}
                 alt={`Video thumbnail ${index + 1}`}
                 fill
+                sizes="(max-width: 768px) 50vw, 25vw"
                 className="object-cover"
+                loading="lazy"
+                quality={80}
               />
               <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent)]/40 opacity-0 transition-opacity group-hover:opacity-100">
                 <svg className="h-12 w-12 text-[var(--base)]" fill="currentColor" viewBox="0 0 24 24">
@@ -515,7 +526,10 @@ export function Bookings2025Section() {
               src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
               alt="Studio booking space"
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
+              loading="lazy"
+              quality={85}
             />
           </div>
         </div>
@@ -599,7 +613,10 @@ export function HowItWorksSection() {
                       src={step.image}
                       alt={step.title}
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                      quality={85}
                     />
                   </div>
                   <h3 className="font-heading text-3xl font-bold text-[var(--accent)] mt-8">{step.title}</h3>
@@ -715,7 +732,10 @@ export function TestimonialSection() {
             alt={testimonial.author}
             width={48}
             height={48}
+            sizes="48px"
             className="object-cover"
+            loading="lazy"
+            quality={75}
           />
         </div>
         <div className="flex-1 min-w-0">
@@ -807,7 +827,10 @@ export function LatestNewsSection() {
               src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80"
               alt="New studio room"
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
+              loading="lazy"
+              quality={85}
             />
           </div>
           <div className="flex flex-col justify-center space-y-6">
@@ -1070,7 +1093,10 @@ export function StudioFeaturesSection() {
                     src={feature.image}
                     alt={feature.imageAlt}
                     fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                    quality={85}
                   />
                 </div>
               </div>
@@ -1101,7 +1127,10 @@ export function GiveUsAFollowSection() {
                 src={src}
                 alt={`Instagram post ${index + 1}`}
                 fill
+                sizes="(max-width: 768px) 50vw, 20vw"
                 className="object-cover transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+                quality={80}
               />
             </Link>
           ))}

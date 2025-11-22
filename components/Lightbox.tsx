@@ -105,8 +105,10 @@ export function Lightbox({ isOpen, onClose, images, currentIndex, onNavigate }: 
               src={currentImage.src}
               alt={currentImage.alt || currentImage.focus || ""}
               fill
+              sizes="100vw"
               className="object-contain"
               priority
+              quality={90}
               onLoad={() => setIsLoading(false)}
             />
             {isLoading && (

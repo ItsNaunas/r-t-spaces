@@ -94,7 +94,10 @@ export default function GalleryPage() {
                   alt={item.focus}
                   width={800}
                   height={600}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
+                  quality={85}
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
                   <svg 
