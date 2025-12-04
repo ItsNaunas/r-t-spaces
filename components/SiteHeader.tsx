@@ -47,7 +47,6 @@ export function SiteHeader() {
   const navTextColor = isLightMode ? 'text-[var(--accent)]' : 'text-white';
   const navHoverColor = isLightMode ? 'hover:text-[var(--primary)]' : 'hover:text-[var(--primary)]';
   const navActiveColor = isLightMode ? 'text-[var(--primary)]' : 'text-white';
-  const logoColor = isLightMode ? 'text-[var(--accent)]' : 'text-white';
 
   return (
     <>
@@ -66,7 +65,7 @@ export function SiteHeader() {
       style={{ border: 'none', outline: 'none', position: 'sticky' }}
     >
       <div className={`mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8 relative transition-all duration-300`}>
-        <nav className={`hidden items-center gap-4 lg:gap-6 text-xs font-semibold uppercase tracking-[0.3em] ${navTextColor}/80 md:flex flex-1 max-w-[50%]`}>
+        <nav className={`hidden items-center gap-4 lg:gap-6 text-xs font-semibold uppercase tracking-[0.3em] ${navTextColor}/80 md:flex flex-1`}>
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -79,14 +78,7 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <Link
-          href="/"
-          className={`text-lg font-semibold tracking-tight ${logoColor} absolute left-1/2 -translate-x-1/2 z-10`}
-          onClick={closeMenu}
-        >
-          R&amp;T Spaces
-        </Link>
-        <div className="flex items-center gap-3 lg:gap-4 flex-1 justify-end">
+        <div className="flex items-center gap-3 lg:gap-4 justify-end">
           <Link
             href="https://www.instagram.com/randtspace"
             target="_blank"
