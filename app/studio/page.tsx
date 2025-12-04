@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import {
   FinalCtaSection,
   SiteFooter,
@@ -122,7 +123,150 @@ export default function StudioPage() {
           </div>
         </section>
 
-        <section className="space-y-6">
+        {/* Equipment List */}
+        <section className="space-y-6 border-t border-[var(--accent)]/20 pt-12">
+          <h2 className="font-heading text-3xl text-[var(--accent)]">
+            Included Equipment
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-4">
+              <h3 className="font-heading text-xl text-[var(--accent)]">
+                Lighting Equipment
+              </h3>
+              <ul className="space-y-2 text-[var(--accent)]/80">
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Professional softboxes</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Continuous LEDs</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Strobes & modifiers</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Diffusers & reflectors</span>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-heading text-xl text-[var(--accent)]">
+                Studio Equipment
+              </h3>
+              <ul className="space-y-2 text-[var(--accent)]/80">
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Light stands & grip</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Tethering station</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Rolling wardrobe rack</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Steamer</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Backdrop Options */}
+        <section className="space-y-6 border-t border-[var(--accent)]/20 pt-12">
+          <h2 className="font-heading text-3xl text-[var(--accent)]">
+            Backdrop Options
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-4">
+              <h3 className="font-heading text-xl text-[var(--accent)]">
+                Available Backdrops
+              </h3>
+              <ul className="space-y-2 text-[var(--accent)]/80">
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>White cyclorama (seamless)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Textured grey backdrop</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Colour backdrop rolls</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Lifestyle setups & styled corners</span>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-heading text-xl text-[var(--accent)]">
+                Props Available
+              </h3>
+              <ul className="space-y-2 text-[var(--accent)]/80">
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Stools & plinths</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Furniture pieces</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Neon photo booth wall</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Styling accessories</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Gallery Section */}
+        <section className="space-y-6 border-t border-[var(--accent)]/20 pt-12">
           <h2 className="font-heading text-3xl text-[var(--accent)]">
             Corners ready for your lens
           </h2>
@@ -144,6 +288,25 @@ export default function StudioPage() {
                 </figcaption>
               </figure>
             ))}
+          </div>
+        </section>
+
+        {/* Book This Studio CTA */}
+        <section className="text-center space-y-6 border-t border-[var(--accent)]/20 pt-12">
+          <h2 className="font-heading text-3xl text-[var(--accent)]">
+            Ready to Book This Studio?
+          </h2>
+          <p className="text-lg text-[var(--accent)]/80 max-w-2xl mx-auto">
+            Reserve your studio time today. All equipment is included and ready
+            before your call time.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/book-online" className="btn-primary">
+              Book This Studio
+            </Link>
+            <Link href="/equipment" className="btn-secondary">
+              View Equipment
+            </Link>
           </div>
         </section>
 

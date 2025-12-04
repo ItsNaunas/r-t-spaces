@@ -127,10 +127,10 @@ export function MissionSection() {
           in, we tailor bookings to your run sheet and deliverables.
         </p>
         <Link
-          href="/contact"
+          href="/book-online"
           className="btn-primary btn-small"
         >
-          Book studio
+          Book Now
         </Link>
       </div>
       <div className="space-y-6">
@@ -475,7 +475,7 @@ export function StudioPreviewsGrid() {
             href="/studio"
             className="btn-secondary inline-flex items-center gap-2"
           >
-            View our studio
+            View Studio
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -825,10 +825,10 @@ export function TestimonialSection() {
               From portrait sessions to brand launches, our community of photographers and creators share their experiences working in our East London studio.
             </p>
             <Link
-              href="/contact"
+              href="/book-online"
               className="btn-secondary w-fit"
             >
-              Book studio
+              Book Now
             </Link>
           </div>
 
@@ -1282,11 +1282,20 @@ export function SiteFooter() {
               <Link href="/studio" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
                 Studios
               </Link>
-              <Link href="/services" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
-                Pricing
+              <Link href="/equipment" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
+                Equipment & Backdrops
               </Link>
-              <Link href="/contact" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
-                Book Now
+              <Link href="/services" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
+                Packages / Pricing
+              </Link>
+              <Link href="/book-online" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
+                Book Online
+              </Link>
+              <Link href="/gallery" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
+                Our Work / Gallery
+              </Link>
+              <Link href="/about-us" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
+                About
               </Link>
               <Link href="/contact" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
                 Contact

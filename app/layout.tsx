@@ -3,6 +3,8 @@ import { Playfair_Display, Raleway } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { FloatingBookButton } from "@/components/FloatingBookButton";
+import { InfoPopup } from "@/components/InfoPopup";
 import { Analytics } from "@vercel/analytics/next";
 
 const playfairDisplay = Playfair_Display({
@@ -38,6 +40,8 @@ export default function RootLayout({
         <ScrollProgress />
         <SiteHeader />
         {children}
+        <FloatingBookButton />
+        <InfoPopup />
         <Analytics />
       </body>
     </html>

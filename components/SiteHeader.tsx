@@ -7,8 +7,10 @@ import { useState, useEffect } from "react";
 export const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Studios", href: "/studio" },
+  { label: "Equipment", href: "/equipment" },
   { label: "Pricing", href: "/services" },
-  { label: "Our Work", href: "/gallery" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "About", href: "/about-us" },
   { label: "Contact", href: "/contact" },
 ] as const;
 
@@ -64,12 +66,12 @@ export function SiteHeader() {
       style={{ border: 'none', outline: 'none', position: 'sticky' }}
     >
       <div className={`mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8 relative transition-all duration-300`}>
-        <nav className={`hidden items-center gap-6 text-xs font-semibold uppercase tracking-[0.3em] ${navTextColor}/80 md:flex flex-1`}>
+        <nav className={`hidden items-center gap-4 lg:gap-6 text-xs font-semibold uppercase tracking-[0.3em] ${navTextColor}/80 md:flex flex-1 max-w-[50%]`}>
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`transition ${navHoverColor} ${
+              className={`whitespace-nowrap transition ${navHoverColor} ${
                 pathname === link.href ? navActiveColor : ""
               }`}
             >
@@ -79,12 +81,12 @@ export function SiteHeader() {
         </nav>
         <Link
           href="/"
-          className={`text-lg font-semibold tracking-tight ${logoColor} absolute left-1/2 -translate-x-1/2`}
+          className={`text-lg font-semibold tracking-tight ${logoColor} absolute left-1/2 -translate-x-1/2 z-10`}
           onClick={closeMenu}
         >
           R&amp;T Spaces
         </Link>
-        <div className="flex items-center gap-4 flex-1 justify-end">
+        <div className="flex items-center gap-3 lg:gap-4 flex-1 justify-end">
           <Link
             href="https://www.instagram.com/randtspace"
             target="_blank"
@@ -106,10 +108,10 @@ export function SiteHeader() {
             </svg>
           </Link>
           <Link
-            href="/contact"
-            className={`btn-small hidden md:inline-flex ${isLightMode ? 'btn-primary text-[var(--base)]' : 'btn-hero-white'}`}
+            href="/book-online"
+            className={`btn-small hidden lg:inline-flex whitespace-nowrap ${isLightMode ? 'btn-primary text-[var(--base)]' : 'btn-hero-white'}`}
           >
-            Get In Touch!
+            Book Online
           </Link>
           <button
             type="button"
@@ -140,11 +142,11 @@ export function SiteHeader() {
             </Link>
           ))}
           <Link
-            href="/contact"
+            href="/book-online"
             className={`btn-small block text-center ${isLightMode ? 'btn-primary text-[var(--base)]' : 'btn-hero-white'}`}
             onClick={closeMenu}
           >
-            Get In Touch!
+            Book Online
           </Link>
         </div>
       )}

@@ -1,0 +1,251 @@
+import { Suspense } from "react";
+import { SiteFooter } from "@/components/StudioSections";
+import { BookingForm } from "@/components/BookingForm";
+
+const bookingPolicies = [
+  {
+    title: "Booking Confirmation",
+    content:
+      "We'll confirm your booking within 24 hours via email. For last-minute bookings (within 48 hours), please DM us on Instagram @randtspace.",
+  },
+  {
+    title: "Cancellation Policy",
+    content:
+      "Cancellations made 48 hours or more before your booking receive a full refund. Cancellations within 48 hours are subject to a 50% cancellation fee.",
+  },
+  {
+    title: "Rescheduling",
+    content:
+      "Rescheduling is free when requested 48 hours or more before your booking. Changes within 48 hours may incur a rescheduling fee.",
+  },
+  {
+    title: "Payment",
+    content:
+      "A 50% deposit is required to secure your booking. The remaining balance is due 48 hours before your session date.",
+  },
+  {
+    title: "Studio Hours",
+    content:
+      "Our studio is open daily from 8 AM to 11 PM. Extended hours may be available upon request.",
+  },
+  {
+    title: "Equipment & Setup",
+    content:
+      "All listed equipment is included in your booking. Let us know your specific requirements when booking, and we'll have everything ready before your call time.",
+  },
+];
+
+const availabilityInfo = {
+  title: "Check Availability",
+  description:
+    "Our studio is available daily from 8 AM to 11 PM. Popular time slots book quickly, so we recommend booking at least 1-2 weeks in advance.",
+  currentStatus: "Open for bookings",
+  popularTimes: [
+    "Weekday mornings (8 AM - 12 PM)",
+    "Weekday afternoons (2 PM - 6 PM)",
+    "Weekend slots (all day)",
+  ],
+};
+
+export default function BookOnlinePage() {
+  return (
+    <div className="bg-[var(--base)]">
+      <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
+        <section className="space-y-6">
+          <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+            Book Online
+          </p>
+          <h1 className="font-heading text-4xl text-[var(--accent)] sm:text-5xl lg:text-6xl">
+            Reserve Your Studio Time
+          </h1>
+          <p className="max-w-3xl text-lg text-[var(--accent)]/80">
+            Fill out the form below with your preferred date, time, and
+            requirements. We&apos;ll confirm availability and send you all the
+            details within 24 hours.
+          </p>
+        </section>
+
+        {/* Availability Section */}
+        <section className="border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-6 lg:p-8">
+          <h2 className="font-heading text-2xl text-[var(--accent)] mb-4">
+            {availabilityInfo.title}
+          </h2>
+          <p className="text-[var(--accent)]/80 mb-6">
+            {availabilityInfo.description}
+          </p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60 mb-2">
+                Current Status
+              </p>
+              <p className="text-lg font-semibold text-[var(--accent)]">
+                {availabilityInfo.currentStatus}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60 mb-2">
+                Popular Time Slots
+              </p>
+              <ul className="space-y-1 text-[var(--accent)]/80">
+                {availabilityInfo.popularTimes.map((time, index) => (
+                  <li key={index} className="flex items-start gap-2">
+                    <svg
+                      className="h-4 w-4 text-[var(--primary)] mt-1 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span>{time}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Booking Form Section */}
+        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div>
+            <h2 className="font-heading text-2xl text-[var(--accent)] mb-6">
+              Booking Request
+            </h2>
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center border border-[var(--accent)]/20 p-6 text-sm text-[var(--accent)]/80">
+                  Loading form…
+                </div>
+              }
+            >
+              <BookingForm />
+            </Suspense>
+          </div>
+
+          <div className="space-y-6">
+            {/* Quick Contact */}
+            <div className="border border-[var(--accent)]/20 p-6 space-y-4">
+              <h3 className="font-heading text-xl text-[var(--accent)]">
+                Need Immediate Assistance?
+              </h3>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-[var(--accent)]/60">
+                    Phone
+                  </p>
+                  <a
+                    href="tel:07944667000"
+                    className="text-base text-[var(--accent)] hover:text-[var(--primary)] transition-colors"
+                  >
+                    07944667000
+                  </a>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-[var(--accent)]/60">
+                    Email
+                  </p>
+                  <a
+                    href="mailto:Teddy77723@gmail.com"
+                    className="text-base text-[var(--accent)] hover:text-[var(--primary)] transition-colors"
+                  >
+                    Teddy77723@gmail.com
+                  </a>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-[var(--accent)]/60">
+                    Instagram
+                  </p>
+                  <a
+                    href="https://www.instagram.com/randtspace"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-base text-[var(--accent)] hover:text-[var(--primary)] transition-colors"
+                  >
+                    @randtspace
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Studio Hours */}
+            <div className="border border-[var(--accent)]/20 p-6">
+              <h3 className="font-heading text-xl text-[var(--accent)] mb-4">
+                Studio Hours
+              </h3>
+              <div className="space-y-2 text-[var(--accent)]/80">
+                <p className="flex justify-between">
+                  <span>Monday - Sunday</span>
+                  <span className="font-semibold">8 AM - 11 PM</span>
+                </p>
+                <p className="text-sm text-[var(--accent)]/60">
+                  Extended hours available upon request
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Booking Policies Section */}
+        <section className="space-y-6 border-t border-[var(--accent)]/20 pt-12">
+          <div>
+            <h2 className="font-heading text-3xl text-[var(--accent)] mb-4">
+              Booking Policies
+            </h2>
+            <p className="text-[var(--accent)]/80">
+              Please review our booking policies before submitting your request.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {bookingPolicies.map((policy) => (
+              <article
+                key={policy.title}
+                className="border border-[var(--accent)]/20 p-6 space-y-3"
+              >
+                <h3 className="font-heading text-xl text-[var(--accent)]">
+                  {policy.title}
+                </h3>
+                <p className="text-sm text-[var(--accent)]/80 leading-relaxed">
+                  {policy.content}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="text-center space-y-6 border-t border-[var(--accent)]/20 pt-12">
+          <h2 className="font-heading text-3xl text-[var(--accent)]">
+            Ready to Book?
+          </h2>
+          <p className="text-lg text-[var(--accent)]/80 max-w-2xl mx-auto">
+            Fill out the booking form above or contact us directly for
+            immediate assistance.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="tel:07944667000"
+              className="btn-primary"
+            >
+              Call Now
+            </a>
+            <a
+              href="https://www.instagram.com/randtspace"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-secondary"
+            >
+              DM on Instagram
+            </a>
+          </div>
+        </section>
+      </main>
+      <SiteFooter />
+    </div>
+  );
+}
+
