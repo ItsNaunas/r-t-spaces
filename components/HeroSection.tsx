@@ -6,17 +6,29 @@ import { useEffect, useState } from "react";
 
 export function HeroSection() {
   const [scrollY, setScrollY] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Detect mobile device
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
 
-  const parallaxOffset = scrollY * 0.5;
+  // Disable parallax on mobile for better performance
+  const parallaxOffset = isMobile ? 0 : scrollY * 0.5;
 
   return (
     <section className="relative h-screen min-h-[700px] overflow-hidden -mt-[73px] pt-[73px] bg-black w-full max-w-full">
@@ -46,18 +58,18 @@ export function HeroSection() {
       <div className="relative flex h-full flex-col items-center justify-center px-4 text-center text-white z-10">
         <div className="flex flex-col items-center animate-fade-in-up">
           <h1 
-            className="font-heading text-6xl font-bold leading-[1.1] sm:text-7xl md:text-8xl lg:text-9xl max-w-6xl mx-auto mb-8"
+            className="font-heading text-4xl font-bold leading-[1.1] sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl max-w-6xl mx-auto mb-4 sm:mb-8"
             style={{
-              transform: `translateY(${scrollY * 0.2}px)`,
-              opacity: Math.max(0, 1 - scrollY / 400),
+              transform: isMobile ? 'none' : `translateY(${scrollY * 0.2}px)`,
+              opacity: isMobile ? 1 : Math.max(0, 1 - scrollY / 400),
             }}
           >
             Book your perfect studio space
           </h1>
-          <p className="mt-8 text-xl font-medium uppercase tracking-[0.25em] sm:text-2xl md:text-3xl max-w-3xl mx-auto leading-relaxed opacity-95">
+          <p className="mt-4 sm:mt-8 text-base sm:text-xl md:text-2xl lg:text-3xl font-medium uppercase tracking-[0.15em] sm:tracking-[0.2em] md:tracking-[0.25em] max-w-3xl mx-auto leading-relaxed opacity-95">
             Professional studio hire for your creative projects
           </p>
-          <div className="mt-16">
+          <div className="mt-8 sm:mt-12 md:mt-16">
             <Link
               href="/contact"
               className="btn-primary group relative overflow-hidden text-lg px-8 py-4"

@@ -136,7 +136,7 @@ export function MissionSection() {
       <div className="space-y-6">
         <div className="overflow-hidden bg-[var(--accent)]/5">
           <Image
-            src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
+            src="/assets/8eb25501-7cc0-4ccf-a906-3a2a747836fd.jpg"
             alt="Creative direction"
             width={800}
             height={600}
@@ -294,12 +294,12 @@ export function GallerySection() {
 
 export function FinalCtaSection() {
   return (
-    <section className="grid gap-6 bg-[var(--primary)] px-6 py-12 text-[var(--base)] sm:px-8 lg:grid-cols-[1.5fr_1fr]">
+    <section className="grid gap-6 bg-[var(--primary)] px-6 py-12 text-[var(--accent)] sm:px-8 lg:grid-cols-[1.5fr_1fr]">
       <div>
-        <p className="text-sm uppercase tracking-[0.5em] text-[var(--base)]/80">
+        <p className="text-sm uppercase tracking-[0.5em] text-[var(--accent)]/80">
           Ready when you are
         </p>
-        <h3 className="mt-4 font-heading text-4xl">
+        <h3 className="mt-4 font-heading text-4xl text-[var(--accent)]">
           Book R&amp;T Spaces for your next shoot
         </h3>
       </div>
@@ -307,7 +307,7 @@ export function FinalCtaSection() {
         <Link
           href="/contact"
           className="btn-secondary"
-          style={{ borderColor: 'var(--base)', color: 'var(--base)' }}
+          style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}
         >
           Message us
         </Link>
@@ -359,8 +359,19 @@ const instagramImages = [
 export function StudioPreviewsGrid() {
   const { ref, isVisible } = useScrollAnimation();
   const [visibleVideos, setVisibleVideos] = useState<Set<number>>(new Set());
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Detect mobile device
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    // Use larger rootMargin on mobile for better preloading
+    const rootMargin = isMobile ? '200px' : '100px';
+    
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -370,7 +381,7 @@ export function StudioPreviewsGrid() {
           }
         });
       },
-      { rootMargin: '100px' } // Start loading 100px before visible
+      { rootMargin }
     );
 
     // Use a small delay to ensure DOM is ready
@@ -381,14 +392,15 @@ export function StudioPreviewsGrid() {
 
     return () => {
       clearTimeout(timeoutId);
+      window.removeEventListener('resize', checkMobile);
       const videoElements = document.querySelectorAll('[data-video-index]');
       videoElements.forEach((el) => observer.unobserve(el));
       observer.disconnect();
     };
-  }, []);
+  }, [isMobile]);
 
   return (
-    <section className="bg-[var(--base)] px-4 py-32 sm:px-6 lg:px-8">
+    <section className="bg-[var(--base)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div 
           ref={ref}
@@ -441,22 +453,35 @@ export function StudioPreviewsGrid() {
             {studioPreviewVideos.map((src, index) => (
               <div key={`second-${index}`} className="flex-shrink-0 group relative" data-video-index={index}>
                 <video
-                  autoPlay={visibleVideos.has(index)}
+                  autoPlay={visibleVideos.has(index) && !isMobile}
                   loop
                   muted
                   playsInline
-                  preload="metadata"
-                  className="h-[400px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                  preload={isMobile ? "none" : "metadata"}
+                  className="h-[250px] sm:h-[300px] md:h-[400px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                   onMouseEnter={(e) => {
-                    const video = e.currentTarget;
-                    if (visibleVideos.has(index)) {
-                      video.playbackRate = 0.5;
+                    if (!isMobile) {
+                      const video = e.currentTarget;
+                      if (visibleVideos.has(index)) {
+                        video.playbackRate = 0.5;
+                      }
                     }
                   }}
                   onMouseLeave={(e) => {
+                    if (!isMobile) {
+                      const video = e.currentTarget;
+                      if (visibleVideos.has(index)) {
+                        video.playbackRate = 1;
+                      }
+                    }
+                  }}
+                  onTouchStart={(e) => {
+                    // On mobile, play video on touch
                     const video = e.currentTarget;
-                    if (visibleVideos.has(index)) {
-                      video.playbackRate = 1;
+                    if (visibleVideos.has(index) && video.paused) {
+                      video.play().catch(() => {
+                        // Auto-play was prevented, user interaction required
+                      });
                     }
                   }}
                   onError={(e) => {
@@ -622,11 +647,11 @@ export function HowItWorksSection() {
   const { ref, isVisible } = useScrollAnimation();
 
   return (
-    <section className="bg-[var(--base)] px-4 py-32 sm:px-6 lg:px-8">
+    <section className="bg-[var(--base)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div 
           ref={ref}
-          className={`mb-20 text-center transition-all duration-700 ${
+          className={`mb-12 sm:mb-16 lg:mb-20 text-center transition-all duration-700 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
@@ -810,7 +835,7 @@ export function TestimonialSection() {
   );
 
   return (
-    <section className="bg-[var(--base)] px-4 py-32 sm:px-6 lg:px-8">
+    <section className="bg-[var(--base)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-16 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
           {/* Left Column: Editorial Content */}
@@ -1095,9 +1120,9 @@ export function StudioFeaturesSection() {
   ];
 
   return (
-    <section className="bg-[var(--base)] px-4 py-32 sm:px-6 lg:px-8">
+    <section className="bg-[var(--base)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-24 text-center">
+        <div className="mb-12 sm:mb-16 lg:mb-24 text-center">
           <h2 className="font-heading text-5xl font-bold text-[var(--accent)] sm:text-6xl md:text-7xl mb-6">
             What&apos;s Included in Your Session
           </h2>
@@ -1208,7 +1233,7 @@ export function EmailSubscriptionSection() {
   };
 
   return (
-    <section className="bg-[var(--base)] px-4 py-32 sm:px-6 lg:px-8">
+    <section className="bg-[var(--base)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl text-center">
         <h2 className="font-heading text-5xl font-bold text-[var(--accent)] sm:text-6xl md:text-7xl mb-8">
           Join the R&amp;T Creator Circle

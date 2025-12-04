@@ -30,7 +30,7 @@ export function InfoPopup() {
       {/* Toggle Button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-6 py-4 flex items-center justify-between bg-[var(--accent)]/5 hover:bg-[var(--accent)]/10 transition-colors"
+        className="w-full min-h-[44px] px-6 py-4 flex items-center justify-between bg-[var(--accent)]/5 hover:bg-[var(--accent)]/10 transition-colors active:opacity-70"
         aria-expanded={isExpanded}
         aria-label={isExpanded ? "Hide contact information" : "Show contact information"}
       >
@@ -66,7 +66,7 @@ export function InfoPopup() {
               <p className="text-sm text-[var(--accent)]">{location}</p>
               <button
                 onClick={() => copyToClipboard(location, "location")}
-                className="text-xs text-[var(--primary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1"
+                className="min-w-[44px] min-h-[44px] px-3 py-2 text-xs text-[var(--primary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1 active:opacity-70"
               >
                 {copiedField === "location" ? (
                   <>
@@ -109,7 +109,7 @@ export function InfoPopup() {
               </a>
               <button
                 onClick={() => copyToClipboard(phone, "phone")}
-                className="text-xs text-[var(--primary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1"
+                className="min-w-[44px] min-h-[44px] px-3 py-2 text-xs text-[var(--primary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1 active:opacity-70"
               >
                 {copiedField === "phone" ? (
                   <>
@@ -152,7 +152,7 @@ export function InfoPopup() {
               </a>
               <button
                 onClick={() => copyToClipboard(email, "email")}
-                className="text-xs text-[var(--primary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1"
+                className="min-w-[44px] min-h-[44px] px-3 py-2 text-xs text-[var(--primary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1 active:opacity-70"
               >
                 {copiedField === "email" ? (
                   <>

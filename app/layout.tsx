@@ -25,6 +25,12 @@ export const metadata: Metadata = {
   title: "R&T Spaces — Photography Studio Hire East London",
   description:
     "R&T Spaces offers daylight-ready studio hire, creative sessions, and photobooth packages in East London from 8 AM to 11 PM daily.",
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
 };
 
 export default function RootLayout({

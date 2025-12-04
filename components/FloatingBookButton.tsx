@@ -27,11 +27,15 @@ export function FloatingBookButton() {
   return (
     <Link
       href="/book-online"
-      className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${
+      className={`fixed z-50 transition-all duration-300 ${
         isVisible
           ? "opacity-100 translate-y-0"
           : "opacity-0 translate-y-4 pointer-events-none"
       }`}
+      style={{
+        bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))',
+        right: 'calc(1.5rem + env(safe-area-inset-right, 0px))',
+      }}
       aria-label="Book Online"
     >
       <div className="btn-primary shadow-lg hover:shadow-xl group relative overflow-hidden">

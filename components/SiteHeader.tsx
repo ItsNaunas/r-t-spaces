@@ -22,6 +22,44 @@ export function SiteHeader() {
   const closeMenu = () => setMenuOpen(false);
 
   useEffect(() => {
+    // Close menu when clicking outside
+    if (menuOpen) {
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+        if (!target.closest('header')) {
+          closeMenu();
+        }
+      };
+      
+      // Close menu on escape key
+      const handleEscape = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          closeMenu();
+        }
+      };
+
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscape);
+      
+      // Prevent body scroll when menu is open
+      document.body.style.overflow = 'hidden';
+      
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleEscape);
+        document.body.style.overflow = '';
+      };
+    }
+  }, [menuOpen]);
+
+  useEffect(() => {
+    // Only use scroll-based detection on the home page
+    // Other pages have light backgrounds from the start, so always use light mode
+    if (pathname !== "/") {
+      setIsOverLightSection(true);
+      return;
+    }
+
     const handleScroll = () => {
       const scrollY = window.scrollY;
       
@@ -39,11 +77,12 @@ export function SiteHeader() {
     
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [pathname]);
 
   // Determine nav colors based on scroll position
   // isLightMode = true when over light sections (dark text), false when over hero (white text)
-  const isLightMode = isOverLightSection;
+  // On non-home pages, always use light mode since they have light backgrounds
+  const isLightMode = pathname !== "/" ? true : isOverLightSection;
   const navTextColor = isLightMode ? 'text-[var(--accent)]' : 'text-white';
   const navHoverColor = isLightMode ? 'hover:text-[var(--primary)]' : 'hover:text-[var(--primary)]';
   const navActiveColor = isLightMode ? 'text-[var(--primary)]' : 'text-white';
@@ -78,12 +117,12 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-3 lg:gap-4 justify-end">
+        <div className="flex items-center gap-2 lg:gap-4 justify-end">
           <Link
             href="https://www.instagram.com/randtspace"
             target="_blank"
             aria-label="Instagram"
-            className={`${isLightMode ? 'text-[var(--accent)]/80 hover:text-[var(--primary)]' : 'text-white/80 hover:text-[var(--primary)]'} transition`}
+            className={`flex items-center justify-center min-w-[44px] min-h-[44px] ${isLightMode ? 'text-[var(--accent)]/80 hover:text-[var(--primary)]' : 'text-white/80 hover:text-[var(--primary)]'} transition`}
           >
             <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
@@ -93,7 +132,7 @@ export function SiteHeader() {
             href="https://www.tiktok.com/@randtspace"
             target="_blank"
             aria-label="TikTok"
-            className={`${isLightMode ? 'text-[var(--accent)]/80 hover:text-[var(--primary)]' : 'text-white/80 hover:text-[var(--primary)]'} transition`}
+            className={`flex items-center justify-center min-w-[44px] min-h-[44px] ${isLightMode ? 'text-[var(--accent)]/80 hover:text-[var(--primary)]' : 'text-white/80 hover:text-[var(--primary)]'} transition`}
           >
             <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
@@ -107,7 +146,7 @@ export function SiteHeader() {
           </Link>
           <button
             type="button"
-            className={`btn-small inline-flex items-center md:hidden ${isLightMode ? 'text-[var(--accent)]' : 'text-white'}`}
+            className={`min-w-[44px] min-h-[44px] inline-flex items-center justify-center md:hidden px-3 py-2 ${isLightMode ? 'text-[var(--accent)] active:opacity-70' : 'text-white active:opacity-70'} transition-opacity`}
             onClick={() => setMenuOpen((prev) => !prev)}
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
@@ -117,15 +156,22 @@ export function SiteHeader() {
         </div>
       </div>
       {menuOpen && (
-        <div
-          id="mobile-nav"
-          className={`space-y-4 border-t ${isLightMode ? 'border-[var(--accent)]/20' : 'border-white/20'} px-4 pb-6 pt-4 text-sm font-semibold uppercase tracking-[0.3em] ${isLightMode ? 'text-[var(--accent)]/80' : 'text-white/80'} md:hidden`}
-        >
+        <>
+          {/* Backdrop overlay */}
+          <div 
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+            onClick={closeMenu}
+            aria-hidden="true"
+          />
+          <div
+            id="mobile-nav"
+            className={`relative z-50 space-y-4 border-t ${isLightMode ? 'border-[var(--accent)]/20' : 'border-white/20'} px-4 pb-6 pt-4 text-sm font-semibold uppercase tracking-[0.3em] ${isLightMode ? 'text-[var(--accent)]/80' : 'text-white/80'} md:hidden bg-[var(--base)]/95 backdrop-blur-md animate-in slide-in-from-top-2`}
+          >
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`block border ${isLightMode ? 'border-[var(--accent)]/20 hover:border-[var(--primary)]' : 'border-white/20 hover:border-white'} px-4 py-3 text-center transition ${
+              className={`block border ${isLightMode ? 'border-[var(--accent)]/20 hover:border-[var(--primary)]' : 'border-white/20 hover:border-white'} px-4 py-4 text-center transition min-h-[44px] flex items-center justify-center active:opacity-70 ${
                 pathname === link.href ? (isLightMode ? "border-[var(--primary)] text-[var(--primary)]" : "border-white text-white") : ""
               }`}
               onClick={closeMenu}
@@ -141,6 +187,7 @@ export function SiteHeader() {
             Book Online
           </Link>
         </div>
+        </>
       )}
     </header>
     </>

@@ -95,6 +95,8 @@ export function BookingForm() {
           placeholder="Rose and Teddy"
           value={formData.name}
           onChange={handleChange}
+          autoComplete="name"
+          inputMode="text"
           required
         />
       </div>
@@ -106,6 +108,8 @@ export function BookingForm() {
           placeholder="you@email.com"
           value={formData.email}
           onChange={handleChange}
+          autoComplete="email"
+          inputMode="email"
           required
         />
       </div>
@@ -117,6 +121,8 @@ export function BookingForm() {
           type="date"
           value={formData.date}
           onChange={handleChange}
+          autoComplete="off"
+          inputMode="none"
         />
         <Field
           label="Hours needed"
@@ -125,6 +131,7 @@ export function BookingForm() {
           placeholder="e.g. 8 AM – 2 PM"
           value={formData.hours}
           onChange={handleChange}
+          inputMode="text"
         />
       </div>
 
@@ -195,12 +202,13 @@ type FieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
 function Field({ label, ...props }: FieldProps) {
   return (
     <div>
-      <label className="text-xs font-semibold uppercase tracking-[0.4em] text-[var(--accent)]/60">
+      <label className="text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[var(--accent)]/60">
         {label}
       </label>
       <input
         {...props}
-        className="mt-2 w-full  border border-[var(--accent)]/20 px-4 py-3 text-sm text-[var(--accent)] outline-none transition focus:border-[var(--primary)]"
+        className="mt-2 w-full border border-[var(--accent)]/20 px-4 py-3 text-base text-[var(--accent)] outline-none transition focus:border-[var(--primary)]"
+        style={{ fontSize: '16px' }}
       />
     </div>
   );
@@ -213,12 +221,13 @@ type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
 function Textarea({ label, ...props }: TextareaProps) {
   return (
     <div>
-      <label className="text-xs font-semibold uppercase tracking-[0.4em] text-[var(--accent)]/60">
+      <label className="text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[var(--accent)]/60">
         {label}
       </label>
       <textarea
         {...props}
-        className="mt-2 w-full  border border-[var(--accent)]/20 px-4 py-3 text-sm text-[var(--accent)] outline-none transition focus:border-[var(--primary)]"
+        className="mt-2 w-full border border-[var(--accent)]/20 px-4 py-3 text-base text-[var(--accent)] outline-none transition focus:border-[var(--primary)]"
+        style={{ fontSize: '16px' }}
       />
     </div>
   );
