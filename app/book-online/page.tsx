@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { SiteFooter } from "@/components/StudioSections";
 import { BookingForm } from "@/components/BookingForm";
+import { BookingSuccessMessage } from "@/components/BookingSuccessMessage";
 
 const bookingPolicies = [
   {
@@ -47,10 +48,28 @@ const availabilityInfo = {
   ],
 };
 
-export default function BookOnlinePage() {
+export default function BookOnlinePage({
+  searchParams,
+}: {
+  searchParams?: { success?: string; canceled?: string; session_id?: string };
+}) {
   return (
     <div className="bg-[var(--base)]">
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
+        {/* Success Message */}
+        {searchParams?.success === "true" && (
+          <BookingSuccessMessage />
+        )}
+        
+        {/* Cancel Message */}
+        {searchParams?.canceled === "true" && (
+          <div className="border border-yellow-500/20 bg-yellow-500/10 p-6 text-yellow-600">
+            <p className="font-semibold">Booking Canceled</p>
+            <p className="text-sm mt-2">
+              Your booking was not completed. You can try again or contact us directly.
+            </p>
+          </div>
+        )}
         <section className="space-y-6">
           <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
             Book Online
@@ -248,4 +267,5 @@ export default function BookOnlinePage() {
     </div>
   );
 }
+
 

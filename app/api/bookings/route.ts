@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { saveBooking } from "@/lib/bookingStore";
+import { sendBookingNotification } from "@/lib/email";
 
 const emailRegex =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -23,12 +24,20 @@ export async function POST(request: Request) {
       );
     }
 
-    await saveBooking({
+    const bookingEntry = {
       name: String(name).trim(),
       email: String(email).trim().toLowerCase(),
       date: date ? String(date) : undefined,
       hours: hours ? String(hours) : undefined,
       notes: notes ? String(notes) : undefined,
+    };
+
+    // Save booking
+    const savedBooking = await saveBooking(bookingEntry);
+
+    // Send email notifications (non-blocking - don't fail if email fails)
+    sendBookingNotification(savedBooking).catch((error) => {
+      console.error("Email notification failed (booking still saved):", error);
     });
 
     return NextResponse.json({ success: true });

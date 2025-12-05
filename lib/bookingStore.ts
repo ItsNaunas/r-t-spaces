@@ -8,6 +8,10 @@ export type BookingEntry = {
   hours?: string;
   notes?: string;
   createdAt: string;
+  status?: "pending" | "confirmed" | "cancelled";
+  paymentIntentId?: string;
+  paidAt?: string;
+  calendarEventId?: string;
 };
 
 const bookingsFile = path.join(process.cwd(), "data", "bookings.json");
@@ -21,11 +25,13 @@ async function ensureFile() {
   }
 }
 
-export async function saveBooking(entry: Omit<BookingEntry, "createdAt">) {
+export async function saveBooking(entry: Omit<BookingEntry, "createdAt">): Promise<BookingEntry> {
   await ensureFile();
   const raw = await fs.readFile(bookingsFile, "utf-8");
   const bookings: BookingEntry[] = JSON.parse(raw);
-  bookings.push({ ...entry, createdAt: new Date().toISOString() });
+  const newBooking: BookingEntry = { ...entry, createdAt: new Date().toISOString() };
+  bookings.push(newBooking);
   await fs.writeFile(bookingsFile, JSON.stringify(bookings, null, 2), "utf-8");
+  return newBooking;
 }
 
