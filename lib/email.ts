@@ -1,10 +1,35 @@
 import { Resend } from "resend";
 import type { BookingEntry } from "./bookingStore";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization to avoid build-time errors when env vars are missing
+function getResend() {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY is not set");
+  }
+  return new Resend(apiKey);
+}
 
 const STUDIO_EMAIL = process.env.STUDIO_EMAIL || "Teddy77723@gmail.com";
 const FROM_EMAIL = process.env.FROM_EMAIL || "onboarding@resend.dev";
+
+// Helper function to safely format dates
+function formatDate(dateString: string | undefined, format: "long" | "short" | "datetime" = "long"): string {
+  if (!dateString) return "";
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; // Return original if invalid
+    if (format === "long") {
+      return date.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    if (format === "datetime") {
+      return date.toLocaleString('en-GB');
+    }
+    return date.toLocaleDateString('en-GB');
+  } catch {
+    return dateString; // Return original if parsing fails
+  }
+}
 
 export async function sendBookingNotification(booking: BookingEntry) {
   if (!process.env.RESEND_API_KEY) {
@@ -13,6 +38,7 @@ export async function sendBookingNotification(booking: BookingEntry) {
   }
 
   try {
+    const resend = getResend();
     // Email to studio
     await resend.emails.send({
       from: FROM_EMAIL,
@@ -24,10 +50,10 @@ export async function sendBookingNotification(booking: BookingEntry) {
           <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p><strong>Name:</strong> ${booking.name}</p>
             <p><strong>Email:</strong> <a href="mailto:${booking.email}">${booking.email}</a></p>
-            ${booking.date ? `<p><strong>Preferred Date:</strong> ${new Date(booking.date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>` : ''}
+            ${booking.date ? `<p><strong>Preferred Date:</strong> ${formatDate(booking.date, 'long')}</p>` : ''}
             ${booking.hours ? `<p><strong>Hours Needed:</strong> ${booking.hours}</p>` : ''}
             ${booking.notes ? `<p><strong>Notes:</strong><br>${booking.notes.replace(/\n/g, '<br>')}</p>` : ''}
-            <p><strong>Submitted:</strong> ${new Date(booking.createdAt).toLocaleString('en-GB')}</p>
+            <p><strong>Submitted:</strong> ${formatDate(booking.createdAt, 'datetime')}</p>
           </div>
           <p style="color: #666; font-size: 14px;">
             Please respond within 24 hours to confirm availability.
@@ -49,7 +75,7 @@ export async function sendBookingNotification(booking: BookingEntry) {
           <p>We've received your booking request and will confirm availability within 24 hours.</p>
           <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="margin-top: 0;">Your Request Details:</h3>
-            ${booking.date ? `<p><strong>Preferred Date:</strong> ${new Date(booking.date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>` : ''}
+            ${booking.date ? `<p><strong>Preferred Date:</strong> ${formatDate(booking.date, 'long')}</p>` : ''}
             ${booking.hours ? `<p><strong>Hours Needed:</strong> ${booking.hours}</p>` : ''}
             ${booking.notes ? `<p><strong>Notes:</strong><br>${booking.notes.replace(/\n/g, '<br>')}</p>` : ''}
           </div>

@@ -2,10 +2,25 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { createCalendarEvent } from "@/lib/calendar";
 import { sendBookingNotification } from "@/lib/email";
+import type { BookingEntry } from "@/lib/bookingStore";
 import { promises as fs } from "fs";
 import path from "path";
 
 const bookingsFile = path.join(process.cwd(), "data", "bookings.json");
+
+// Helper function to validate booking entry
+function isValidBookingEntry(booking: unknown): booking is BookingEntry {
+  return (
+    typeof booking === "object" &&
+    booking !== null &&
+    "name" in booking &&
+    "email" in booking &&
+    "createdAt" in booking &&
+    typeof (booking as { name: unknown }).name === "string" &&
+    typeof (booking as { email: unknown }).email === "string" &&
+    typeof (booking as { createdAt: unknown }).createdAt === "string"
+  );
+}
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -18,13 +33,22 @@ export async function POST(request: Request) {
     );
   }
 
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    console.error("STRIPE_WEBHOOK_SECRET is not set");
+    return NextResponse.json(
+      { error: "Webhook secret not configured" },
+      { status: 500 },
+    );
+  }
+
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!,
+      webhookSecret,
     );
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : "Unknown error";
@@ -52,15 +76,29 @@ export async function POST(request: Request) {
       // Get booking details from metadata
       const { bookingId } = session.metadata || {};
 
+      if (!bookingId) {
+        console.error("No bookingId in session metadata");
+        return NextResponse.json({ received: true });
+      }
+
       // Load booking from file
       const raw = await fs.readFile(bookingsFile, "utf-8");
-      const bookings = JSON.parse(raw) as Array<{ createdAt: string; [key: string]: unknown }>;
+      const bookings = JSON.parse(raw) as unknown[];
       const booking = bookings.find(
-        (b) => b.createdAt === bookingId,
+        (b): b is BookingEntry => {
+          if (!isValidBookingEntry(b)) return false;
+          return b.createdAt === bookingId;
+        },
       );
 
       if (!booking) {
         console.error("Booking not found:", bookingId);
+        return NextResponse.json({ received: true });
+      }
+
+      // Validate booking has required fields
+      if (!isValidBookingEntry(booking)) {
+        console.error("Invalid booking entry structure:", bookingId);
         return NextResponse.json({ received: true });
       }
 

@@ -39,6 +39,19 @@ export async function POST(request: Request) {
     // Save booking as pending (will be confirmed via webhook)
     const booking = await saveBooking(bookingEntry);
 
+    // Format date safely for description
+    let dateDescription = "";
+    if (bookingEntry.date) {
+      try {
+        const date = new Date(bookingEntry.date);
+        if (!isNaN(date.getTime())) {
+          dateDescription = ` on ${date.toLocaleDateString()}`;
+        }
+      } catch {
+        // Invalid date, skip date in description
+      }
+    }
+
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -48,7 +61,7 @@ export async function POST(request: Request) {
             currency: "gbp",
             product_data: {
               name: "Studio Booking",
-              description: `Studio booking for ${bookingEntry.name}${bookingEntry.date ? ` on ${new Date(bookingEntry.date).toLocaleDateString()}` : ""}${bookingEntry.hours ? ` (${bookingEntry.hours})` : ""}`,
+              description: `Studio booking for ${bookingEntry.name}${dateDescription}${bookingEntry.hours ? ` (${bookingEntry.hours})` : ""}`,
             },
             unit_amount: amount,
           },
@@ -67,6 +80,10 @@ export async function POST(request: Request) {
         hours: bookingEntry.hours || "",
       },
     });
+
+    if (!session.url) {
+      throw new Error("Stripe session URL is missing");
+    }
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error) {
