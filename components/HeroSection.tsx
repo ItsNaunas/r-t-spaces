@@ -139,12 +139,12 @@ export function HeroSection() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-5">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-4 md:gap-5 w-full sm:w-auto">
               <Link 
                 href="/book-online"
-                className="btn-primary group min-w-[180px]"
+                className="btn-primary group w-full sm:min-w-[180px]"
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center justify-center gap-2">
                   Book a Session
                   <svg 
                     className="w-5 h-5 transition-transform group-hover:translate-x-1" 
@@ -158,9 +158,9 @@ export function HeroSection() {
               </Link>
               <Link 
                 href="/gallery"
-                className="btn-secondary group min-w-[180px]"
+                className="btn-secondary group w-full sm:min-w-[180px]"
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center justify-center gap-2">
                   View Portfolio
                   <svg 
                     className="w-5 h-5 transition-transform group-hover:translate-x-1" 
