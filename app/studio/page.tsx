@@ -44,13 +44,13 @@ export default function StudioPage() {
     <div className="bg-[var(--base)]">
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         <section className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             Studio
           </p>
-          <h1 className="font-heading text-4xl text-[var(--accent)] sm:text-5xl">
+          <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl">
             Take a tour of R&amp;T Spaces
           </h1>
-          <p className="max-w-3xl text-lg text-[var(--accent)]/80">
+          <p className="max-w-3xl text-lg text-[var(--muted-plum)]">
             Designed for content days, lookbooks, and community events, our East
             London studio mixes daylight with controlled lighting so you can
             pivot between clean commercial looks and warm lifestyle scenes.
@@ -68,11 +68,11 @@ export default function StudioPage() {
               priority
             />
           </div>
-          <div className="space-y-6 border border-[var(--accent)]/20 p-6">
-            <h2 className="font-heading text-2xl text-[var(--accent)]">
+          <div className="space-y-6 border border-[var(--accent)]/20 p-6 rounded-lg">
+            <h2 className="font-heading text-2xl text-[var(--primary)]">
               Ready before you arrive
             </h2>
-            <p className="text-[var(--accent)]/80">
+            <p className="text-[var(--muted-plum)]">
               Send through a mood board and we&apos;ll stage the space, pre-light
               sets, and prepare any photobooth wraps or props ahead of call time.
             </p>
@@ -80,12 +80,12 @@ export default function StudioPage() {
               {studioHighlights.map((item) => (
                 <div
                   key={item.title}
-                  className="border border-[var(--accent)]/20 p-4"
+                  className="border border-[var(--accent)]/20 p-4 rounded-lg"
                 >
-                  <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60">
+                  <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)]">
                     {item.title}
                   </p>
-                  <p className="text-base text-[var(--accent)]">{item.detail}</p>
+                  <p className="text-base text-[var(--primary)]">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -96,10 +96,10 @@ export default function StudioPage() {
           {availabilityBlocks.map((item) => (
             <div
               key={item.label}
-              className="border border-[var(--accent)]/20 p-6 text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60"
+              className="border border-[var(--accent)]/20 p-6 text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)] rounded-lg"
             >
               <p>{item.label}</p>
-              <p className="mt-3 text-base text-[var(--accent)] normal-case">
+              <p className="mt-3 text-base text-[var(--primary)] normal-case">
                 {item.value}
               </p>
             </div>
@@ -107,17 +107,17 @@ export default function StudioPage() {
         </section>
 
         <section className="space-y-6">
-          <h2 className="font-heading text-3xl text-[var(--accent)]">Studio services</h2>
+          <h2 className="font-heading text-3xl text-[var(--primary)]">Studio services</h2>
           <div className="grid gap-6 md:grid-cols-2">
             {studioServices.map((service) => (
               <article
                 key={service.title}
-                className="border border-[var(--accent)]/20 p-6"
+                className="border border-[var(--accent)]/20 p-6 rounded-lg"
               >
-                <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+                <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
                   {service.title}
                 </p>
-                <p className="mt-3 text-lg text-[var(--accent)]">{service.meta}</p>
+                <p className="mt-3 text-lg text-[var(--primary)]">{service.meta}</p>
               </article>
             ))}
           </div>
@@ -125,15 +125,15 @@ export default function StudioPage() {
 
         {/* Equipment List */}
         <section className="space-y-6 border-t border-[var(--accent)]/20 pt-12">
-          <h2 className="font-heading text-3xl text-[var(--accent)]">
+          <h2 className="font-heading text-3xl text-[var(--primary)]">
             Included Equipment
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-4">
-              <h3 className="font-heading text-xl text-[var(--accent)]">
+              <h3 className="font-heading text-xl text-[var(--primary)]">
                 Lighting Equipment
               </h3>
-              <ul className="space-y-2 text-[var(--accent)]/80">
+              <ul className="space-y-2 text-[var(--muted-plum)]">
                 <li className="flex items-start gap-2">
                   <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -161,10 +161,10 @@ export default function StudioPage() {
               </ul>
             </div>
             <div className="space-y-4">
-              <h3 className="font-heading text-xl text-[var(--accent)]">
+              <h3 className="font-heading text-xl text-[var(--primary)]">
                 Studio Equipment
               </h3>
-              <ul className="space-y-2 text-[var(--accent)]/80">
+              <ul className="space-y-2 text-[var(--muted-plum)]">
                 <li className="flex items-start gap-2">
                   <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -196,15 +196,15 @@ export default function StudioPage() {
 
         {/* Backdrop Options */}
         <section className="space-y-6 border-t border-[var(--accent)]/20 pt-12">
-          <h2 className="font-heading text-3xl text-[var(--accent)]">
+          <h2 className="font-heading text-3xl text-[var(--primary)]">
             Backdrop Options
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-4">
-              <h3 className="font-heading text-xl text-[var(--accent)]">
+              <h3 className="font-heading text-xl text-[var(--primary)]">
                 Available Backdrops
               </h3>
-              <ul className="space-y-2 text-[var(--accent)]/80">
+              <ul className="space-y-2 text-[var(--muted-plum)]">
                 <li className="flex items-start gap-2">
                   <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -232,10 +232,10 @@ export default function StudioPage() {
               </ul>
             </div>
             <div className="space-y-4">
-              <h3 className="font-heading text-xl text-[var(--accent)]">
+              <h3 className="font-heading text-xl text-[var(--primary)]">
                 Props Available
               </h3>
-              <ul className="space-y-2 text-[var(--accent)]/80">
+              <ul className="space-y-2 text-[var(--muted-plum)]">
                 <li className="flex items-start gap-2">
                   <svg className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -267,14 +267,14 @@ export default function StudioPage() {
 
         {/* Gallery Section */}
         <section className="space-y-6 border-t border-[var(--accent)]/20 pt-12">
-          <h2 className="font-heading text-3xl text-[var(--accent)]">
+          <h2 className="font-heading text-3xl text-[var(--primary)]">
             Corners ready for your lens
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
             {studioGallery.slice(0, 4).map((item) => (
               <figure
                 key={item.artist}
-                className="space-y-3 border border-[var(--accent)]/10 bg-[var(--base)] p-4"
+                className="space-y-3 border border-[var(--accent)]/10 bg-[var(--base)] p-4 rounded-lg"
               >
                 <Image
                   src={item.src}
@@ -283,7 +283,7 @@ export default function StudioPage() {
                   height={800}
                   className="h-64 w-full object-cover"
                 />
-                <figcaption className="text-sm text-[var(--accent)]/80">
+                <figcaption className="text-sm text-[var(--muted-plum)]">
                   {item.focus}
                 </figcaption>
               </figure>
@@ -293,10 +293,10 @@ export default function StudioPage() {
 
         {/* Book This Studio CTA */}
         <section className="text-center space-y-6 border-t border-[var(--accent)]/20 pt-12">
-          <h2 className="font-heading text-3xl text-[var(--accent)]">
+          <h2 className="font-heading text-3xl text-[var(--primary)]">
             Ready to Book This Studio?
           </h2>
-          <p className="text-lg text-[var(--accent)]/80 max-w-2xl mx-auto">
+          <p className="text-lg text-[var(--muted-plum)] max-w-2xl mx-auto">
             Reserve your studio time today. All equipment is included and ready
             before your call time.
           </p>

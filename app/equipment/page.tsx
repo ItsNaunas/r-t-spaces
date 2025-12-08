@@ -110,13 +110,13 @@ export default function EquipmentPage() {
     <div className="bg-[var(--base)]">
       <main className="mx-auto w-full max-w-7xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         <section className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             Equipment & Backdrops
           </p>
-          <h1 className="font-heading text-4xl text-[var(--accent)] sm:text-5xl lg:text-6xl">
+          <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl lg:text-6xl">
             Complete Studio Equipment
           </h1>
-          <p className="max-w-3xl text-lg text-[var(--accent)]/80">
+          <p className="max-w-3xl text-lg text-[var(--muted-plum)]">
             Every piece of equipment you need for a successful shoot is included
             in your booking. From professional lighting to versatile backdrops,
             we&apos;ve curated a complete kit ready for your creative vision.
@@ -127,7 +127,7 @@ export default function EquipmentPage() {
         {equipmentCategories.map((category, categoryIndex) => (
           <section key={category.title} className="space-y-8">
             <div className="flex items-center justify-between">
-              <h2 className="font-heading text-3xl text-[var(--accent)] sm:text-4xl">
+              <h2 className="font-heading text-3xl text-[var(--primary)] sm:text-4xl">
                 {category.title}
               </h2>
               {categoryIndex === 0 && (
@@ -141,12 +141,12 @@ export default function EquipmentPage() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {category.items.map((item, itemIndex) => (
+              {category.items.map((item) => (
                 <article
                   key={item.name}
-                  className="group border border-[var(--accent)]/10 bg-[var(--base)] p-4 hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg"
+                  className="group border border-[var(--accent)]/10 bg-[var(--base)] p-4 hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg rounded-lg"
                 >
-                  <div className="relative aspect-square overflow-hidden mb-4">
+                  <div className="relative aspect-square overflow-hidden mb-4 rounded-lg">
                     <Image
                       src={item.image}
                       alt={item.name}
@@ -157,10 +157,10 @@ export default function EquipmentPage() {
                       quality={85}
                     />
                   </div>
-                  <h3 className="font-heading text-xl font-semibold text-[var(--accent)] mb-2">
+                  <h3 className="font-heading text-xl font-semibold text-[var(--primary)] mb-2">
                     {item.name}
                   </h3>
-                  <p className="text-sm text-[var(--accent)]/80">
+                  <p className="text-sm text-[var(--muted-plum)]">
                     {item.description}
                   </p>
                 </article>
@@ -181,15 +181,15 @@ export default function EquipmentPage() {
         {/* Additional Info Section */}
         <section className="grid gap-6 lg:grid-cols-2 border-t border-[var(--accent)]/20 pt-12">
           <div className="space-y-4">
-            <h3 className="font-heading text-2xl text-[var(--accent)]">
+            <h3 className="font-heading text-2xl text-[var(--primary)]">
               All Equipment Included
             </h3>
-            <p className="text-[var(--accent)]/80">
+            <p className="text-[var(--muted-plum)]">
               Every piece of equipment listed is included in your studio hire at
               no additional cost. Our team preps everything before your call time
               so you can focus on creating.
             </p>
-            <ul className="space-y-2 text-[var(--accent)]/80">
+            <ul className="space-y-2 text-[var(--muted-plum)]">
               <li className="flex items-start gap-2">
                 <svg
                   className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0"
@@ -257,10 +257,10 @@ export default function EquipmentPage() {
             </ul>
           </div>
           <div className="space-y-4">
-            <h3 className="font-heading text-2xl text-[var(--accent)]">
+            <h3 className="font-heading text-2xl text-[var(--primary)]">
               Need Something Specific?
             </h3>
-            <p className="text-[var(--accent)]/80">
+            <p className="text-[var(--muted-plum)]">
               Have a specific piece of equipment in mind? Let us know when you
               book and we&apos;ll confirm availability or suggest alternatives.
             </p>

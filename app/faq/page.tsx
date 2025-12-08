@@ -28,19 +28,19 @@ export default function FAQPage() {
     <div className="bg-[var(--base)]">
       <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-12 px-4 pb-16 pt-12 sm:gap-16 sm:px-6 lg:px-8">
         <section className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             FAQ
           </p>
-          <h1 className="font-heading text-4xl text-[var(--accent)] sm:text-5xl">
+          <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl">
             Frequently Asked Questions
           </h1>
           <div className="mt-12 space-y-8">
             {faqs.map((faq, index) => (
               <div key={index} className="space-y-3 border-b border-[var(--accent)]/20 pb-8">
-                <h2 className="font-heading text-2xl font-semibold text-[var(--accent)]">
+                <h2 className="font-heading text-2xl font-semibold text-[var(--primary)]">
                   {faq.question}
                 </h2>
-                <p className="text-lg text-[var(--accent)]/80">{faq.answer}</p>
+                <p className="text-lg text-[var(--muted-plum)]">{faq.answer}</p>
               </div>
             ))}
           </div>

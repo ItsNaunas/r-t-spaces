@@ -44,13 +44,13 @@ export default function ServicesPage() {
     <div className="bg-[var(--base)]">
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         <section className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             Packages / Pricing
           </p>
-          <h1 className="font-heading text-4xl text-[var(--accent)] sm:text-5xl lg:text-6xl">
+          <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl lg:text-6xl">
             Packages & Pricing
           </h1>
-          <p className="max-w-3xl text-lg text-[var(--accent)]/80">
+          <p className="max-w-3xl text-lg text-[var(--muted-plum)]">
             Choose a simple studio hire or plug into our resident crew for
             content direction, tethered capture, and photobooth moments that
             keep your community engaged.
@@ -61,15 +61,15 @@ export default function ServicesPage() {
           {packages.map((pkg) => (
             <article
               key={pkg.title}
-              className="flex flex-col border border-[var(--accent)]/20 p-6 hover:border-[var(--primary)] transition-all duration-300"
+              className="flex flex-col border border-[var(--accent)]/20 p-6 hover:border-[var(--primary)] transition-all duration-300 rounded-lg"
             >
-              <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+              <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
                 {pkg.title}
               </p>
-              <p className="mt-3 text-3xl font-semibold text-[var(--accent)]">
+              <p className="mt-3 text-3xl font-semibold text-[var(--primary)]">
                 {pkg.price}
               </p>
-              <ul className="mt-4 space-y-2 text-sm text-[var(--accent)]/80">
+              <ul className="mt-4 space-y-2 text-sm text-[var(--muted-plum)]">
                 {pkg.includes.map((detail) => (
                   <li key={detail} className="flex items-start gap-2">
                     <svg className="h-4 w-4 text-[var(--primary)] mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,31 +90,31 @@ export default function ServicesPage() {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="border border-[var(--accent)]/20 p-6">
-            <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+          <div className="border border-[var(--accent)]/20 p-6 rounded-lg">
+            <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
               Studio support
             </p>
             <div className="mt-6 space-y-4">
               {studioServices.map((service) => (
                 <article
                   key={service.title}
-                  className="border border-[var(--accent)]/20 p-4"
+                  className="border border-[var(--accent)]/20 p-4 rounded-lg"
                 >
-                  <p className="text-xs uppercase tracking-[0.4em] text-[var(--accent)]/60">
+                  <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-plum)]">
                     {service.title}
                   </p>
-                  <p className="mt-2 text-base text-[var(--accent)]">{service.meta}</p>
+                  <p className="mt-2 text-base text-[var(--primary)]">{service.meta}</p>
                 </article>
               ))}
             </div>
           </div>
-          <div className="border border-[var(--accent)]/20 p-6">
-            <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+          <div className="border border-[var(--accent)]/20 p-6 rounded-lg">
+            <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
               Add-ons
             </p>
-            <ul className="mt-6 space-y-3 text-base text-[var(--accent)]/80">
+            <ul className="mt-6 space-y-3 text-base text-[var(--muted-plum)]">
               {addOns.map((addon) => (
-                <li key={addon} className="bg-[var(--accent)]/5 p-4">
+                <li key={addon} className="bg-[var(--accent)]/5 p-4 rounded-lg">
                   {addon}
                 </li>
               ))}
@@ -124,10 +124,10 @@ export default function ServicesPage() {
 
         {/* Book Now CTA Section */}
         <section className="text-center space-y-6 border-t border-[var(--accent)]/20 pt-12">
-          <h2 className="font-heading text-3xl text-[var(--accent)]">
+          <h2 className="font-heading text-3xl text-[var(--primary)]">
             Ready to Book?
           </h2>
-          <p className="text-lg text-[var(--accent)]/80 max-w-2xl mx-auto">
+          <p className="text-lg text-[var(--muted-plum)] max-w-2xl mx-auto">
             Choose your package and book your studio session today. All
             equipment is included and ready before your call time.
           </p>

@@ -39,13 +39,13 @@ export default function AboutUsPage() {
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <section className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             About Us
           </p>
-          <h1 className="font-heading text-4xl text-[var(--accent)] sm:text-5xl lg:text-6xl">
+          <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl lg:text-6xl">
             About R&amp;T Spaces
           </h1>
-          <p className="max-w-3xl text-lg text-[var(--accent)]/80">
+          <p className="max-w-3xl text-lg text-[var(--muted-plum)]">
             A home for creators, brand launches, and portrait sessions in East
             London. Founded by Rose &amp; Teddy, R&amp;T Spaces pairs a calming
             studio with ready-to-roll equipment so you can focus on creating.
@@ -60,52 +60,52 @@ export default function AboutUsPage() {
 
         {/* Company Information */}
         <section className="space-y-8 border-t border-[var(--accent)]/20 pt-12">
-          <h2 className="font-heading text-3xl text-[var(--accent)] sm:text-4xl">
+          <h2 className="font-heading text-3xl text-[var(--primary)] sm:text-4xl">
             Company Information
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-2">
-              <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60">
+              <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)]">
                 Founded
               </p>
-              <p className="text-lg font-semibold text-[var(--accent)]">
+              <p className="text-lg font-semibold text-[var(--primary)]">
                 {companyInfo.founded}
               </p>
             </div>
             <div className="space-y-2">
-              <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60">
+              <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)]">
                 Location
               </p>
-              <p className="text-lg font-semibold text-[var(--accent)]">
+              <p className="text-lg font-semibold text-[var(--primary)]">
                 {companyInfo.location}
               </p>
             </div>
             <div className="space-y-2">
-              <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60">
+              <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)]">
                 Address
               </p>
-              <p className="text-base text-[var(--accent)]/80">
+              <p className="text-base text-[var(--muted-plum)]">
                 {companyInfo.address}
               </p>
             </div>
             <div className="space-y-2">
-              <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60">
+              <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)]">
                 Email
               </p>
               <a
                 href={`mailto:${companyInfo.email}`}
-                className="text-base text-[var(--accent)] hover:text-[var(--primary)] transition-colors"
+                className="text-base text-[var(--primary)] hover:text-[var(--accent)] transition-colors"
               >
                 {companyInfo.email}
               </a>
             </div>
             <div className="space-y-2">
-              <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60">
+              <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)]">
                 Phone
               </p>
               <a
                 href={`tel:${companyInfo.phone}`}
-                className="text-base text-[var(--accent)] hover:text-[var(--primary)] transition-colors"
+                className="text-base text-[var(--primary)] hover:text-[var(--accent)] transition-colors"
               >
                 {companyInfo.phone}
               </a>
@@ -116,10 +116,10 @@ export default function AboutUsPage() {
         {/* Values Section */}
         <section className="space-y-8 border-t border-[var(--accent)]/20 pt-12">
           <div>
-            <h2 className="font-heading text-3xl text-[var(--accent)] sm:text-4xl mb-4">
+            <h2 className="font-heading text-3xl text-[var(--primary)] sm:text-4xl mb-4">
               Our Values
             </h2>
-            <p className="text-lg text-[var(--accent)]/80 max-w-3xl">
+            <p className="text-lg text-[var(--muted-plum)] max-w-3xl">
               The principles that guide everything we do at R&amp;T Spaces.
             </p>
           </div>
@@ -127,12 +127,12 @@ export default function AboutUsPage() {
             {values.map((value) => (
               <article
                 key={value.title}
-                className="border border-[var(--accent)]/20 p-6 space-y-3"
+                className="border border-[var(--accent)]/20 p-6 space-y-3 rounded-lg"
               >
-                <h3 className="font-heading text-xl text-[var(--accent)]">
+                <h3 className="font-heading text-xl text-[var(--primary)]">
                   {value.title}
                 </h3>
-                <p className="text-[var(--accent)]/80">{value.description}</p>
+                <p className="text-[var(--muted-plum)]">{value.description}</p>
               </article>
             ))}
           </div>
@@ -140,22 +140,22 @@ export default function AboutUsPage() {
 
         {/* Privacy Policy & Terms */}
         <section className="space-y-8 border-t border-[var(--accent)]/20 pt-12">
-          <h2 className="font-heading text-3xl text-[var(--accent)] sm:text-4xl">
+          <h2 className="font-heading text-3xl text-[var(--primary)] sm:text-4xl">
             Privacy Policy & Terms
           </h2>
           <div className="space-y-8">
             <div className="space-y-4">
-              <h3 className="font-heading text-2xl text-[var(--accent)]">
+              <h3 className="font-heading text-2xl text-[var(--primary)]">
                 Privacy Policy
               </h3>
-              <div className="space-y-4 text-[var(--accent)]/80">
+              <div className="space-y-4 text-[var(--muted-plum)]">
                 <p>
                   At R&amp;T Spaces, we respect your privacy and are committed to
                   protecting your personal data. This privacy policy explains how we
                   collect, use, and safeguard your information.
                 </p>
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-[var(--accent)]">
+                  <h4 className="font-semibold text-[var(--primary)]">
                     Information We Collect
                   </h4>
                   <ul className="list-disc list-inside space-y-1 ml-4">
@@ -166,7 +166,7 @@ export default function AboutUsPage() {
                   </ul>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-[var(--accent)]">
+                  <h4 className="font-semibold text-[var(--primary)]">
                     How We Use Your Information
                   </h4>
                   <ul className="list-disc list-inside space-y-1 ml-4">
@@ -185,12 +185,12 @@ export default function AboutUsPage() {
             </div>
 
             <div className="space-y-4 border-t border-[var(--accent)]/20 pt-8">
-              <h3 className="font-heading text-2xl text-[var(--accent)]">
+              <h3 className="font-heading text-2xl text-[var(--primary)]">
                 Terms of Service
               </h3>
-              <div className="space-y-4 text-[var(--accent)]/80">
+              <div className="space-y-4 text-[var(--muted-plum)]">
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-[var(--accent)]">
+                  <h4 className="font-semibold text-[var(--primary)]">
                     Booking Terms
                   </h4>
                   <ul className="list-disc list-inside space-y-1 ml-4">
@@ -208,7 +208,7 @@ export default function AboutUsPage() {
                   </ul>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-[var(--accent)]">
+                  <h4 className="font-semibold text-[var(--primary)]">
                     Studio Usage
                   </h4>
                   <ul className="list-disc list-inside space-y-1 ml-4">
@@ -229,7 +229,7 @@ export default function AboutUsPage() {
                   </ul>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-[var(--accent)]">
+                  <h4 className="font-semibold text-[var(--primary)]">
                     Liability
                   </h4>
                   <p>
@@ -242,7 +242,7 @@ export default function AboutUsPage() {
             </div>
 
             <div className="pt-6">
-              <p className="text-sm text-[var(--accent)]/60">
+              <p className="text-sm text-[var(--muted-plum)]">
                 Last updated: January 2025. For questions about our privacy policy
                 or terms, please contact us at{" "}
                 <a
@@ -259,10 +259,10 @@ export default function AboutUsPage() {
 
         {/* CTA Section */}
         <section className="text-center space-y-6 border-t border-[var(--accent)]/20 pt-12">
-          <h2 className="font-heading text-3xl text-[var(--accent)]">
+          <h2 className="font-heading text-3xl text-[var(--primary)]">
             Ready to Work With Us?
           </h2>
-          <p className="text-lg text-[var(--accent)]/80 max-w-2xl mx-auto">
+          <p className="text-lg text-[var(--muted-plum)] max-w-2xl mx-auto">
             Book your studio session today and experience the R&amp;T Spaces
             difference.
           </p>

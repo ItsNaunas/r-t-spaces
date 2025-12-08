@@ -63,7 +63,7 @@ export default function BookOnlinePage({
         
         {/* Cancel Message */}
         {searchParams?.canceled === "true" && (
-          <div className="border border-yellow-500/20 bg-yellow-500/10 p-6 text-yellow-600">
+          <div className="border border-yellow-500/20 bg-yellow-500/10 p-6 text-yellow-600 rounded-lg">
             <p className="font-semibold">Booking Canceled</p>
             <p className="text-sm mt-2">
               Your booking was not completed. You can try again or contact us directly.
@@ -71,13 +71,13 @@ export default function BookOnlinePage({
           </div>
         )}
         <section className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             Book Online
           </p>
-          <h1 className="font-heading text-4xl text-[var(--accent)] sm:text-5xl lg:text-6xl">
+          <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl lg:text-6xl">
             Reserve Your Studio Time
           </h1>
-          <p className="max-w-3xl text-lg text-[var(--accent)]/80">
+          <p className="max-w-3xl text-lg text-[var(--muted-plum)]">
             Fill out the form below with your preferred date, time, and
             requirements. We&apos;ll confirm availability and send you all the
             details within 24 hours.
@@ -85,27 +85,27 @@ export default function BookOnlinePage({
         </section>
 
         {/* Availability Section */}
-        <section className="border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-6 lg:p-8">
-          <h2 className="font-heading text-2xl text-[var(--accent)] mb-4">
+        <section className="border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-6 lg:p-8 rounded-lg">
+          <h2 className="font-heading text-2xl text-[var(--primary)] mb-4">
             {availabilityInfo.title}
           </h2>
-          <p className="text-[var(--accent)]/80 mb-6">
+          <p className="text-[var(--muted-plum)] mb-6">
             {availabilityInfo.description}
           </p>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60 mb-2">
+              <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)] mb-2">
                 Current Status
               </p>
-              <p className="text-lg font-semibold text-[var(--accent)]">
+              <p className="text-lg font-semibold text-[var(--primary)]">
                 {availabilityInfo.currentStatus}
               </p>
             </div>
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60 mb-2">
+              <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)] mb-2">
                 Popular Time Slots
               </p>
-              <ul className="space-y-1 text-[var(--accent)]/80">
+              <ul className="space-y-1 text-[var(--muted-plum)]">
                 {availabilityInfo.popularTimes.map((time, index) => (
                   <li key={index} className="flex items-start gap-2">
                     <svg
@@ -132,12 +132,12 @@ export default function BookOnlinePage({
         {/* Booking Form Section */}
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
-            <h2 className="font-heading text-2xl text-[var(--accent)] mb-6">
+            <h2 className="font-heading text-2xl text-[var(--primary)] mb-6">
               Booking Request
             </h2>
             <Suspense
               fallback={
-                <div className="flex h-full items-center justify-center border border-[var(--accent)]/20 p-6 text-sm text-[var(--accent)]/80">
+                <div className="flex h-full items-center justify-center border border-[var(--accent)]/20 p-6 text-sm text-[var(--muted-plum)] rounded-lg">
                   Loading form…
                 </div>
               }
@@ -148,42 +148,42 @@ export default function BookOnlinePage({
 
           <div className="space-y-6">
             {/* Quick Contact */}
-            <div className="border border-[var(--accent)]/20 p-6 space-y-4">
-              <h3 className="font-heading text-xl text-[var(--accent)]">
+            <div className="border border-[var(--accent)]/20 p-6 space-y-4 rounded-lg">
+              <h3 className="font-heading text-xl text-[var(--primary)]">
                 Need Immediate Assistance?
               </h3>
               <div className="space-y-3 text-sm">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-[var(--accent)]/60">
+                  <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)]">
                     Phone
                   </p>
                   <a
                     href="tel:07944667000"
-                    className="text-base text-[var(--accent)] hover:text-[var(--primary)] transition-colors"
+                    className="text-base text-[var(--primary)] hover:text-[var(--accent)] transition-colors"
                   >
                     07944667000
                   </a>
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-[var(--accent)]/60">
+                  <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)]">
                     Email
                   </p>
                   <a
                     href="mailto:Teddy77723@gmail.com"
-                    className="text-base text-[var(--accent)] hover:text-[var(--primary)] transition-colors"
+                    className="text-base text-[var(--primary)] hover:text-[var(--accent)] transition-colors"
                   >
                     Teddy77723@gmail.com
                   </a>
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-[var(--accent)]/60">
+                  <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)]">
                     Instagram
                   </p>
                   <a
                     href="https://www.instagram.com/randtspace"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base text-[var(--accent)] hover:text-[var(--primary)] transition-colors"
+                    className="text-base text-[var(--primary)] hover:text-[var(--accent)] transition-colors"
                   >
                     @randtspace
                   </a>
@@ -192,16 +192,16 @@ export default function BookOnlinePage({
             </div>
 
             {/* Studio Hours */}
-            <div className="border border-[var(--accent)]/20 p-6">
-              <h3 className="font-heading text-xl text-[var(--accent)] mb-4">
+            <div className="border border-[var(--accent)]/20 p-6 rounded-lg">
+              <h3 className="font-heading text-xl text-[var(--primary)] mb-4">
                 Studio Hours
               </h3>
-              <div className="space-y-2 text-[var(--accent)]/80">
+              <div className="space-y-2 text-[var(--muted-plum)]">
                 <p className="flex justify-between">
                   <span>Monday - Sunday</span>
                   <span className="font-semibold">8 AM - 11 PM</span>
                 </p>
-                <p className="text-sm text-[var(--accent)]/60">
+                <p className="text-sm text-[var(--muted-plum)]">
                   Extended hours available upon request
                 </p>
               </div>
@@ -212,10 +212,10 @@ export default function BookOnlinePage({
         {/* Booking Policies Section */}
         <section className="space-y-6 border-t border-[var(--accent)]/20 pt-12">
           <div>
-            <h2 className="font-heading text-3xl text-[var(--accent)] mb-4">
+            <h2 className="font-heading text-3xl text-[var(--primary)] mb-4">
               Booking Policies
             </h2>
-            <p className="text-[var(--accent)]/80">
+            <p className="text-[var(--muted-plum)]">
               Please review our booking policies before submitting your request.
             </p>
           </div>
@@ -223,12 +223,12 @@ export default function BookOnlinePage({
             {bookingPolicies.map((policy) => (
               <article
                 key={policy.title}
-                className="border border-[var(--accent)]/20 p-6 space-y-3"
+                className="border border-[var(--accent)]/20 p-6 space-y-3 rounded-lg"
               >
-                <h3 className="font-heading text-xl text-[var(--accent)]">
+                <h3 className="font-heading text-xl text-[var(--primary)]">
                   {policy.title}
                 </h3>
-                <p className="text-sm text-[var(--accent)]/80 leading-relaxed">
+                <p className="text-sm text-[var(--muted-plum)] leading-relaxed">
                   {policy.content}
                 </p>
               </article>
@@ -238,10 +238,10 @@ export default function BookOnlinePage({
 
         {/* Final CTA */}
         <section className="text-center space-y-6 border-t border-[var(--accent)]/20 pt-12">
-          <h2 className="font-heading text-3xl text-[var(--accent)]">
+          <h2 className="font-heading text-3xl text-[var(--primary)]">
             Ready to Book?
           </h2>
-          <p className="text-lg text-[var(--accent)]/80 max-w-2xl mx-auto">
+          <p className="text-lg text-[var(--muted-plum)] max-w-2xl mx-auto">
             Fill out the booking form above or contact us directly for
             immediate assistance.
           </p>

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Raleway } from "next/font/google";
+import { Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { FloatingBookButton } from "@/components/FloatingBookButton";
-import { InfoPopup } from "@/components/InfoPopup";
 import { Analytics } from "@vercel/analytics/next";
 
+// Playfair Display (Secondary/Heading Font)
 const playfairDisplay = Playfair_Display({
   variable: "--font-heading",
   subsets: ["latin"],
@@ -14,11 +15,25 @@ const playfairDisplay = Playfair_Display({
   display: 'swap',
 });
 
-const raleway = Raleway({
-  variable: "--font-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+// New Icon Script (Primary Script Font)
+const newIconScript = localFont({
+  src: [
+    { path: "../fonts/new-icon-script-regular.otf", weight: "400" },
+  ],
+  variable: "--font-script",
   display: 'swap',
+  fallback: ['cursive'],
+});
+
+// Glacial Indifference (Accent/Sans-serif Font)
+const glacialIndifference = localFont({
+  src: [
+    { path: "../fonts/GlacialIndifference-Regular.otf", weight: "400" },
+    { path: "../fonts/GlacialIndifference-Bold.otf", weight: "700" },
+  ],
+  variable: "--font-sans",
+  display: 'swap',
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
 });
 
 export const metadata: Metadata = {
@@ -41,13 +56,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playfairDisplay.variable} ${raleway.variable} antialiased`}
+        className={`${playfairDisplay.variable} ${newIconScript.variable} ${glacialIndifference.variable} antialiased`}
       >
         <ScrollProgress />
         <SiteHeader />
         {children}
         <FloatingBookButton />
-        <InfoPopup />
         <Analytics />
       </body>
     </html>

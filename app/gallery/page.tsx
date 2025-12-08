@@ -53,13 +53,13 @@ export default function GalleryPage() {
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             Gallery
           </p>
-          <h1 className="font-heading text-4xl text-[var(--accent)] sm:text-5xl">
+          <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl">
             Scenes from recent bookings
           </h1>
-          <p className="max-w-3xl text-lg text-[var(--accent)]/80">
+          <p className="max-w-3xl text-lg text-[var(--muted-plum)]">
             Content teams, photographers, and community builders share the space
             daily. Browse a few of our favorite captures and corners.
           </p>
@@ -70,10 +70,10 @@ export default function GalleryPage() {
             <button
               key={filter}
               onClick={() => setSelectedFilter(filter)}
-              className={`border px-4 py-2 transition-all duration-300 ${
+              className={`border px-4 py-2 transition-all duration-300 rounded-lg ${
                 selectedFilter === filter
-                  ? "border-[var(--accent)] text-[var(--accent)] bg-[var(--primary)]/10"
-                  : "border-[var(--accent)]/30 text-[var(--accent)]/60 hover:border-[var(--accent)]/50 hover:text-[var(--accent)]/80"
+                  ? "border-[var(--primary)] text-[var(--primary)] bg-[var(--primary)]/10"
+                  : "border-[var(--accent)]/30 text-[var(--muted-plum)] hover:border-[var(--primary)]/50 hover:text-[var(--primary)]"
               }`}
             >
               {filter}
@@ -85,10 +85,10 @@ export default function GalleryPage() {
           {filteredGallery.map((item, index) => (
             <article
               key={`${item.artist}-${index}`}
-              className="space-y-3 border border-[var(--accent)]/10 bg-[var(--base)] p-4 cursor-pointer group hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg"
+              className="space-y-3 border border-[var(--accent)]/10 bg-[var(--base)] p-4 cursor-pointer group hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg rounded-lg"
               onClick={() => handleImageClick(index)}
             >
-              <div className="relative overflow-hidden">
+              <div className="relative overflow-hidden rounded-lg">
                 <Image
                   src={item.src}
                   alt={item.focus}
@@ -111,10 +111,10 @@ export default function GalleryPage() {
                 </div>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-[0.4em] text-[var(--accent)]/60">
+                <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-plum)]">
                   {item.focus}
                 </p>
-                <p className="text-lg font-semibold text-[var(--accent)]">
+                <p className="text-lg font-semibold text-[var(--primary)]">
                   {item.artist}
                 </p>
               </div>
@@ -124,7 +124,7 @@ export default function GalleryPage() {
 
         {filteredGallery.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-lg text-[var(--accent)]/60">No items found in this category.</p>
+            <p className="text-lg text-[var(--muted-plum)]">No items found in this category.</p>
           </div>
         )}
 

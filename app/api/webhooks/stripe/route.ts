@@ -26,27 +26,37 @@ export async function POST(request: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!,
     );
-  } catch (err: any) {
-    console.error("Webhook signature verification failed:", err.message);
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : "Unknown error";
+    console.error("Webhook signature verification failed:", errorMessage);
     return NextResponse.json(
-      { error: `Webhook Error: ${err.message}` },
+      { error: `Webhook Error: ${errorMessage}` },
       { status: 400 },
     );
   }
 
   // Handle the event
   if (event.type === "checkout.session.completed") {
-    const session = event.data.object as any;
+    const session = event.data.object as {
+      metadata?: {
+        bookingId?: string;
+        name?: string;
+        email?: string;
+        date?: string;
+        hours?: string;
+      };
+      payment_intent?: string;
+    };
 
     try {
       // Get booking details from metadata
-      const { bookingId, name, email, date, hours } = session.metadata;
+      const { bookingId } = session.metadata || {};
 
       // Load booking from file
       const raw = await fs.readFile(bookingsFile, "utf-8");
-      const bookings = JSON.parse(raw);
+      const bookings = JSON.parse(raw) as Array<{ createdAt: string; [key: string]: unknown }>;
       const booking = bookings.find(
-        (b: any) => b.createdAt === bookingId,
+        (b) => b.createdAt === bookingId,
       );
 
       if (!booking) {

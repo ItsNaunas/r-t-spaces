@@ -75,17 +75,17 @@ export const studioGallery = [
 
 export function StorySection() {
   return (
-    <section className="bg-[var(--base)] px-2 py-12 sm:px-4 lg:px-0">
+    <section className="bg-white px-2 py-12 sm:px-4 lg:px-0">
       <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
         <div className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             About R&amp;T Spaces
           </p>
-          <h2 className="font-heading text-4xl leading-tight text-[var(--accent)] lg:text-5xl">
+          <h2 className="font-heading text-4xl leading-tight text-[var(--primary)] lg:text-5xl">
             A home for creators, brand launches, and portrait sessions in East
             London.
           </h2>
-          <p className="text-lg text-[var(--accent)]/80">
+          <p className="text-lg text-[var(--muted-plum)]">
             Founded by Rose &amp; Teddy, R&amp;T Spaces pairs a calming studio
             with ready-to-roll equipment so you can focus on directing talent,
             shooting content, or hosting clients.
@@ -95,14 +95,14 @@ export function StorySection() {
           {valueList.map((value, index) => (
             <div
               key={value.label}
-              className="flex gap-5 border-t border-[var(--accent)]/20 pt-6"
+              className="flex gap-5 border-t border-[var(--lavender)] pt-6"
             >
-              <div className="text-sm font-semibold text-[var(--accent)]/60">
+              <div className="text-sm font-semibold text-[var(--muted-plum)]">
                 {String(index + 1).padStart(2, "0")}
               </div>
               <div>
-                <p className="font-semibold text-[var(--accent)]">{value.label}</p>
-                <p className="text-sm text-[var(--accent)]/80">{value.detail}</p>
+                <p className="font-semibold text-[var(--primary)]">{value.label}</p>
+                <p className="text-sm text-[var(--muted-plum)]">{value.detail}</p>
               </div>
             </div>
           ))}
@@ -114,47 +114,47 @@ export function StorySection() {
 
 export function MissionSection() {
   return (
-    <section className="grid gap-10 bg-[var(--base)] px-2 py-12 sm:px-4 lg:grid-cols-2 lg:px-0">
+    <section className="grid gap-10 bg-white px-2 py-12 sm:px-4 lg:grid-cols-2 lg:px-0">
       <div className="space-y-6">
-        <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+        <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
           Translate your vision
         </p>
-        <h3 className="font-heading text-4xl text-[var(--accent)]">
+        <h3 className="font-heading text-4xl text-[var(--primary)]">
           Pick the service that fits your shoot day.
         </h3>
-        <p className="text-lg text-[var(--accent)]/80">
+        <p className="text-lg text-[var(--muted-plum)]">
           Whether you need four walls and great light or prefer our crew to jump
           in, we tailor bookings to your run sheet and deliverables.
         </p>
-        <Link
-          href="/book-online"
-          className="btn-primary btn-small"
-        >
-          Book Now
-        </Link>
+          <Link
+            href="/book-online"
+            className="btn-cta btn-small"
+          >
+            Book Now
+          </Link>
       </div>
       <div className="space-y-6">
-        <div className="overflow-hidden bg-[var(--accent)]/5">
+        <div className="overflow-hidden bg-white rounded-lg shadow-lg">
           <Image
             src="/assets/8eb25501-7cc0-4ccf-a906-3a2a747836fd.jpg"
             alt="Creative direction"
             width={800}
             height={600}
             sizes="(max-width: 768px) 100vw, 50vw"
-            className="h-[360px] w-full object-cover sm:h-[420px]"
+            className="h-[360px] w-full object-cover sm:h-[420px] rounded-lg"
             loading="lazy"
             quality={85}
           />
         </div>
-        <div className="border border-[var(--accent)]/20 p-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+        <div className="border border-[var(--lavender)] p-6 bg-white rounded-lg shadow-lg">
+          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             Our services
           </p>
           <div className="mt-6 space-y-5">
             {studioServices.map((service) => (
-              <div key={service.title} className="border-t border-[var(--accent)]/20 pt-4">
-                <p className="font-semibold text-[var(--accent)]">{service.title}</p>
-                <p className="text-sm text-[var(--accent)]/80">{service.meta}</p>
+              <div key={service.title} className="border-t border-[var(--lavender)] pt-4">
+                <p className="font-semibold text-[var(--primary)]">{service.title}</p>
+                <p className="text-sm text-[var(--muted-plum)]">{service.meta}</p>
               </div>
             ))}
           </div>
@@ -166,33 +166,33 @@ export function MissionSection() {
 
 export function FeaturedWorkSection() {
   return (
-    <section className="bg-[var(--base)] px-2 py-12 sm:px-4 lg:px-0">
-      <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+    <section className="bg-white px-2 py-12 sm:px-4 lg:px-0">
+      <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
         See our work
       </p>
-      <h3 className="mt-4 font-heading text-4xl text-[var(--accent)] lg:text-5xl">
+      <h3 className="mt-4 font-heading text-4xl text-[var(--primary)] lg:text-5xl">
         Glimpses from the studio floor.
       </h3>
 
-      <div className="mt-10 overflow-hidden bg-[var(--accent)]">
+      <div className="mt-10 overflow-hidden bg-white rounded-lg shadow-lg">
         <Image
           src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80"
           alt="Featured project"
           width={1400}
           height={800}
           sizes="(max-width: 768px) 100vw, 100vw"
-          className="h-[320px] w-full object-cover sm:h-[420px]"
+          className="h-[320px] w-full object-cover sm:h-[420px] rounded-lg"
           priority
           quality={85}
         />
       </div>
 
-      <div className="mt-8 grid gap-6 border-t border-[var(--accent)]/20 pt-8 text-sm text-[var(--accent)]/80 lg:grid-cols-4">
+      <div className="mt-8 grid gap-6 border-t border-[var(--lavender)] pt-8 text-sm text-[var(--muted-plum)] lg:grid-cols-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.4em] text-[var(--accent)]/60">
+          <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             Featured Session
           </p>
-          <p className="mt-2 text-base font-semibold text-[var(--accent)]">
+          <p className="mt-2 text-base font-semibold text-[var(--primary)]">
             InTheSpotlight Content Day
           </p>
         </div>
@@ -202,11 +202,11 @@ export function FeaturedWorkSection() {
         </p>
         <div className="space-y-3 text-sm">
           <p>
-            <span className="font-semibold text-[var(--accent)]">Location:</span> Unit 3E,
+            <span className="font-semibold text-[var(--primary)]">Location:</span> Unit 3E,
             736-740 Romford Road, London
           </p>
           <p>
-            <span className="font-semibold text-[var(--accent)]">Hours:</span> Open daily
+            <span className="font-semibold text-[var(--primary)]">Hours:</span> Open daily
             8 AM – 11 PM
           </p>
         </div>
@@ -223,12 +223,12 @@ export function GallerySection() {
 
   return (
     <>
-      <section className="bg-[var(--base)] px-2 py-12 sm:px-4 lg:px-0">
+      <section className="bg-white px-2 py-12 sm:px-4 lg:px-0">
         <div className="flex items-center justify-between">
-          <h3 className="font-heading text-3xl text-[var(--accent)]">Studio Archive</h3>
+          <h3 className="font-heading text-3xl text-[var(--primary)]">Studio Archive</h3>
           <Link
             href="https://www.instagram.com/randtspace"
-            className="text-sm font-semibold uppercase tracking-[0.3em] text-[var(--primary)] hover:text-[var(--accent)] transition-colors"
+            className="text-sm font-semibold uppercase tracking-[0.3em] text-[var(--primary)] hover:text-[var(--accent-gold)] transition-colors"
             target="_blank"
           >
             Follow @randtspace →
@@ -243,13 +243,13 @@ export function GallerySection() {
           {studioGallery.map((item, index) => (
             <article
               key={item.artist}
-              className="space-y-3 border border-[var(--accent)]/10 bg-[var(--base)] p-4 shadow-[inset_0_0_0_1px_var(--base)] cursor-pointer group hover:border-[var(--primary)] transition-all duration-300"
+              className="space-y-3 border border-[var(--lavender)] bg-white p-4 shadow-lg cursor-pointer group hover:border-[var(--primary)] transition-all duration-300 rounded-lg"
               onClick={() => {
                 setCurrentImageIndex(index);
                 setLightboxOpen(true);
               }}
             >
-              <div className="overflow-hidden relative">
+              <div className="overflow-hidden relative rounded-lg">
                 <Image
                   src={item.src}
                   alt={item.artist}
@@ -272,10 +272,10 @@ export function GallerySection() {
                 </div>
               </div>
               <div>
-                <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+                <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
                   {item.focus}
                 </p>
-                <p className="text-xl font-semibold text-[var(--accent)]">{item.artist}</p>
+                <p className="text-xl font-semibold text-[var(--primary)]">{item.artist}</p>
               </div>
             </article>
           ))}
@@ -294,20 +294,19 @@ export function GallerySection() {
 
 export function FinalCtaSection() {
   return (
-    <section className="grid gap-6 bg-[var(--primary)] px-6 py-12 text-[var(--accent)] sm:px-8 lg:grid-cols-[1.5fr_1fr]">
+    <section className="grid gap-6 bg-[var(--primary)] px-6 py-12 text-white sm:px-8 lg:grid-cols-[1.5fr_1fr]">
       <div>
-        <p className="text-sm uppercase tracking-[0.5em] text-[var(--accent)]/80">
+        <p className="text-sm uppercase tracking-[0.5em] text-white/80">
           Ready when you are
         </p>
-        <h3 className="mt-4 font-heading text-4xl text-[var(--accent)]">
-          Book R&amp;T Spaces for your next shoot
+        <h3 className="mt-4 font-heading text-4xl text-white">
+          Book R&amp;T Spaces for your <span className="text-[var(--accent-gold)]">next</span> shoot
         </h3>
       </div>
       <div className="flex items-center justify-end">
         <Link
           href="/contact"
-          className="btn-secondary"
-          style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}
+          className="btn-cta"
         >
           Message us
         </Link>
@@ -316,23 +315,23 @@ export function FinalCtaSection() {
   );
 }
 
-// Studio preview videos for marquee
-const studioPreviewVideos = [
-  "/assets/20251028_131356.mp4",
-  "/assets/20251028_131503.mp4",
-  "/assets/20251028_131543.mp4",
-  "/assets/20251028_131640.mp4",
-  "/assets/20251028_131713.mp4",
-  "/assets/20251028_131741.mp4",
-  "/assets/20251028_131808.mp4",
-  "/assets/20251028_132117.mp4",
-  "/assets/20251028_132128.mp4",
-  "/assets/20251028_132143.mp4",
-  "/assets/20251028_132355.mp4",
-  "/assets/20251028_132407.mp4",
-  "/assets/20251028_132419.mp4",
-  "/assets/20251028_143237.mp4",
-];
+// Studio preview videos for marquee (reserved for future use)
+// const studioPreviewVideos = [
+//   "/assets/20251028_131356.mp4",
+//   "/assets/20251028_131503.mp4",
+//   "/assets/20251028_131543.mp4",
+//   "/assets/20251028_131640.mp4",
+//   "/assets/20251028_131713.mp4",
+//   "/assets/20251028_131741.mp4",
+//   "/assets/20251028_131808.mp4",
+//   "/assets/20251028_132117.mp4",
+//   "/assets/20251028_132128.mp4",
+//   "/assets/20251028_132143.mp4",
+//   "/assets/20251028_132355.mp4",
+//   "/assets/20251028_132407.mp4",
+//   "/assets/20251028_132419.mp4",
+//   "/assets/20251028_143237.mp4",
+// ];
 
 // Video carousel images
 const videoCarouselImages = [
@@ -356,155 +355,184 @@ const instagramImages = [
   "/assets/6191004c-40dd-4cc2-92ac-85eefb30dbad.jpg",
 ];
 
-export function StudioPreviewsGrid() {
-  const { ref, isVisible } = useScrollAnimation();
-  const [visibleVideos, setVisibleVideos] = useState<Set<number>>(new Set());
-  const [isMobile, setIsMobile] = useState(false);
+export function StudioHeroStats() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  const stats = [
+    { value: "500+", label: "Creators", sublabel: "Served" },
+    { value: "4.9/5", label: "Average", sublabel: "Rating" },
+    { value: "50+", label: "Bookings", sublabel: "This Month" },
+    { value: "24/7", label: "Support", sublabel: "Available" },
+    { value: "100%", label: "Equipment", sublabel: "Included" },
+  ];
+
+  // Studio images for rotation
+  const rotatingImages = [
+    "/assets/71d985ec-e79d-4ac5-89e4-f5785077064a.jpg",
+    "/assets/9664d1b7-9f9a-4c82-bf63-5befb91b0102.jpg",
+    "/assets/aaeebd1e-e1b8-4548-9052-39a53a169559.jpg",
+    "/assets/5448c683-ea0d-43cb-8ca6-c407b47ba93e.jpg",
+    "/assets/9450092a-7996-44d5-87f7-ec9281017f5d.jpg",
+    "/assets/00cb384c-557d-425f-ae56-72d83509cef7.jpg",
+  ];
+
+  // Auto-rotate images every 4 seconds
   useEffect(() => {
-    // Detect mobile device
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        (prevIndex + 1) % rotatingImages.length
+      );
+    }, 4000);
 
-    // Use larger rootMargin on mobile for better preloading
-    const rootMargin = isMobile ? '200px' : '100px';
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = parseInt(entry.target.getAttribute('data-video-index') || '0');
-            setVisibleVideos((prev) => new Set([...prev, index]));
-          }
-        });
-      },
-      { rootMargin }
-    );
-
-    // Use a small delay to ensure DOM is ready
-    const timeoutId = setTimeout(() => {
-      const videoElements = document.querySelectorAll('[data-video-index]');
-      videoElements.forEach((el) => observer.observe(el));
-    }, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener('resize', checkMobile);
-      const videoElements = document.querySelectorAll('[data-video-index]');
-      videoElements.forEach((el) => observer.unobserve(el));
-      observer.disconnect();
-    };
-  }, [isMobile]);
+    return () => clearInterval(interval);
+  }, [rotatingImages.length]);
 
   return (
-    <section className="bg-[var(--base)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <div 
-          ref={ref}
-          className={`text-center mb-16 transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <h2 className="font-heading text-5xl font-bold text-[var(--accent)] sm:text-6xl md:text-7xl mb-6">
-            Studio Spaces
-          </h2>
-          <p className="text-xl text-[var(--accent)]/70 max-w-2xl mx-auto">
-            Premium spaces designed for seamless content creation
-          </p>
-        </div>
-        
-        {/* Marquee Container */}
-        <div className="relative overflow-hidden mb-12 hover-scroll-pause">
-          <div className="flex animate-marquee gap-6">
-            {/* First set of videos */}
-            {studioPreviewVideos.map((src, index) => (
-              <div key={`first-${index}`} className="flex-shrink-0 group relative" data-video-index={index}>
-                <video
-                  autoPlay={visibleVideos.has(index)}
-                  loop
-                  muted
-                  playsInline
-                  preload="metadata"
-                  className="h-[400px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                  onMouseEnter={(e) => {
-                    const video = e.currentTarget;
-                    if (visibleVideos.has(index)) {
-                      video.playbackRate = 0.5;
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    const video = e.currentTarget;
-                    if (visibleVideos.has(index)) {
-                      video.playbackRate = 1;
-                    }
-                  }}
-                  onError={(e) => {
-                    console.error('Video load error:', e);
-                  }}
-                >
-                  {visibleVideos.has(index) && <source src={src} type="video/mp4" />}
-                </video>
-              </div>
-            ))}
-            {/* Duplicate set for seamless loop */}
-            {studioPreviewVideos.map((src, index) => (
-              <div key={`second-${index}`} className="flex-shrink-0 group relative" data-video-index={index}>
-                <video
-                  autoPlay={visibleVideos.has(index) && !isMobile}
-                  loop
-                  muted
-                  playsInline
-                  preload={isMobile ? "none" : "metadata"}
-                  className="h-[250px] sm:h-[300px] md:h-[400px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                  onMouseEnter={(e) => {
-                    if (!isMobile) {
-                      const video = e.currentTarget;
-                      if (visibleVideos.has(index)) {
-                        video.playbackRate = 0.5;
-                      }
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isMobile) {
-                      const video = e.currentTarget;
-                      if (visibleVideos.has(index)) {
-                        video.playbackRate = 1;
-                      }
-                    }
-                  }}
-                  onTouchStart={(e) => {
-                    // On mobile, play video on touch
-                    const video = e.currentTarget;
-                    if (visibleVideos.has(index) && video.paused) {
-                      video.play().catch(() => {
-                        // Auto-play was prevented, user interaction required
-                      });
-                    }
-                  }}
-                  onError={(e) => {
-                    console.error('Video load error:', e);
-                  }}
-                >
-                  {visibleVideos.has(index) && <source src={src} type="video/mp4" />}
-                </video>
+    <section className="bg-white py-12 sm:py-16 lg:py-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="mb-8 lg:mb-12">
+          <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:gap-12 items-start">
+            {/* Left: Title */}
+            <div>
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--primary)] leading-tight mb-4">
+                Professional Studio Spaces For Every Creative Vision
+              </h2>
+            </div>
+            
+            {/* Right: Description */}
+            <div className="flex flex-col justify-center">
+              <p className="text-base sm:text-lg text-[var(--muted-plum)] leading-relaxed">
+                Discover our East London studio spaces, designed for photographers, content creators, and brands. 
+                From seamless white cycloramas to styled lifestyle corners, every space comes fully equipped with 
+                professional lighting, backdrops, and amenities—ready for your next shoot.
+              </p>
+            </div>
+          </div>
+
+          {/* Stats Grid */}
+          <div className="mt-8 lg:mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
+            {stats.map((stat, index) => (
+              <div 
+                key={index} 
+                className="text-center border-t-2 border-[var(--lavender)] pt-4"
+              >
+                <p className="font-heading text-3xl sm:text-4xl font-bold text-[var(--accent-gold)] mb-1">
+                  {stat.value}
+                </p>
+                <p className="text-xs sm:text-sm uppercase tracking-wider text-[var(--muted-plum)] font-medium">
+                  {stat.label}
+                </p>
+                <p className="text-xs sm:text-sm text-[var(--muted-plum)]">
+                  {stat.sublabel}
+                </p>
               </div>
             ))}
           </div>
         </div>
-        
-        <div className="text-center">
-          <Link
-            href="/studio"
-            className="btn-secondary inline-flex items-center gap-2"
-          >
-            View Studio
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
+
+        {/* Large Hero Image with Rotation and CTA Overlay */}
+        <div className="group relative aspect-[16/9] lg:aspect-[21/9] overflow-hidden rounded-lg cursor-pointer">
+          {rotatingImages.map((src, index) => (
+            <div
+              key={src}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+              }`}
+            >
+              <Image
+                src={src}
+                alt={`R&T Spaces Studio ${index + 1} - Professional content creation environment`}
+                fill
+                sizes="100vw"
+                className="object-cover"
+                priority={index === 0}
+                quality={90}
+              />
+            </div>
+          ))}
+          
+          {/* Overlay with CTAs - Visible on mobile, enhanced on hover */}
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/0 md:bg-black/0 md:group-hover:bg-black/40 transition-all duration-500">
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 px-4 sm:px-6 opacity-0 md:opacity-0 md:group-hover:opacity-100 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500">
+              <Link 
+                href="/book-online"
+                className="btn-primary group/btn whitespace-nowrap"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="flex items-center gap-2">
+                  Book Studio
+                  <svg 
+                    className="w-5 h-5 transition-transform group-hover/btn:translate-x-1" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
+              </Link>
+              <Link 
+                href="/studio"
+                className="group/btn whitespace-nowrap bg-[var(--accent-gold)] backdrop-blur-sm border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 rounded-lg font-medium text-sm sm:text-sm tracking-[0.05em]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="flex items-center gap-2">
+                  View Studio
+                  <svg 
+                    className="w-5 h-5 transition-transform group-hover/btn:translate-x-1" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </span>
+              </Link>
+            </div>
+          </div>
+          
+          {/* Mobile: Subtle bottom overlay with CTA - Always visible on mobile */}
+          <div className="absolute bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-black/60 via-black/40 to-transparent p-4 sm:p-6 md:hidden">
+            <div className="flex flex-col gap-3">
+              <Link 
+                href="/book-online"
+                className="btn-primary group/btn w-full text-center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="flex items-center justify-center gap-2">
+                  Book Studio
+                  <svg 
+                    className="w-5 h-5 transition-transform group-hover/btn:translate-x-1" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
+              </Link>
+              <Link 
+                href="/studio"
+                className="group/btn w-full text-center bg-[var(--accent-gold)] border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 rounded-lg font-medium text-sm tracking-[0.05em]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="flex items-center justify-center gap-2">
+                  View Studio
+                  <svg 
+                    className="w-5 h-5 transition-transform group-hover/btn:translate-x-1" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </span>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -554,26 +582,26 @@ export function Bookings2025Section() {
   ];
 
   return (
-    <section className="bg-[var(--base)] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-16">
-        <div className="space-y-6 bg-[var(--accent)]/5 p-8 lg:p-12">
-          <p className="font-heading text-3xl font-bold text-[var(--accent)] sm:text-4xl">
+        <div className="space-y-6 bg-white border border-[var(--lavender)] p-8 lg:p-12 shadow-lg rounded-lg">
+          <p className="font-heading text-3xl font-bold text-[var(--primary)] sm:text-4xl">
             Ready to create? Book your 2025 studio time now.
           </p>
-          <p className="text-lg text-[var(--accent)]/80">
+          <p className="text-lg text-[var(--muted-plum)]">
             Our East London studio is ready for content days, lookbooks, and brand launches. Flexible hourly and daily rates available—book your slot today.
           </p>
           <div className="space-y-3">
             {features.map((feature, index) => (
               <div key={index} className="flex items-center gap-3">
                 <span className="text-[var(--primary)] font-bold text-xl">{feature.icon}</span>
-                <span className="text-[var(--accent)]/80">{feature.text}</span>
+                <span className="text-[var(--muted-plum)]">{feature.text}</span>
               </div>
             ))}
           </div>
           <Link
             href="/contact"
-            className="btn-primary inline-flex"
+            className="btn-cta inline-flex"
           >
             BOOK NOW
             <svg className="h-4 w-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -584,9 +612,9 @@ export function Bookings2025Section() {
         <div className="hidden lg:flex flex-col justify-center gap-8">
           <div className="grid grid-cols-3 gap-6">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center p-6 bg-[var(--base)] border-2 border-[var(--accent)]/10 rounded-lg">
+              <div key={index} className="text-center p-6 bg-white border-2 border-[var(--lavender)] rounded-lg shadow-lg">
                 <p className="font-heading text-3xl font-bold text-[var(--primary)] mb-2">{stat.value}</p>
-                <p className="text-sm text-[var(--accent)]/70 uppercase tracking-wider">{stat.label}</p>
+                <p className="text-sm text-[var(--muted-plum)] uppercase tracking-wider">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -612,7 +640,7 @@ export function HowItWorksSection() {
     {
       number: "01",
       title: "Choose Your Studio Space",
-      description: "Browse our range of equipped spaces. From seamless white cyclorama to cozy lounge corners—pick the vibe that matches your vision.",
+      description: "Browse our range of fully-equipped spaces. From seamless white cyclorama to cozy lounge corners—find the perfect space that matches your needs.",
       image: "/assets/6191004c-40dd-4cc2-92ac-85eefb30dbad.jpg",
       icon: (
         <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -622,8 +650,8 @@ export function HowItWorksSection() {
     },
     {
       number: "02",
-      title: "Arrive & Create",
-      description: "Our team greets you on arrival. We've prepped lighting, stands, and refreshments. Just bring your creativity—we handle the rest.",
+      title: "Arrive & Get Started",
+      description: "Walk in and begin your session. Our team greets you with everything prepped—professional lighting configured, stands positioned, and refreshments ready. Everything is set up for you.",
       image: "/assets/62408639-2e32-466b-9174-3ab6cff5e3ae.jpg",
       icon: (
         <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -634,7 +662,7 @@ export function HowItWorksSection() {
     {
       number: "03",
       title: "Join the Community",
-      description: "Become a member for monthly studio access at member rates, plus weekly newsletters with exclusive discounts and creative inspiration.",
+      description: "Become part of our growing community. Enjoy monthly studio access at member rates, plus weekly newsletters with exclusive discounts and updates.",
       image: "/assets/8eb25501-7cc0-4ccf-a906-3a2a747836fd.jpg",
       icon: (
         <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -647,54 +675,86 @@ export function HowItWorksSection() {
   const { ref, isVisible } = useScrollAnimation();
 
   return (
-    <section className="bg-[var(--base)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <div 
-          ref={ref}
-          className={`mb-12 sm:mb-16 lg:mb-20 text-center transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <p className="text-sm font-medium uppercase tracking-wider text-[var(--accent)]/60 mb-6">
+    <section className="pt-24 sm:pt-32 lg:pt-40 pb-16 sm:pb-24 lg:pb-32" style={{ backgroundColor: '#FAF9F6' }}>
+      {/* Full Width Banner */}
+      <div 
+        ref={ref}
+        className={`mb-16 sm:mb-20 lg:mb-24 text-center transition-all duration-700 bg-[var(--primary)] w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
+      >
+        <div className="mx-auto max-w-7xl">
+          <p className="text-sm font-medium uppercase tracking-wider text-white/80 mb-6">
             HOW IT WORKS
           </p>
-          <h2 className="font-heading text-5xl font-bold text-[var(--accent)] sm:text-6xl md:text-7xl">
-            Start your content creation journey
+          <h2 className="font-heading text-5xl font-bold text-white sm:text-6xl md:text-7xl">
+            <span className="font-script">Book</span> your studio space in three simple steps
           </h2>
         </div>
-        <div className="grid gap-20 md:grid-cols-3">
+      </div>
+      
+      {/* Content Section */}
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-12 md:gap-16 lg:gap-24 md:grid-cols-3">
           {steps.map((step, index) => {
             const StepCard = ({ step, index }: { step: typeof steps[0], index: number }) => {
               const { ref, isVisible } = useScrollAnimation({ threshold: 0.2 });
               return (
                 <div 
                   ref={ref}
-                  className={`space-y-6 transition-all duration-700 ${
+                  className={`bg-white rounded-xl p-6 sm:p-8 lg:p-10 shadow-lg hover:shadow-xl transition-all duration-300 ${
                     isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                   }`}
-                  style={{ transitionDelay: `${index * 150}ms` }}
+                  style={{ 
+                    transitionDelay: `${index * 150}ms`,
+                    boxShadow: '0 8px 24px rgba(61, 35, 80, 0.12), 0 4px 12px rgba(61, 35, 80, 0.08)'
+                  }}
                 >
-                  <div className="mb-4">
-                    <p className="font-heading text-7xl font-bold text-[var(--accent)] leading-none">{step.number}</p>
+                  <div className="space-y-8">
+                    {/* Step Number - More Elegant */}
+                    <div className="mb-6">
+                      <p 
+                        className="font-heading text-8xl sm:text-9xl font-bold leading-none"
+                        style={{ 
+                          color: 'var(--primary)',
+                          opacity: 0.15,
+                          lineHeight: '0.85'
+                        }}
+                      >
+                        {step.number}
+                      </p>
+                    </div>
+                    
+                    {/* Image */}
+                    <div className="relative aspect-square overflow-hidden group rounded-lg shadow-md">
+                      <Image
+                        src={step.image}
+                        alt={step.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
+                        quality={85}
+                      />
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="space-y-4">
+                      <h3 className="font-heading text-2xl sm:text-3xl font-bold text-[var(--primary)] leading-tight">
+                        {step.title}
+                      </h3>
+                      <p className="text-base sm:text-lg text-[var(--muted-plum)] leading-relaxed">
+                        {step.description}
+                      </p>
+                    </div>
                   </div>
-                  <div className="relative aspect-square overflow-hidden group">
-                    <Image
-                      src={step.image}
-                      alt={step.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      loading="lazy"
-                      quality={85}
-                    />
-                  </div>
-                  <h3 className="font-heading text-3xl font-bold text-[var(--accent)] mt-8">{step.title}</h3>
-                  <p className="text-lg text-[var(--accent)]/70 leading-relaxed">{step.description}</p>
                 </div>
               );
             };
             return <StepCard key={step.number} step={step} index={index} />;
           })}
+          </div>
         </div>
       </div>
     </section>
@@ -774,7 +834,7 @@ export function TestimonialSection() {
       {[...Array(5)].map((_, i) => (
         <svg
           key={i}
-          className={`h-4 w-4 ${i < rating ? 'text-[var(--primary)] fill-current' : 'text-[var(--base)]/20'}`}
+          className={`h-4 w-4 ${i < rating ? 'text-[var(--accent-gold)] fill-current' : 'text-white/20'}`}
           viewBox="0 0 20 20"
         >
           <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
@@ -792,7 +852,7 @@ export function TestimonialSection() {
   const secondRowDuplicated = [...secondRow, ...secondRow];
 
   const TestimonialCard = ({ testimonial }: { testimonial: typeof testimonials[0] }) => (
-    <div className="bg-[var(--accent)] p-8 shadow-[0_8px_32px_rgba(60,36,20,0.12)] mb-6 flex-shrink-0">
+    <div className="bg-white p-8 shadow-[0_8px_32px_rgba(61,35,80,0.15)] mb-6 flex-shrink-0">
       {/* Avatar and Header */}
       <div className="flex items-center gap-4 mb-6">
         <div className="relative h-12 w-12 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[var(--primary)]/30">
@@ -808,10 +868,10 @@ export function TestimonialSection() {
           />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-base text-[var(--base)] truncate">
+          <p className="font-semibold text-base text-[var(--primary)] truncate">
             {testimonial.author}
           </p>
-          <p className="text-sm text-[var(--base)]/70 truncate">
+          <p className="text-sm text-[var(--muted-plum)] truncate">
             {testimonial.role}
           </p>
         </div>
@@ -823,37 +883,37 @@ export function TestimonialSection() {
       </div>
 
       {/* Quote */}
-      <p className="font-heading text-xl text-[var(--base)] mb-6 leading-relaxed">
+      <p className="font-heading text-xl text-[var(--primary)] mb-6 leading-relaxed">
         &quot;{testimonial.quote}&quot;
       </p>
 
       {/* Date */}
-      <p className="text-xs uppercase tracking-[0.2em] text-[var(--base)]/50">
+      <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-plum)]">
         {testimonial.date}
       </p>
     </div>
   );
 
   return (
-    <section className="bg-[var(--base)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
+    <section className="bg-[var(--primary)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-16 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
           {/* Left Column: Editorial Content */}
           <div className="flex flex-col justify-center space-y-8">
-            <p className="text-sm uppercase tracking-[0.4em] text-[var(--accent)]/60">
+            <p className="text-sm uppercase tracking-[0.4em] text-white/80">
               Community Voices
             </p>
-            <h2 className="font-heading text-4xl leading-tight text-[var(--accent)] lg:text-5xl">
+            <h2 className="font-heading text-4xl leading-tight text-white lg:text-5xl">
               What creators are saying about R&T Spaces
             </h2>
-            <p className="text-lg text-[var(--accent)]/80 leading-relaxed">
+            <p className="text-lg text-white/80 leading-relaxed">
               From portrait sessions to brand launches, our community of photographers and creators share their experiences working in our East London studio.
             </p>
             <Link
               href="/book-online"
-              className="btn-secondary w-fit"
+              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 rounded-lg font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center w-full shadow-lg hover:shadow-xl"
             >
-              Book Now
+              Reserve Your Studio Session
             </Link>
           </div>
 
@@ -874,8 +934,8 @@ export function TestimonialSection() {
             </div>
 
             {/* Gradient Overlays */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-[var(--base)]"></div>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[var(--base)]"></div>
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-[var(--primary)]"></div>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[var(--primary)]"></div>
           </div>
         </div>
       </div>
@@ -885,19 +945,19 @@ export function TestimonialSection() {
 
 export function LatestNewsSection() {
   return (
-    <section className="bg-[var(--base)] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <h2 className="font-heading text-center text-4xl font-bold text-[var(--accent)] sm:text-5xl md:text-6xl">
+        <h2 className="font-heading text-center text-4xl font-bold text-[var(--primary)] sm:text-5xl md:text-6xl">
           Latest News
         </h2>
         <div className="mt-12 grid gap-8 lg:grid-cols-2 lg:gap-12">
-          <div className="relative aspect-[4/3] overflow-hidden">
+          <div className="relative aspect-[4/3] overflow-hidden bg-white rounded-lg shadow-lg">
             <Image
               src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80"
               alt="New studio room"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
+              className="object-cover rounded-lg"
               loading="lazy"
               quality={85}
             />
@@ -907,20 +967,20 @@ export function LatestNewsSection() {
               <span className="px-3 py-1 bg-[var(--primary)] text-white text-xs font-semibold uppercase tracking-wider rounded">
                 NEW STUDIO
               </span>
-              <time className="text-sm text-[var(--accent)]/60" dateTime="2024-12-01">
+              <time className="text-sm text-[var(--muted-plum)]" dateTime="2024-12-01">
                 December 2024
               </time>
             </div>
-            <h3 className="font-heading text-3xl font-bold text-[var(--accent)] sm:text-4xl">
+            <h3 className="font-heading text-3xl font-bold text-[var(--primary)] sm:text-4xl">
               We have officially launched Unit 3E Studio
             </h3>
-            <p className="text-lg text-[var(--accent)]/80">
+            <p className="text-lg text-[var(--muted-plum)]">
               Our newest studio space in East London features a seamless white cyclorama, textured concrete walls, and a cozy lounge corner. Equipped with professional lighting, continuous LEDs, and all the amenities you need for a successful shoot day.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/contact"
-                className="btn-primary w-fit"
+                className="btn-cta w-fit"
               >
                 BOOK NOW
                 <svg className="h-4 w-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -954,13 +1014,13 @@ export function SocialProofSection() {
   const { ref, isVisible } = useScrollAnimation();
 
   return (
-    <section className="bg-[var(--base)] px-4 py-16 sm:px-6 lg:px-8">
+    <section className="bg-white px-4 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="text-center mb-12">
-          <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60 mb-2">
+          <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)] mb-2">
             Join the community
           </p>
-          <h2 className="font-heading text-3xl font-bold text-[var(--accent)] sm:text-4xl">
+          <h2 className="font-heading text-3xl font-bold text-[var(--primary)] sm:text-4xl">
             Join 500+ creators who&apos;ve chosen R&T Spaces
           </h2>
         </div>
@@ -1016,11 +1076,11 @@ function AnimatedStatCard({ stat, isVisible }: { stat: StatType, isVisible: bool
   }, [isVisible, stat.value, stat.isDecimal]);
 
   return (
-    <div className="text-center p-8 bg-[var(--accent)]/5 rounded-lg border-2 border-[var(--accent)]/10 hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg">
+    <div className="text-center p-8 bg-white rounded-lg border-2 border-[var(--lavender)] hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg">
       <p className="font-heading text-5xl font-bold text-[var(--primary)] mb-2">
         {count}{stat.suffix}
       </p>
-      <p className="text-lg text-[var(--accent)]/80 uppercase tracking-wider">{stat.label}</p>
+      <p className="text-lg text-[var(--muted-plum)] uppercase tracking-wider">{stat.label}</p>
     </div>
   );
 }
@@ -1066,29 +1126,29 @@ export function WhyChooseUsSection() {
   ];
 
   return (
-    <section className="bg-[var(--base)] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="text-center mb-12">
-          <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]/60 mb-2">
+          <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)] mb-2">
             Why Choose Us
           </p>
-          <h2 className="font-heading text-4xl font-bold text-[var(--accent)] sm:text-5xl">
+          <h2 className="font-heading text-4xl font-bold text-[var(--primary)] sm:text-5xl">
             Everything you need, nothing you don&apos;t
           </h2>
-          <p className="mt-4 text-lg text-[var(--accent)]/80 max-w-2xl mx-auto">
+          <p className="mt-4 text-lg text-[var(--muted-plum)] max-w-2xl mx-auto">
             Professional spaces designed for seamless content creation
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="text-center space-y-4 p-6 bg-[var(--base)] border-2 border-[var(--accent)]/10 rounded-lg hover:border-[var(--primary)] transition-colors">
+            <div key={index} className="text-center space-y-4 p-6 bg-white border-2 border-[var(--lavender)] rounded-lg hover:border-[var(--primary)] transition-colors shadow-lg">
               <div className="flex justify-center">
                 <div className="p-4 bg-[var(--primary)]/10 text-[var(--primary)] rounded-full">
                   {feature.icon}
                 </div>
               </div>
-              <h3 className="font-heading text-xl font-bold text-[var(--accent)]">{feature.title}</h3>
-              <p className="text-[var(--accent)]/80 text-sm">{feature.description}</p>
+              <h3 className="font-heading text-xl font-bold text-[var(--primary)]">{feature.title}</h3>
+              <p className="text-[var(--muted-plum)] text-sm">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -1100,77 +1160,101 @@ export function WhyChooseUsSection() {
 export function StudioFeaturesSection() {
   const features = [
     {
-      title: "Pro Lighting",
-      description: "Every session includes our complete professional lighting kit. High-end softboxes for soft, even illumination, continuous LEDs for video work, diffusers and reflectors for precise control, plus strobes and modifiers. All equipment is prepped and ready before your call time, so you can focus on capturing the perfect shot without technical delays.",
-      image: "/assets/5448c683-ea0d-43cb-8ca6-c407b47ba93e.jpg",
-      imageAlt: "Professional lighting equipment setup",
+      label: "Pro Lighting",
+      detail: "High-end softboxes, continuous LEDs, diffusers, reflectors, strobes and modifiers — all equipment prepped and ready before call time.",
     },
     {
-      title: "Multiple Backdrops",
-      description: "Switch between looks effortlessly with our versatile backdrop collection. Start with the seamless white cyclorama for clean commercial shots, move to textured grey for editorial depth, or choose from our curated colour rolls and lifestyle setups. Each backdrop is professionally hung and ready to use, giving you the flexibility to pivot your creative direction mid-shoot.",
-      image: "/assets/aaeebd1e-e1b8-4548-9052-39a53a169559.jpg",
-      imageAlt: "Multiple backdrop options in studio",
+      label: "Multiple Backdrops",
+      detail: "Seamless white cyclorama, textured grey walls, curated colour rolls, and lifestyle setups — professionally hung and ready to use.",
     },
     {
-      title: "Studio Amenities",
-      description: "Beyond the shooting space, we've designed every detail for comfort and efficiency. A dedicated changing area with full-length mirrors, a cozy lounge corner for talent breaks, complimentary refreshments, high-speed WiFi, and a tethering station for immediate review. Everything you need to keep your production running smoothly from start to finish.",
-      image: "/assets/71d985ec-e79d-4ac5-89e4-f5785077064a.jpg",
-      imageAlt: "Studio amenities and facilities",
+      label: "Performance Insights",
+      detail: "Visualize your shoot progress with real-time tethering, instant previews, and immediate client feedback loops for better creative decisions.",
     },
   ];
 
   return (
-    <section className="bg-[var(--base)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-12 sm:mb-16 lg:mb-24 text-center">
-          <h2 className="font-heading text-5xl font-bold text-[var(--accent)] sm:text-6xl md:text-7xl mb-6">
-            What&apos;s Included in Your Session
+    <section 
+      className="pt-16 md:pt-24 lg:pt-32 pb-16 md:pb-24 lg:pb-32"
+      style={{ backgroundColor: '#FAF9F6' }}
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Title Block - Left Aligned */}
+        <div className="mb-12 md:mb-16">
+          <p className="text-sm uppercase tracking-wider mb-3" style={{ color: 'var(--muted-foreground)' }}>
+            • Everything You Need
+          </p>
+          <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+            <span style={{ color: 'var(--primary)' }}>What&apos;s Included in Your </span>
+            <span className="font-script" style={{ color: 'var(--accent-gold)' }}>Session</span>
           </h2>
         </div>
-        <div className="space-y-32">
-          {features.map((feature, index) => {
-            const isEven = index % 2 === 0;
-            const { ref, isVisible } = useScrollAnimation();
-            return (
-              <div
-                key={index}
-                ref={ref}
-                className={`grid gap-12 lg:grid-cols-2 lg:gap-20 items-center transition-all duration-700 ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
+
+        {/* Two Column Layout */}
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+          {/* Left Column - Large Editorial Image with Card Style */}
+          <div className="relative">
+            <div 
+              className="relative aspect-[4/3] overflow-hidden rounded-xl p-8 md:p-12"
+              style={{ 
+                backgroundColor: 'var(--card)',
+                boxShadow: 'var(--shadow-xl)'
+              }}
+            >
+              <Image
+                src="/assets/5448c683-ea0d-43cb-8ca6-c407b47ba93e.jpg"
+                alt="Professional studio setup with lighting equipment"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover rounded-lg"
+                loading="lazy"
+                quality={90}
+              />
+            </div>
+          </div>
+
+          {/* Right Column - Numbered List with Larger Text */}
+          <div className="flex flex-col">
+            <div className="grid gap-12 mb-8">
+              {features.map((feature, index) => (
+                <div
+                  key={feature.label}
+                  className="flex gap-6 border-t border-[var(--lavender)] pt-12"
+                >
+                  <div className="text-base font-semibold text-[var(--muted-plum)]">
+                    {String(index + 1).padStart(2, "0")}
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-[var(--primary)] mb-2">{feature.label}</p>
+                    <p className="text-base text-[var(--muted-plum)] leading-relaxed">{feature.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* CTAs */}
+            <div className="flex flex-col gap-4 mt-4">
+              <Link 
+                href="/book-online" 
+                className="btn-primary w-full text-center"
+                style={{
+                  boxShadow: '0 4px 16px rgba(61, 35, 80, 0.2), 0 2px 8px rgba(61, 35, 80, 0.1)',
+                  borderRadius: '0.75rem'
+                }}
               >
-                {/* Text Content */}
-                <div
-                  className={`space-y-8 px-4 sm:px-8 lg:px-12 ${
-                    isEven ? "lg:order-1" : "lg:order-2"
-                  }`}
-                >
-                  <h3 className="font-heading text-4xl sm:text-5xl font-bold text-[var(--accent)]">
-                    {feature.title}
-                  </h3>
-                  <p className="text-lg sm:text-xl text-[var(--accent)]/80 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-                {/* Image */}
-                <div
-                  className={`relative h-[400px] sm:h-[500px] lg:h-[600px] overflow-hidden group ${
-                    isEven ? "lg:order-2" : "lg:order-1"
-                  }`}
-                >
-                  <Image
-                    src={feature.image}
-                    alt={feature.imageAlt}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
-                    quality={85}
-                  />
-                </div>
-              </div>
-            );
-          })}
+                Book Now
+              </Link>
+              <Link 
+                href="/contact" 
+                className="btn-secondary w-full text-center"
+                style={{
+                  boxShadow: '0 2px 12px rgba(61, 35, 80, 0.12), 0 1px 4px rgba(61, 35, 80, 0.08)',
+                  borderRadius: '0.75rem'
+                }}
+              >
+                Contact Us
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1179,9 +1263,9 @@ export function StudioFeaturesSection() {
 
 export function GiveUsAFollowSection() {
   return (
-    <section className="bg-[var(--base)] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <h2 className="font-heading text-center text-3xl font-bold uppercase tracking-wider text-[var(--accent)] sm:text-4xl">
+        <h2 className="font-heading text-center text-3xl font-bold uppercase tracking-wider text-[var(--primary)] sm:text-4xl">
           GIVE US A FOLLOW
         </h2>
         <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-5">
@@ -1225,7 +1309,7 @@ export function EmailSubscriptionSection() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setStatus("success");
       setEmail("");
-    } catch (error) {
+    } catch {
       setStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -1233,12 +1317,12 @@ export function EmailSubscriptionSection() {
   };
 
   return (
-    <section className="bg-[var(--base)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
+    <section className="bg-white px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl text-center">
-        <h2 className="font-heading text-5xl font-bold text-[var(--accent)] sm:text-6xl md:text-7xl mb-8">
-          Join the R&amp;T Creator Circle
+        <h2 className="text-5xl font-normal text-[var(--accent-gold)] sm:text-6xl md:text-7xl mb-8">
+          Join the <span className="font-script">R&amp;T</span> Creator Circle
         </h2>
-        <p className="text-xl text-[var(--accent)]/80 mb-16 leading-relaxed max-w-2xl mx-auto">
+        <p className="text-xl text-[var(--primary)] mb-16 leading-relaxed max-w-2xl mx-auto">
           Monthly studio tips, lighting setups, workflow guidance, and member-only perks.
         </p>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 sm:flex-row max-w-2xl mx-auto">
@@ -1253,7 +1337,7 @@ export function EmailSubscriptionSection() {
               }}
               required
               disabled={isSubmitting}
-              className={`w-full border border-[var(--accent)]/20 bg-[var(--base)] px-6 py-5 text-lg text-[var(--accent)] transition-colors focus:outline-none focus:border-[var(--accent)]/40 ${
+              className={`w-full border border-[var(--lavender)] bg-white px-6 py-5 text-lg text-[var(--muted-plum)] rounded-lg transition-colors focus:outline-none focus:border-[var(--primary)] ${
                 status === "error"
                   ? "border-red-500 focus:border-red-500"
                   : status === "success"
@@ -1278,8 +1362,8 @@ export function EmailSubscriptionSection() {
           </button>
         </form>
         {status === "success" && (
-          <div className="mt-8 p-6 border border-[var(--accent)]/20 bg-[var(--base)]">
-            <p className="text-lg text-[var(--accent)]">Thank you for joining. Welcome to the circle.</p>
+          <div className="mt-8 p-6 border border-[var(--lavender)] bg-white rounded-lg">
+            <p className="text-lg text-[var(--muted-plum)]">Thank you for joining. Welcome to the circle.</p>
           </div>
         )}
       </div>
@@ -1289,119 +1373,126 @@ export function EmailSubscriptionSection() {
 
 export function SiteFooter() {
   return (
-    <footer className="bg-[var(--base)] px-4 py-20 text-sm text-[var(--accent)]/80 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4 mb-16">
-          {/* Column 1: Brand */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-[var(--accent)]">R&amp;T Spaces</h3>
-            <p className="text-base text-[var(--accent)]/80 leading-relaxed">
-              London creative studio for photographers &amp; creators.
-            </p>
-          </div>
-
-          {/* Column 2: Links */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-[var(--accent)]">Quick Links</h3>
-            <nav className="space-y-3">
-              <Link href="/studio" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
-                Studios
-              </Link>
-              <Link href="/equipment" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
-                Equipment & Backdrops
-              </Link>
-              <Link href="/services" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
-                Packages / Pricing
-              </Link>
-              <Link href="/book-online" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
-                Book Online
-              </Link>
-              <Link href="/gallery" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
-                Our Work / Gallery
-              </Link>
-              <Link href="/about-us" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
-                About
-              </Link>
-              <Link href="/contact" className="block text-[var(--accent)]/80 hover:text-[var(--accent)] transition">
-                Contact
-              </Link>
-            </nav>
-          </div>
-
-          {/* Column 3: Contact */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-[var(--accent)]">Contact</h3>
-            <div className="space-y-3 text-[var(--accent)]/80">
-              <p>
-                Unit 3E, 736-740 Romford Road<br />
-                London E12 6BT
-              </p>
-              <p>
-                <a href="mailto:Teddy77723@gmail.com" className="hover:text-[var(--accent)] transition">
-                  Teddy77723@gmail.com
-                </a>
-              </p>
-              <p>
-                <a href="tel:07944667000" className="hover:text-[var(--accent)] transition">
-                  07944667000
-                </a>
+    <footer>
+      {/* Top strip - deep plum */}
+      <div className="bg-[var(--primary)] px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+            {/* Column 1: Brand */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white">R&amp;T Spaces</h3>
+              <p className="text-base text-white/80 leading-relaxed">
+                London creative studio for photographers &amp; creators.
               </p>
             </div>
-          </div>
 
-          {/* Column 4: Socials */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-[var(--accent)]">Follow Us</h3>
-            <div className="flex gap-4">
-              <Link
-                href="https://www.instagram.com/randtspace"
-                className="text-[var(--accent)]/80 hover:text-[var(--accent)] transition"
-                target="_blank"
-                aria-label="Instagram"
-              >
-                <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                </svg>
-              </Link>
-              <Link
-                href="https://www.facebook.com"
-                className="text-[var(--accent)]/80 hover:text-[var(--accent)] transition"
-                target="_blank"
-                aria-label="Facebook"
-              >
-                <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-              </Link>
-              <Link
-                href="https://www.tiktok.com/@randtspace"
-                className="text-[var(--accent)]/80 hover:text-[var(--accent)] transition"
-                target="_blank"
-                aria-label="TikTok"
-              >
-                <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
-                </svg>
-              </Link>
-              <Link
-                href="https://www.twitter.com"
-                className="text-[var(--accent)]/80 hover:text-[var(--accent)] transition"
-                target="_blank"
-                aria-label="Twitter"
-              >
-                <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-                </svg>
-              </Link>
+            {/* Column 2: Links */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white">Quick Links</h3>
+              <nav className="space-y-3">
+                <Link href="/studio" className="block text-white/80 hover:text-white transition">
+                  Studios
+                </Link>
+                <Link href="/equipment" className="block text-white/80 hover:text-white transition">
+                  Equipment & Backdrops
+                </Link>
+                <Link href="/services" className="block text-white/80 hover:text-white transition">
+                  Packages / Pricing
+                </Link>
+                <Link href="/book-online" className="block text-white/80 hover:text-white transition">
+                  Book Online
+                </Link>
+                <Link href="/gallery" className="block text-white/80 hover:text-white transition">
+                  Our Work / Gallery
+                </Link>
+                <Link href="/about-us" className="block text-white/80 hover:text-white transition">
+                  About
+                </Link>
+                <Link href="/contact" className="block text-white/80 hover:text-white transition">
+                  Contact
+                </Link>
+              </nav>
+            </div>
+
+            {/* Column 3: Contact */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white">Contact</h3>
+              <div className="space-y-3 text-white/80">
+                <p>
+                  Unit 3E, 736-740 Romford Road<br />
+                  London E12 6BT
+                </p>
+                <p>
+                  <a href="mailto:Teddy77723@gmail.com" className="hover:text-white transition">
+                    Teddy77723@gmail.com
+                  </a>
+                </p>
+                <p>
+                  <a href="tel:07944667000" className="hover:text-white transition">
+                    07944667000
+                  </a>
+                </p>
+              </div>
+            </div>
+
+            {/* Column 4: Socials */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white">Follow Us</h3>
+              <div className="flex gap-4">
+                <Link
+                  href="https://www.instagram.com/randtspace"
+                  className="text-white/80 hover:text-white transition"
+                  target="_blank"
+                  aria-label="Instagram"
+                >
+                  <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                  </svg>
+                </Link>
+                <Link
+                  href="https://www.facebook.com"
+                  className="text-white/80 hover:text-white transition"
+                  target="_blank"
+                  aria-label="Facebook"
+                >
+                  <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                  </svg>
+                </Link>
+                <Link
+                  href="https://www.tiktok.com/@randtspace"
+                  className="text-white/80 hover:text-white transition"
+                  target="_blank"
+                  aria-label="TikTok"
+                >
+                  <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
+                  </svg>
+                </Link>
+                <Link
+                  href="https://www.twitter.com"
+                  className="text-white/80 hover:text-white transition"
+                  target="_blank"
+                  aria-label="Twitter"
+                >
+                  <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+                  </svg>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Footer Line */}
-        <div className="pt-8 border-t border-[var(--accent)]/10 text-center">
-          <p className="text-sm text-[var(--accent)]/60">
-            © 2025 R&amp;T Spaces. All Rights Reserved.
-          </p>
+      {/* Lower footer - white */}
+      <div className="bg-white px-4 py-8 text-sm text-[var(--muted-plum)] sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="pt-8 border-t border-[var(--lavender)] text-center">
+            <p className="text-sm text-[var(--muted-plum)]">
+              © 2025 R&amp;T Spaces. All Rights Reserved.
+            </p>
+          </div>
         </div>
       </div>
     </footer>

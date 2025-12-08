@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^8.5.3",
+    "@tabler/icons-react": "^3.35.0",
     "@vercel/analytics": "^1.5.0",
     "clsx": "^2.1.1",
     "googleapis": "^167.0.0",

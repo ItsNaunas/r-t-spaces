@@ -2,7 +2,7 @@
 
 export function BookingSuccessMessage() {
   return (
-    <div className="border border-emerald-500/20 bg-emerald-500/10 p-6 space-y-3">
+    <div className="border border-emerald-500/20 bg-emerald-500/10 p-6 space-y-3 rounded-lg">
       <div className="flex items-start gap-3">
         <svg
           className="h-6 w-6 text-emerald-600 flex-shrink-0 mt-0.5"

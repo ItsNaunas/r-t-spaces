@@ -17,6 +17,7 @@ export const NAV_LINKS = [
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isOverLightSection, setIsOverLightSection] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
   const closeMenu = () => setMenuOpen(false);
@@ -53,31 +54,24 @@ export function SiteHeader() {
   }, [menuOpen]);
 
   useEffect(() => {
-    // Only use scroll-based detection on the home page
-    // Other pages have light backgrounds from the start, so always use light mode
-    if (pathname !== "/") {
-      setIsOverLightSection(true);
-      return;
-    }
-
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      
-      // Hero section is full viewport height (h-screen = 100vh)
-      // We're over the hero if we haven't scrolled past the viewport height
-      const heroHeight = window.innerHeight;
-      const isOverHero = scrollY < heroHeight;
-      
-      // isOverLightSection should be true when we're past the hero (over light sections)
-      setIsOverLightSection(!isOverHero);
-    };
-    
-    // Initial check
-    handleScroll();
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Hero section now has a light background, so always use light mode
+    // All pages have light backgrounds, so always use light mode
+    const timer = setTimeout(() => setIsOverLightSection(true), 0);
+    return () => clearTimeout(timer);
   }, [pathname]);
+
+  useEffect(() => {
+    // Track scroll position to show/hide border
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Check initial scroll position
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Determine nav colors based on scroll position
   // isLightMode = true when over light sections (dark text), false when over hero (white text)
@@ -96,12 +90,17 @@ export function SiteHeader() {
         Skip to main content
       </a>
       <header 
-      className={`sticky top-0 z-50 w-full border-0 outline-none transition-all duration-300 ${
+      className={`md:sticky top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled 
+          ? 'border-b border-[var(--accent)]/20' 
+          : 'border-b border-transparent'
+      } ${
         isLightMode 
           ? 'bg-[var(--base)]/95 backdrop-blur-md shadow-sm' 
-          : 'bg-transparent'
-      }`} 
-      style={{ border: 'none', outline: 'none', position: 'sticky' }}
+          : isScrolled
+            ? 'md:bg-[var(--base)]/95 md:backdrop-blur-md md:shadow-sm'
+            : 'md:bg-transparent bg-transparent'
+      }`}
     >
       <div className={`mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8 relative transition-all duration-300`}>
         <nav className={`hidden items-center gap-4 lg:gap-6 text-xs font-semibold uppercase tracking-[0.3em] ${navTextColor}/80 md:flex flex-1`}>

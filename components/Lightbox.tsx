@@ -17,14 +17,18 @@ export function Lightbox({ isOpen, onClose, images, currentIndex, onNavigate }: 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
-      setIsLoading(true);
+      // Reset loading state when opening
+      const timer = setTimeout(() => setIsLoading(true), 0);
+      return () => {
+        clearTimeout(timer);
+        document.body.style.overflow = "unset";
+      };
     } else {
       document.body.style.overflow = "unset";
+      return () => {
+        document.body.style.overflow = "unset";
+      };
     }
-
-    return () => {
-      document.body.style.overflow = "unset";
-    };
   }, [isOpen]);
 
   useEffect(() => {

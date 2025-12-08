@@ -188,7 +188,7 @@ export function BookingForm() {
             <div className="flex-1">
               <div className="font-semibold text-[var(--accent)]">Request Booking</div>
               <div className="text-xs text-[var(--accent)]/60 mt-1">
-                Free enquiry. We'll confirm availability within 24 hours.
+                Free enquiry. We&apos;ll confirm availability within 24 hours.
               </div>
             </div>
           </label>

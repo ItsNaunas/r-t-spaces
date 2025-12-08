@@ -3,7 +3,7 @@ import {
   HowItWorksSection,
   SiteFooter,
   StudioFeaturesSection,
-  StudioPreviewsGrid,
+  StudioHeroStats,
   TestimonialSection,
 } from "@/components/StudioSections";
 import { HeroSection } from "@/components/HeroSection";
@@ -13,7 +13,7 @@ export default function Home() {
     <>
       <HeroSection />
       <main id="main-content" className="w-full bg-[var(--base)]">
-        <StudioPreviewsGrid />
+        <StudioHeroStats />
         <StudioFeaturesSection />
         <HowItWorksSection />
         <TestimonialSection />
