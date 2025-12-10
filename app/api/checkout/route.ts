@@ -1,97 +1,60 @@
-import { NextResponse } from "next/server";
-import { stripe, calculatePrice } from "@/lib/stripe";
-import { saveBooking } from "@/lib/bookingStore";
-
-const emailRegex =
-  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+import { NextResponse } from 'next/server';
+import Stripe from 'stripe';
 
 export async function POST(request: Request) {
   try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured' },
+        { status: 500 }
+      );
+    }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-11-17.clover',
+    });
     const body = await request.json();
-    const { name, email, date, hours, notes } = body ?? {};
+    const { amount, name, email } = body;
 
-    if (!name || !email) {
+    if (!amount || !name || !email) {
       return NextResponse.json(
-        { error: "Name and email are required." },
-        { status: 400 },
+        { error: 'Missing required fields: amount, name, email' },
+        { status: 400 }
       );
     }
 
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: "Please provide a valid email." },
-        { status: 400 },
-      );
-    }
-
-    // Calculate price based on hours
-    const amount = hours ? calculatePrice(hours) : 2 * 5000; // Default 2 hours if no hours specified
-
-    // Create booking entry (will be confirmed after payment)
-    const bookingEntry = {
-      name: String(name).trim(),
-      email: String(email).trim().toLowerCase(),
-      date: date ? String(date) : undefined,
-      hours: hours ? String(hours) : undefined,
-      notes: notes ? String(notes) : undefined,
-    };
-
-    // Save booking as pending (will be confirmed via webhook)
-    const booking = await saveBooking(bookingEntry);
-
-    // Format date safely for description
-    let dateDescription = "";
-    if (bookingEntry.date) {
-      try {
-        const date = new Date(bookingEntry.date);
-        if (!isNaN(date.getTime())) {
-          dateDescription = ` on ${date.toLocaleDateString()}`;
-        }
-      } catch {
-        // Invalid date, skip date in description
-      }
-    }
-
-    // Create Stripe Checkout Session
+    // Create a Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types: ['card'],
       line_items: [
         {
           price_data: {
-            currency: "gbp",
+            currency: 'usd',
             product_data: {
-              name: "Studio Booking",
-              description: `Studio booking for ${bookingEntry.name}${dateDescription}${bookingEntry.hours ? ` (${bookingEntry.hours})` : ""}`,
+              name: 'Studio Booking',
+              description: `Booking for ${name}`,
             },
-            unit_amount: amount,
+            unit_amount: Math.round(amount * 100), // Convert to cents
           },
           quantity: 1,
         },
       ],
-      mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/book-online?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/book-online?canceled=true`,
-      customer_email: bookingEntry.email,
+      mode: 'payment',
+      customer_email: email,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/book-online?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/book-online?canceled=true`,
       metadata: {
-        bookingId: booking.createdAt, // Use timestamp as ID
-        name: bookingEntry.name,
-        email: bookingEntry.email,
-        date: bookingEntry.date || "",
-        hours: bookingEntry.hours || "",
+        customerName: name,
+        customerEmail: email,
       },
     });
 
-    if (!session.url) {
-      throw new Error("Stripe session URL is missing");
-    }
-
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error) {
-    console.error("Checkout error:", error);
+    console.error('Checkout error:', error);
     return NextResponse.json(
-      { error: "Unable to create checkout session. Please try again later." },
-      { status: 500 },
+      { error: 'Failed to create checkout session' },
+      { status: 500 }
     );
   }
 }
-

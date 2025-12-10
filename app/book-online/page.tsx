@@ -63,7 +63,7 @@ export default function BookOnlinePage({
         
         {/* Cancel Message */}
         {searchParams?.canceled === "true" && (
-          <div className="border border-yellow-500/20 bg-yellow-500/10 p-6 text-yellow-600 rounded-lg">
+          <div className="border border-yellow-500/20 bg-yellow-500/10 p-6 text-yellow-600 ">
             <p className="font-semibold">Booking Canceled</p>
             <p className="text-sm mt-2">
               Your booking was not completed. You can try again or contact us directly.
@@ -85,7 +85,7 @@ export default function BookOnlinePage({
         </section>
 
         {/* Availability Section */}
-        <section className="border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-6 lg:p-8 rounded-lg">
+        <section className="border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-6 lg:p-8 ">
           <h2 className="font-heading text-2xl text-[var(--primary)] mb-4">
             {availabilityInfo.title}
           </h2>
@@ -137,7 +137,7 @@ export default function BookOnlinePage({
             </h2>
             <Suspense
               fallback={
-                <div className="flex h-full items-center justify-center border border-[var(--accent)]/20 p-6 text-sm text-[var(--muted-plum)] rounded-lg">
+                <div className="flex h-full items-center justify-center border border-[var(--accent)]/20 p-6 text-sm text-[var(--muted-plum)] ">
                   Loading form…
                 </div>
               }
@@ -148,7 +148,7 @@ export default function BookOnlinePage({
 
           <div className="space-y-6">
             {/* Quick Contact */}
-            <div className="border border-[var(--accent)]/20 p-6 space-y-4 rounded-lg">
+            <div className="border border-[var(--accent)]/20 p-6 space-y-4 ">
               <h3 className="font-heading text-xl text-[var(--primary)]">
                 Need Immediate Assistance?
               </h3>
@@ -192,7 +192,7 @@ export default function BookOnlinePage({
             </div>
 
             {/* Studio Hours */}
-            <div className="border border-[var(--accent)]/20 p-6 rounded-lg">
+            <div className="border border-[var(--accent)]/20 p-6 ">
               <h3 className="font-heading text-xl text-[var(--primary)] mb-4">
                 Studio Hours
               </h3>
@@ -223,7 +223,7 @@ export default function BookOnlinePage({
             {bookingPolicies.map((policy) => (
               <article
                 key={policy.title}
-                className="border border-[var(--accent)]/20 p-6 space-y-3 rounded-lg"
+                className="border border-[var(--accent)]/20 p-6 space-y-3 "
               >
                 <h3 className="font-heading text-xl text-[var(--primary)]">
                   {policy.title}

@@ -27,3 +27,4 @@ The code will automatically check both locations.
 - **Glacial Indifference** (Free): https://www.fontsquirrel.com/fonts/glacial-indifference
 - **New Icon Script** (Paid): Purchase from Font Bros or similar font retailers
 
+

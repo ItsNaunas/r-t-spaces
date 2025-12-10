@@ -76,7 +76,7 @@ export function Lightbox({ isOpen, onClose, images, currentIndex, onNavigate }: 
               e.stopPropagation();
               onNavigate((currentIndex - 1 + images.length) % images.length);
             }}
-            className="absolute left-4 z-[101] text-white/80 hover:text-white transition-colors p-4 bg-black/50 rounded-full"
+            className="absolute left-4 z-[101] text-white/80 hover:text-white transition-colors p-4 bg-black/50 "
             aria-label="Previous image"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,7 +88,7 @@ export function Lightbox({ isOpen, onClose, images, currentIndex, onNavigate }: 
               e.stopPropagation();
               onNavigate((currentIndex + 1) % images.length);
             }}
-            className="absolute right-4 z-[101] text-white/80 hover:text-white transition-colors p-4 bg-black/50 rounded-full"
+            className="absolute right-4 z-[101] text-white/80 hover:text-white transition-colors p-4 bg-black/50 "
             aria-label="Next image"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,7 +117,7 @@ export function Lightbox({ isOpen, onClose, images, currentIndex, onNavigate }: 
             />
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="h-12 w-12 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="h-12 w-12 border-4 border-white/30 border-t-white  animate-spin" />
               </div>
             )}
           </div>

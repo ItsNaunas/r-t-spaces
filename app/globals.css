@@ -4,7 +4,8 @@
   /* ========== BRAND COLOUR SYSTEM (LIGHT MODE) ========== */
 
   /* Backgrounds & Base */
-  --background: oklch(1 0 0);                    /* pure white */
+  --background: oklch(0.94 0.025 312);                    /* soft purple background */
+  --hero-background: oklch(0.87 0.035 312);                /* darker purple for hero */
   --foreground: oklch(0.32 0.08 309);           /* deep plum */
 
   /* Cards */
@@ -32,8 +33,8 @@
   --lavender: oklch(0.75 0.06 315);             /* lavender for borders/separators only */
 
   /* Accent Gold (muted luxury) */
-  --accent-gold: oklch(0.72 0.06 85);           /* muted warm gold - stored for backward compatibility */
-  --accent: oklch(0.72 0.06 85);                /* muted warm gold */
+  --accent-gold: oklch(0.68 0.07 70);           /* very muted sophisticated gold - matches palette's low chroma */
+  --accent: oklch(0.68 0.07 70);                /* very muted sophisticated gold - matches palette's low chroma */
   --accent-foreground: oklch(0.32 0.08 309);
 
   /* Destructive */
@@ -46,7 +47,7 @@
   --ring: oklch(0.75 0.06 315);                 /* lavender outline */
 
   /* Charts (muted + brand-consistent) */
-  --chart-1: oklch(0.72 0.06 85);               /* muted gold */
+  --chart-1: oklch(0.68 0.07 70);               /* very muted sophisticated gold */
   --chart-2: oklch(0.46 0.06 315);              /* mid plum */
   --chart-3: oklch(0.80 0.04 315);              /* soft lavender */
   --chart-4: oklch(0.60 0.05 315);              /* mauve */
@@ -57,7 +58,7 @@
   --sidebar-foreground: oklch(0.32 0.08 309);
   --sidebar-primary: oklch(0.60 0.05 315);      /* mauve */
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.72 0.06 85);
+  --sidebar-accent: oklch(0.68 0.07 70);
   --sidebar-accent-foreground: oklch(0.32 0.08 309);
   --sidebar-border: oklch(0.87 0.03 315);
   --sidebar-ring: oklch(0.75 0.06 315);
@@ -98,11 +99,11 @@
   /* ========== BACKWARD COMPATIBILITY MAPPINGS ========== */
   /* Map old variables to new system to prevent breaking existing components */
   /* Note: --accent is kept for headings (deep plum), use --muted-plum for paragraph text */
-  --base: oklch(1 0 0);                         /* white - explicit white background */
+  --base: oklch(0.94 0.025 312);                         /* soft purple background */
   --accent: var(--foreground);                  /* deep plum - for headings only */
   --plum: var(--primary);                       /* deep plum */
-  --gold: var(--accent-gold);                   /* muted gold */
-  --gold-hover: oklch(0.68 0.06 85);           /* slightly darker gold for hover */
+  --gold: var(--accent-gold);                   /* very muted sophisticated gold */
+  --gold-hover: oklch(0.65 0.08 70);           /* slightly darker muted gold for hover */
   --primary-hover: oklch(0.70 0.06 315);        /* slightly darker lavender for hover */
   --rose: oklch(0.60 0.05 315);                 /* map to chart-4 (mauve) */
   --ink: var(--foreground);                     /* deep plum */
@@ -133,8 +134,8 @@
   --muted: oklch(0.24 0.01 315);
   --muted-foreground: oklch(0.70 0.02 315);
 
-  --accent-gold: oklch(0.72 0.06 85);           /* stored for backward compatibility */
-  --accent: oklch(0.72 0.06 85);
+  --accent-gold: oklch(0.68 0.07 70);           /* very muted sophisticated gold - matches palette's low chroma */
+  --accent: oklch(0.68 0.07 70);
   --accent-foreground: oklch(0.92 0.01 315);
 
   --destructive: oklch(0.63 0.20 25);
@@ -145,7 +146,7 @@
   --ring: oklch(0.75 0.06 315);
 
   /* Dark Charts */
-  --chart-1: oklch(0.80 0.06 85);
+  --chart-1: oklch(0.70 0.07 70);
   --chart-2: oklch(0.60 0.06 315);
   --chart-3: oklch(0.72 0.04 315);
   --chart-4: oklch(0.52 0.05 315);
@@ -156,7 +157,7 @@
   --sidebar-foreground: oklch(0.92 0.01 315);
   --sidebar-primary: oklch(0.75 0.06 315);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.72 0.06 85);
+  --sidebar-accent: oklch(0.68 0.07 70);
   --sidebar-accent-foreground: oklch(0.92 0.01 315);
   --sidebar-border: oklch(0.32 0.01 315);
   --sidebar-ring: oklch(0.75 0.06 315);
@@ -165,8 +166,8 @@
   --base: var(--background);
   --accent: var(--foreground);                  /* deep plum for headings */
   --plum: var(--primary);
-  --gold: var(--accent-gold);                   /* muted gold */
-  --gold-hover: oklch(0.68 0.06 85);
+  --gold: var(--accent-gold);                   /* very muted sophisticated gold */
+  --gold-hover: oklch(0.65 0.08 70);
   --primary-hover: oklch(0.70 0.06 315);
   --rose: oklch(0.52 0.05 315);
   --ink: var(--foreground);
@@ -181,7 +182,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
-  --color-accent: var(--accent-gold);            /* use accent-gold for Tailwind (gold color) */
+  --color-accent: var(--accent-gold);            /* use very muted sophisticated gold for Tailwind */
 }
 
 *,
@@ -199,13 +200,20 @@ html {
 body {
   margin: 0;
   padding: 0;
-  background: var(--background);
+  background: linear-gradient(
+    180deg,
+    var(--hero-background) 0%,
+    var(--hero-background) 20%,
+    var(--background) 100%
+  );
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
   line-height: 1.6;
   overflow-x: hidden;
   max-width: 100vw;
+  min-height: 100vh;
 }
 
 /* Improve text readability on mobile */
@@ -244,7 +252,7 @@ body {
   text-transform: none;
   letter-spacing: 0.05em;
   color: white !important;
-  border-radius: var(--radius);
+  border-radius: 0;
   transition: all 0.3s ease;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(61, 35, 80, 0.15);
@@ -298,7 +306,7 @@ body {
   text-transform: none;
   letter-spacing: 0.05em;
   color: var(--plum);
-  border-radius: var(--radius);
+  border-radius: 0;
   transition: all 0.3s ease;
   cursor: pointer;
 }
@@ -336,7 +344,7 @@ body {
   text-transform: none;
   letter-spacing: 0.05em;
   color: white !important;
-  border-radius: var(--radius);
+  border-radius: 0;
   transition: all 0.3s ease;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(61, 35, 80, 0.15);
@@ -385,7 +393,7 @@ textarea:focus-visible,
 select:focus-visible {
   outline: 3px solid var(--primary);
   outline-offset: 2px;
-  border-radius: 2px;
+  border-radius: 0;
   box-shadow: 0 0 0 3px rgba(174, 148, 185, 0.2);
 }
 
@@ -459,7 +467,7 @@ button:active,
   text-transform: none;
   letter-spacing: 0.05em;
   color: white !important;
-  border-radius: var(--radius);
+  border-radius: 0;
   transition: all 0.3s ease;
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(61, 35, 80, 0.2);
@@ -499,7 +507,7 @@ button:active,
   border-color: rgba(255, 255, 255, 0.9) !important;
   color: rgba(255, 255, 255, 0.9) !important;
   background: transparent !important;
-  border-radius: var(--radius);
+  border-radius: 0;
 }
 
 .btn-hero-white:hover {

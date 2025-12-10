@@ -162,3 +162,4 @@ Edit `lib/stripe.ts` to customize pricing:
 - [ ] Set `NEXT_PUBLIC_BASE_URL` to production URL
 - [ ] Consider migrating from file storage to database
 
+

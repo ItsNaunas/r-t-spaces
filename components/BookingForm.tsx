@@ -111,7 +111,7 @@ export function BookingForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4  border border-[var(--accent)]/20 p-6"
+      className="space-y-6 sm:space-y-7"
     >
       <div className="transition-all duration-300">
         <Field
@@ -140,7 +140,7 @@ export function BookingForm() {
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2">
         <Field
           label="Preferred date"
           name="date"
@@ -171,39 +171,77 @@ export function BookingForm() {
       />
 
       {/* Payment Mode Selection */}
-      <div className="border-t border-[var(--accent)]/20 pt-4 space-y-4">
-        <label className="text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[var(--accent)]/60">
+      <div className="border-t border-[var(--lavender)]/30 pt-6 space-y-5">
+        <label className="block text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[var(--muted-plum)]">
           Booking Type
         </label>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <label className="flex items-start gap-3 p-4 border border-[var(--accent)]/20 cursor-pointer hover:border-[var(--primary)] transition-colors">
-            <input
-              type="radio"
-              name="paymentMode"
-              value="request"
-              checked={paymentMode === "request"}
-              onChange={(e) => setPaymentMode(e.target.value as "request" | "pay")}
-              className="mt-1"
-            />
-            <div className="flex-1">
-              <div className="font-semibold text-[var(--accent)]">Request Booking</div>
-              <div className="text-xs text-[var(--accent)]/60 mt-1">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className={`group flex items-start gap-4 p-5 border-2 cursor-pointer transition-all duration-300 ${
+            paymentMode === "request" 
+              ? "border-[var(--primary)] bg-[var(--primary)]/5" 
+              : "border-[var(--lavender)]/30 hover:border-[var(--primary)]/50 bg-white"
+          }`}>
+            <div className="relative flex-shrink-0 mt-0.5">
+              <input
+                type="radio"
+                name="paymentMode"
+                value="request"
+                checked={paymentMode === "request"}
+                onChange={(e) => setPaymentMode(e.target.value as "request" | "pay")}
+                className="sr-only"
+              />
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                paymentMode === "request"
+                  ? "border-[var(--primary)] bg-[var(--primary)]"
+                  : "border-[var(--muted-plum)]/40 group-hover:border-[var(--primary)]/60"
+              }`}>
+                {paymentMode === "request" && (
+                  <div className="w-2.5 h-2.5 rounded-full bg-white" />
+                )}
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className={`font-semibold text-base mb-1.5 transition-colors ${
+                paymentMode === "request" ? "text-[var(--primary)]" : "text-[var(--primary)]"
+              }`}>
+                Request Booking
+              </div>
+              <div className="text-sm text-[var(--muted-plum)] leading-relaxed">
                 Free enquiry. We&apos;ll confirm availability within 24 hours.
               </div>
             </div>
           </label>
-          <label className="flex items-start gap-3 p-4 border border-[var(--accent)]/20 cursor-pointer hover:border-[var(--primary)] transition-colors">
-            <input
-              type="radio"
-              name="paymentMode"
-              value="pay"
-              checked={paymentMode === "pay"}
-              onChange={(e) => setPaymentMode(e.target.value as "request" | "pay")}
-              className="mt-1"
-            />
-            <div className="flex-1">
-              <div className="font-semibold text-[var(--accent)]">Pay & Book Now</div>
-              <div className="text-xs text-[var(--accent)]/60 mt-1">
+          <label className={`group flex items-start gap-4 p-5 border-2 cursor-pointer transition-all duration-300 ${
+            paymentMode === "pay" 
+              ? "border-[var(--primary)] bg-[var(--primary)]/5" 
+              : "border-[var(--lavender)]/30 hover:border-[var(--primary)]/50 bg-white"
+          }`}>
+            <div className="relative flex-shrink-0 mt-0.5">
+              <input
+                type="radio"
+                name="paymentMode"
+                value="pay"
+                checked={paymentMode === "pay"}
+                onChange={(e) => setPaymentMode(e.target.value as "request" | "pay")}
+                className="sr-only"
+              />
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                paymentMode === "pay"
+                  ? "border-[var(--primary)] bg-[var(--primary)]"
+                  : "border-[var(--muted-plum)]/40 group-hover:border-[var(--primary)]/60"
+              }`}>
+                {paymentMode === "pay" && (
+                  <div className="w-2.5 h-2.5 rounded-full bg-white" />
+                )}
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className={`font-semibold text-base mb-1.5 transition-colors ${
+                paymentMode === "pay" ? "text-[var(--primary)]" : "text-[var(--primary)]"
+              }`}>
+                Pay & Book Now
+              </div>
+              <div className="text-sm text-[var(--muted-plum)] leading-relaxed">
                 Secure payment. Auto-confirmed and added to calendar.
               </div>
             </div>
@@ -214,7 +252,7 @@ export function BookingForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="btn-primary btn-full relative overflow-hidden group"
+        className="btn-primary btn-full relative overflow-hidden group mt-2"
       >
         <span className="relative z-10 flex items-center justify-center gap-2">
           {isSubmitting ? (
@@ -237,22 +275,24 @@ export function BookingForm() {
       </button>
 
       {message && (
-        <p
-          className={`text-xs ${
-            status === "success" ? "text-emerald-600" : "text-red-600"
-          }`}
-        >
-          {message}
-        </p>
+        <div className={`p-4 rounded-sm border ${
+          status === "success" 
+            ? "bg-emerald-50 border-emerald-200 text-emerald-800" 
+            : "bg-red-50 border-red-200 text-red-800"
+        }`}>
+          <p className="text-sm font-medium">
+            {message}
+          </p>
+        </div>
       )}
 
-      <p className="text-xs text-[var(--accent)]/60">
+      <p className="text-sm text-[var(--muted-plum)] leading-relaxed pt-2">
         We respond within 24 hours. For last-minute bookings, DM{" "}
         <a
           href="https://www.instagram.com/randtspace"
           target="_blank"
           rel="noreferrer"
-          className="font-semibold text-[var(--primary)]"
+          className="font-semibold text-[var(--primary)] hover:text-[var(--accent-gold)] transition-colors underline underline-offset-2"
         >
           @randtspace
         </a>
@@ -268,13 +308,14 @@ type FieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
 
 function Field({ label, ...props }: FieldProps) {
   return (
-    <div>
-      <label className="text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[var(--accent)]/60">
+    <div className="space-y-2">
+      <label className="block text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[var(--muted-plum)]">
         {label}
+        {props.required && <span className="text-[var(--primary)] ml-1">*</span>}
       </label>
       <input
         {...props}
-        className="mt-2 w-full border border-[var(--accent)]/20 px-4 py-3 text-base text-[var(--accent)] outline-none transition focus:border-[var(--primary)]"
+        className="w-full border-2 border-[var(--lavender)]/30 bg-white px-4 py-3.5 text-base text-[var(--primary)] placeholder:text-[var(--muted-plum)]/50 outline-none transition-all duration-300 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:bg-white"
         style={{ fontSize: '16px' }}
       />
     </div>
@@ -287,13 +328,13 @@ type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
 
 function Textarea({ label, ...props }: TextareaProps) {
   return (
-    <div>
-      <label className="text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[var(--accent)]/60">
+    <div className="space-y-2">
+      <label className="block text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[var(--muted-plum)]">
         {label}
       </label>
       <textarea
         {...props}
-        className="mt-2 w-full border border-[var(--accent)]/20 px-4 py-3 text-base text-[var(--accent)] outline-none transition focus:border-[var(--primary)]"
+        className="w-full border-2 border-[var(--lavender)]/30 bg-white px-4 py-3.5 text-base text-[var(--primary)] placeholder:text-[var(--muted-plum)]/50 outline-none transition-all duration-300 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:bg-white resize-y"
         style={{ fontSize: '16px' }}
       />
     </div>

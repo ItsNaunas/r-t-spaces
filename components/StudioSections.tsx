@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import { Lightbox } from "@/components/Lightbox";
+import { GradientBars } from "@/components/ui/gradient-bars";
 
 const valueList = [
   {
@@ -134,19 +135,19 @@ export function MissionSection() {
           </Link>
       </div>
       <div className="space-y-6">
-        <div className="overflow-hidden bg-white rounded-lg shadow-lg">
+        <div className="overflow-hidden bg-white  shadow-lg">
           <Image
             src="/assets/8eb25501-7cc0-4ccf-a906-3a2a747836fd.jpg"
             alt="Creative direction"
             width={800}
             height={600}
             sizes="(max-width: 768px) 100vw, 50vw"
-            className="h-[360px] w-full object-cover sm:h-[420px] rounded-lg"
+            className="h-[360px] w-full object-cover sm:h-[420px] "
             loading="lazy"
             quality={85}
           />
         </div>
-        <div className="border border-[var(--lavender)] p-6 bg-white rounded-lg shadow-lg">
+        <div className="border border-[var(--lavender)] p-6 bg-white  shadow-lg">
           <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             Our services
           </p>
@@ -174,14 +175,14 @@ export function FeaturedWorkSection() {
         Glimpses from the studio floor.
       </h3>
 
-      <div className="mt-10 overflow-hidden bg-white rounded-lg shadow-lg">
+      <div className="mt-10 overflow-hidden bg-white  shadow-lg">
         <Image
           src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80"
           alt="Featured project"
           width={1400}
           height={800}
           sizes="(max-width: 768px) 100vw, 100vw"
-          className="h-[320px] w-full object-cover sm:h-[420px] rounded-lg"
+          className="h-[320px] w-full object-cover sm:h-[420px] "
           priority
           quality={85}
         />
@@ -236,48 +237,87 @@ export function GallerySection() {
         </div>
         <div 
           ref={ref}
-          className={`mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3 transition-all duration-700 ${
+          className={`mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3 transition-all duration-700 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
           {studioGallery.map((item, index) => (
-            <article
+            <div
               key={item.artist}
-              className="space-y-3 border border-[var(--lavender)] bg-white p-4 shadow-lg cursor-pointer group hover:border-[var(--primary)] transition-all duration-300 rounded-lg"
-              onClick={() => {
-                setCurrentImageIndex(index);
-                setLightboxOpen(true);
-              }}
+              className="group"
             >
-              <div className="overflow-hidden relative rounded-lg">
-                <Image
-                  src={item.src}
-                  alt={item.artist}
-                  width={500}
-                  height={500}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  loading="lazy"
-                  quality={85}
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                  <svg 
-                    className="h-12 w-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                  </svg>
+              {/* Photo Frame Effect - Image inside frame */}
+              <div 
+                className="relative w-full cursor-pointer transition-transform duration-500 group-hover:scale-[1.02]"
+                onClick={() => {
+                  setCurrentImageIndex(index);
+                  setLightboxOpen(true);
+                }}
+              >
+                {/* Physical Frame Border - Purple outer border */}
+                <div 
+                  className="relative"
+                  style={{
+                    background: 'linear-gradient(145deg, rgba(61, 35, 80, 0.95) 0%, rgba(45, 25, 60, 0.98) 50%, rgba(61, 35, 80, 0.95) 100%)',
+                    boxShadow: `
+                      0 20px 60px rgba(0, 0, 0, 0.15),
+                      0 8px 16px rgba(0, 0, 0, 0.1),
+                      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                      inset 0 -1px 0 rgba(0, 0, 0, 0.2)
+                    `,
+                    border: '1px solid rgba(0, 0, 0, 0.15)',
+                    padding: '12px'
+                  }}
+                >
+                  {/* Frame inner bevel/edge highlight */}
+                  <div 
+                    className="absolute inset-0"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 30%, transparent 70%, rgba(0, 0, 0, 0.2) 100%)',
+                      pointerEvents: 'none'
+                    }}
+                  ></div>
+                  
+                  {/* Gold stroke border */}
+                  <div 
+                    className="absolute inset-3 pointer-events-none z-10"
+                    style={{
+                      border: '4px solid var(--accent-gold)',
+                      opacity: 0.9
+                    }}
+                  ></div>
+                  
+                  {/* Image Container - the actual photo */}
+                  <div className="relative aspect-[4/3] overflow-hidden" style={{ 
+                    margin: '12px',
+                    boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.15)'
+                  }}>
+                    <Image
+                      src={item.src}
+                      alt={item.artist}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
+                      quality={85}
+                    />
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                      <svg 
+                        className="h-12 w-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                      </svg>
+                    </div>
+                    {/* Subtle gradient overlay for depth */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 via-transparent to-[var(--accent-gold)]/5 pointer-events-none"></div>
+                  </div>
                 </div>
               </div>
-              <div>
-                <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-                  {item.focus}
-                </p>
-                <p className="text-xl font-semibold text-[var(--primary)]">{item.artist}</p>
-              </div>
-            </article>
+            </div>
           ))}
         </div>
       </section>
@@ -388,21 +428,26 @@ export function StudioHeroStats() {
   }, [rotatingImages.length]);
 
   return (
-    <section className="bg-white py-12 sm:py-16 lg:py-20">
+    <section 
+      className="py-12 sm:py-16 lg:py-20"
+      style={{
+        background: 'linear-gradient(180deg, var(--primary) 0%, oklch(0.50 0.06 312) 50%, oklch(0.70 0.05 312) 100%)'
+      }}
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="mb-8 lg:mb-12">
           <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:gap-12 items-start">
             {/* Left: Title */}
             <div>
-              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--primary)] leading-tight mb-4">
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
                 Professional Studio Spaces For Every Creative Vision
               </h2>
             </div>
             
             {/* Right: Description */}
             <div className="flex flex-col justify-center">
-              <p className="text-base sm:text-lg text-[var(--muted-plum)] leading-relaxed">
+              <p className="text-base sm:text-lg text-white/90 leading-relaxed">
                 Discover our East London studio spaces, designed for photographers, content creators, and brands. 
                 From seamless white cycloramas to styled lifestyle corners, every space comes fully equipped with 
                 professional lighting, backdrops, and amenities—ready for your next shoot.
@@ -415,15 +460,15 @@ export function StudioHeroStats() {
             {stats.map((stat, index) => (
               <div 
                 key={index} 
-                className="text-center border-t-2 border-[var(--lavender)] pt-4"
+                className="text-center border-t-2 border-white/30 pt-4"
               >
                 <p className="font-heading text-3xl sm:text-4xl font-bold text-[var(--accent-gold)] mb-1">
                   {stat.value}
                 </p>
-                <p className="text-xs sm:text-sm uppercase tracking-wider text-[var(--muted-plum)] font-medium">
+                <p className="text-xs sm:text-sm uppercase tracking-wider text-white/80 font-medium">
                   {stat.label}
                 </p>
-                <p className="text-xs sm:text-sm text-[var(--muted-plum)]">
+                <p className="text-xs sm:text-sm text-white/70">
                   {stat.sublabel}
                 </p>
               </div>
@@ -432,28 +477,71 @@ export function StudioHeroStats() {
         </div>
 
         {/* Large Hero Image with Rotation and CTA Overlay */}
-        <div className="group relative aspect-[16/9] lg:aspect-[21/9] overflow-hidden rounded-lg cursor-pointer">
-          {rotatingImages.map((src, index) => (
-            <div
-              key={src}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                index === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0"
-              }`}
-            >
-              <Image
-                src={src}
-                alt={`R&T Spaces Studio ${index + 1} - Professional content creation environment`}
-                fill
-                sizes="100vw"
-                className="object-cover"
-                priority={index === 0}
-                quality={90}
-              />
+        <div className="group relative aspect-[16/9] lg:aspect-[21/9] cursor-pointer">
+          <div className="relative w-full h-full">
+            {/* Photo Frame Effect - Realistic physical frame */}
+            <div className="relative w-full h-full">
+              {/* Physical Frame Border - Purple outer border */}
+              <div 
+                className="absolute inset-0 p-8 md:p-12 lg:p-16"
+                style={{
+                  background: 'linear-gradient(145deg, rgba(61, 35, 80, 0.95) 0%, rgba(45, 25, 60, 0.98) 50%, rgba(61, 35, 80, 0.95) 100%)',
+                  boxShadow: `
+                    0 20px 60px rgba(0, 0, 0, 0.3),
+                    0 8px 16px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.3)
+                  `,
+                  border: '1px solid rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                {/* Frame inner bevel/edge highlight */}
+                <div 
+                  className="absolute inset-0"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 30%, transparent 70%, rgba(0, 0, 0, 0.2) 100%)',
+                    pointerEvents: 'none'
+                  }}
+                ></div>
+                
+                {/* Gold stroke border */}
+                <div 
+                  className="absolute inset-4 pointer-events-none z-10"
+                  style={{
+                    border: '6px solid var(--accent-gold)',
+                    opacity: 0.9
+                  }}
+                ></div>
+                
+                {/* Image Container - the actual photo */}
+                <div className="absolute inset-4 overflow-hidden" style={{ boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.15)' }}>
+                  {rotatingImages.map((src, index) => (
+                    <div
+                      key={src}
+                      className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                        index === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+                      }`}
+                    >
+                      <Image
+                        src={src}
+                        alt={`R&T Spaces Studio ${index + 1} - Professional content creation environment`}
+                        fill
+                        sizes="100vw"
+                        className="object-cover"
+                        priority={index === 0}
+                        quality={90}
+                      />
+                    </div>
+                  ))}
+                  {/* Subtle gradient overlay for depth */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/2 via-transparent to-[var(--accent-gold)]/2 pointer-events-none"></div>
+                </div>
+              </div>
             </div>
-          ))}
+          </div>
           
           {/* Overlay with CTAs - Visible on mobile, enhanced on hover */}
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/0 md:bg-black/0 md:group-hover:bg-black/40 transition-all duration-500">
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/0 md:bg-black/0 md:group-hover:bg-black/40 transition-all duration-500">
             <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 px-4 sm:px-6 opacity-0 md:opacity-0 md:group-hover:opacity-100 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500">
               <Link 
                 href="/book-online"
@@ -474,7 +562,7 @@ export function StudioHeroStats() {
               </Link>
               <Link 
                 href="/studio"
-                className="group/btn whitespace-nowrap bg-[var(--accent-gold)] backdrop-blur-sm border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 rounded-lg font-medium text-sm sm:text-sm tracking-[0.05em]"
+                className="group/btn whitespace-nowrap bg-[var(--accent-gold)] backdrop-blur-sm border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4  font-medium text-sm sm:text-sm tracking-[0.05em]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="flex items-center gap-2">
@@ -515,7 +603,7 @@ export function StudioHeroStats() {
               </Link>
               <Link 
                 href="/studio"
-                className="group/btn w-full text-center bg-[var(--accent-gold)] border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 rounded-lg font-medium text-sm tracking-[0.05em]"
+                className="group/btn w-full text-center bg-[var(--accent-gold)] border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4  font-medium text-sm tracking-[0.05em]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="flex items-center justify-center gap-2">
@@ -541,7 +629,7 @@ export function StudioHeroStats() {
 
 export function VideoCarouselSection() {
   return (
-    <section className="bg-[var(--base)] px-4 py-12 sm:px-6 lg:px-8">
+    <section className="px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {videoCarouselImages.map((src, index) => (
@@ -584,7 +672,7 @@ export function Bookings2025Section() {
   return (
     <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-16">
-        <div className="space-y-6 bg-white border border-[var(--lavender)] p-8 lg:p-12 shadow-lg rounded-lg">
+        <div className="space-y-6 bg-white border border-[var(--lavender)] p-8 lg:p-12 shadow-lg ">
           <p className="font-heading text-3xl font-bold text-[var(--primary)] sm:text-4xl">
             Ready to create? Book your 2025 studio time now.
           </p>
@@ -612,13 +700,13 @@ export function Bookings2025Section() {
         <div className="hidden lg:flex flex-col justify-center gap-8">
           <div className="grid grid-cols-3 gap-6">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center p-6 bg-white border-2 border-[var(--lavender)] rounded-lg shadow-lg">
+              <div key={index} className="text-center p-6 bg-white border-2 border-[var(--lavender)]  shadow-lg">
                 <p className="font-heading text-3xl font-bold text-[var(--primary)] mb-2">{stat.value}</p>
                 <p className="text-sm text-[var(--muted-plum)] uppercase tracking-wider">{stat.label}</p>
               </div>
             ))}
           </div>
-          <div className="relative aspect-video overflow-hidden rounded-lg">
+          <div className="relative aspect-video overflow-hidden ">
             <Image
               src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
               alt="Studio booking space"
@@ -675,7 +763,7 @@ export function HowItWorksSection() {
   const { ref, isVisible } = useScrollAnimation();
 
   return (
-    <section className="pt-24 sm:pt-32 lg:pt-40 pb-16 sm:pb-24 lg:pb-32" style={{ backgroundColor: '#FAF9F6' }}>
+    <section className="pb-16 sm:pb-24 lg:pb-32">
       {/* Full Width Banner */}
       <div 
         ref={ref}
@@ -696,57 +784,92 @@ export function HowItWorksSection() {
       {/* Content Section */}
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-12 md:gap-16 lg:gap-24 md:grid-cols-3">
+          <div className="space-y-20 md:space-y-28 lg:space-y-36">
           {steps.map((step, index) => {
             const StepCard = ({ step, index }: { step: typeof steps[0], index: number }) => {
               const { ref, isVisible } = useScrollAnimation({ threshold: 0.2 });
+              // Alternating layout: Step 1 (index 0) = text left, image right
+              //                    Step 2 (index 1) = image left, text right
+              //                    Step 3 (index 2) = text left, image right
+              const isEven = index % 2 === 0;
+              
               return (
                 <div 
                   ref={ref}
-                  className={`bg-white rounded-xl p-6 sm:p-8 lg:p-10 shadow-lg hover:shadow-xl transition-all duration-300 ${
-                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  className={`grid gap-8 md:gap-12 lg:gap-16 md:grid-cols-2 items-center transition-all duration-700 ${
+                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
                   }`}
                   style={{ 
-                    transitionDelay: `${index * 150}ms`,
-                    boxShadow: '0 8px 24px rgba(61, 35, 80, 0.12), 0 4px 12px rgba(61, 35, 80, 0.08)'
+                    transitionDelay: `${index * 200}ms`
                   }}
                 >
-                  <div className="space-y-8">
-                    {/* Step Number - More Elegant */}
-                    <div className="mb-6">
-                      <p 
-                        className="font-heading text-8xl sm:text-9xl font-bold leading-none"
-                        style={{ 
-                          color: 'var(--primary)',
-                          opacity: 0.15,
-                          lineHeight: '0.85'
-                        }}
-                      >
-                        {step.number}
-                      </p>
-                    </div>
-                    
-                    {/* Image */}
-                    <div className="relative aspect-square overflow-hidden group rounded-lg shadow-md">
-                      <Image
-                        src={step.image}
-                        alt={step.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                        loading="lazy"
-                        quality={85}
-                      />
-                    </div>
-                    
-                    {/* Content */}
+                  {/* Text Content - Left for even steps, Right for odd steps */}
+                  <div className={`space-y-6 ${isEven ? 'md:order-1' : 'md:order-2'}`}>
                     <div className="space-y-4">
-                      <h3 className="font-heading text-2xl sm:text-3xl font-bold text-[var(--primary)] leading-tight">
+                      <h3 className="font-script text-5xl sm:text-6xl lg:text-7xl font-bold text-[var(--primary)] leading-tight">
                         {step.title}
                       </h3>
-                      <p className="text-base sm:text-lg text-[var(--muted-plum)] leading-relaxed">
+                      <p className="text-lg sm:text-xl text-[var(--muted-plum)] leading-relaxed max-w-xl">
                         {step.description}
                       </p>
+                    </div>
+                  </div>
+                  
+                  {/* Image Content - Right for even steps, Left for odd steps */}
+                  <div className={`relative ${isEven ? 'md:order-2' : 'md:order-1'}`}>
+                    {/* Photo Frame Effect - Realistic physical frame */}
+                    <div className="relative w-full">
+                      {/* Physical Frame Border - Purple outer border */}
+                      <div 
+                        className="relative"
+                        style={{
+                          background: 'linear-gradient(145deg, rgba(61, 35, 80, 0.95) 0%, rgba(45, 25, 60, 0.98) 50%, rgba(61, 35, 80, 0.95) 100%)',
+                          boxShadow: `
+                            0 20px 60px rgba(0, 0, 0, 0.3),
+                            0 8px 16px rgba(0, 0, 0, 0.2),
+                            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                            inset 0 -1px 0 rgba(0, 0, 0, 0.3)
+                          `,
+                          border: '1px solid rgba(0, 0, 0, 0.2)',
+                          padding: '10px'
+                        }}
+                      >
+                        {/* Frame inner bevel/edge highlight */}
+                        <div 
+                          className="absolute inset-0"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 30%, transparent 70%, rgba(0, 0, 0, 0.2) 100%)',
+                            pointerEvents: 'none'
+                          }}
+                        ></div>
+                        
+                        {/* Gold stroke border */}
+                        <div 
+                          className="absolute inset-2.5 pointer-events-none z-10"
+                          style={{
+                            border: '4px solid var(--accent-gold)',
+                            opacity: 0.9
+                          }}
+                        ></div>
+                        
+                        {/* Image Container - the actual photo */}
+                        <div className="relative aspect-[16/10] overflow-hidden group" style={{ 
+                          margin: '10px',
+                          boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.15)'
+                        }}>
+                          <Image
+                            src={step.image}
+                            alt={step.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                            loading="lazy"
+                            quality={85}
+                          />
+                          {/* Subtle gradient overlay for depth */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 via-transparent to-[var(--accent-gold)]/5 pointer-events-none"></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -855,7 +978,7 @@ export function TestimonialSection() {
     <div className="bg-white p-8 shadow-[0_8px_32px_rgba(61,35,80,0.15)] mb-6 flex-shrink-0">
       {/* Avatar and Header */}
       <div className="flex items-center gap-4 mb-6">
-        <div className="relative h-12 w-12 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[var(--primary)]/30">
+        <div className="relative h-12 w-12  overflow-hidden flex-shrink-0 ring-2 ring-[var(--primary)]/30">
           <Image
             src={testimonial.avatar}
             alt={testimonial.author}
@@ -911,7 +1034,7 @@ export function TestimonialSection() {
             </p>
             <Link
               href="/book-online"
-              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 rounded-lg font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center w-full shadow-lg hover:shadow-xl"
+              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4  font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center w-full shadow-lg hover:shadow-xl"
             >
               Reserve Your Studio Session
             </Link>
@@ -951,20 +1074,20 @@ export function LatestNewsSection() {
           Latest News
         </h2>
         <div className="mt-12 grid gap-8 lg:grid-cols-2 lg:gap-12">
-          <div className="relative aspect-[4/3] overflow-hidden bg-white rounded-lg shadow-lg">
+          <div className="relative aspect-[4/3] overflow-hidden bg-white  shadow-lg">
             <Image
               src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80"
               alt="New studio room"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover rounded-lg"
+              className="object-cover "
               loading="lazy"
               quality={85}
             />
           </div>
           <div className="flex flex-col justify-center space-y-6">
             <div className="flex items-center gap-4 flex-wrap">
-              <span className="px-3 py-1 bg-[var(--primary)] text-white text-xs font-semibold uppercase tracking-wider rounded">
+              <span className="px-3 py-1 bg-[var(--primary)] text-white text-xs font-semibold uppercase tracking-wider ">
                 NEW STUDIO
               </span>
               <time className="text-sm text-[var(--muted-plum)]" dateTime="2024-12-01">
@@ -1076,7 +1199,7 @@ function AnimatedStatCard({ stat, isVisible }: { stat: StatType, isVisible: bool
   }, [isVisible, stat.value, stat.isDecimal]);
 
   return (
-    <div className="text-center p-8 bg-white rounded-lg border-2 border-[var(--lavender)] hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg">
+    <div className="text-center p-8 bg-white  border-2 border-[var(--lavender)] hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg">
       <p className="font-heading text-5xl font-bold text-[var(--primary)] mb-2">
         {count}{stat.suffix}
       </p>
@@ -1141,9 +1264,9 @@ export function WhyChooseUsSection() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="text-center space-y-4 p-6 bg-white border-2 border-[var(--lavender)] rounded-lg hover:border-[var(--primary)] transition-colors shadow-lg">
+            <div key={index} className="text-center space-y-4 p-6 bg-white border-2 border-[var(--lavender)]  hover:border-[var(--primary)] transition-colors shadow-lg">
               <div className="flex justify-center">
-                <div className="p-4 bg-[var(--primary)]/10 text-[var(--primary)] rounded-full">
+                <div className="p-4 bg-[var(--primary)]/10 text-[var(--primary)] ">
                   {feature.icon}
                 </div>
               </div>
@@ -1176,7 +1299,9 @@ export function StudioFeaturesSection() {
   return (
     <section 
       className="pt-16 md:pt-24 lg:pt-32 pb-16 md:pb-24 lg:pb-32"
-      style={{ backgroundColor: '#FAF9F6' }}
+      style={{
+        backgroundColor: 'oklch(0.70 0.05 312)'
+      }}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title Block - Left Aligned */}
@@ -1186,7 +1311,7 @@ export function StudioFeaturesSection() {
           </p>
           <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
             <span style={{ color: 'var(--primary)' }}>What&apos;s Included in Your </span>
-            <span className="font-script" style={{ color: 'var(--accent-gold)' }}>Session</span>
+            <span className="font-script text-white/80">Session</span>
           </h2>
         </div>
 
@@ -1195,21 +1320,58 @@ export function StudioFeaturesSection() {
           {/* Left Column - Large Editorial Image with Card Style */}
           <div className="relative">
             <div 
-              className="relative aspect-[4/3] overflow-hidden rounded-xl p-8 md:p-12"
-              style={{ 
-                backgroundColor: 'var(--card)',
-                boxShadow: 'var(--shadow-xl)'
-              }}
+              className="relative aspect-[4/3] "
             >
-              <Image
-                src="/assets/5448c683-ea0d-43cb-8ca6-c407b47ba93e.jpg"
-                alt="Professional studio setup with lighting equipment"
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover rounded-lg"
-                loading="lazy"
-                quality={90}
-              />
+              {/* Photo Frame Effect - Realistic physical frame */}
+              <div className="relative w-full h-full">
+                {/* Physical Frame Border - Purple outer border */}
+                <div 
+                  className="absolute inset-0  p-12 md:p-16"
+                  style={{
+                    background: 'linear-gradient(145deg, rgba(61, 35, 80, 0.95) 0%, rgba(45, 25, 60, 0.98) 50%, rgba(61, 35, 80, 0.95) 100%)',
+                    boxShadow: `
+                      0 20px 60px rgba(0, 0, 0, 0.3),
+                      0 8px 16px rgba(0, 0, 0, 0.2),
+                      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                      inset 0 -1px 0 rgba(0, 0, 0, 0.3)
+                    `,
+                    border: '1px solid rgba(0, 0, 0, 0.2)'
+                  }}
+                >
+                  {/* Frame inner bevel/edge highlight */}
+                  <div 
+                    className="absolute inset-0 "
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 30%, transparent 70%, rgba(0, 0, 0, 0.2) 100%)',
+                      pointerEvents: 'none'
+                    }}
+                  ></div>
+                  
+                  {/* Gold stroke border */}
+                  <div 
+                    className="absolute inset-4  pointer-events-none z-10"
+                    style={{
+                      border: '6px solid var(--accent-gold)',
+                      opacity: 0.9
+                    }}
+                  ></div>
+                  
+                  {/* Image Container - the actual photo */}
+                  <div className="absolute inset-4  overflow-hidden" style={{ boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.15)' }}>
+                      <Image
+                        src="/assets/5448c683-ea0d-43cb-8ca6-c407b47ba93e.jpg"
+                        alt="Professional studio setup with lighting equipment"
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        className="object-cover"
+                        loading="lazy"
+                        quality={90}
+                      />
+                      {/* Subtle gradient overlay for depth */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/2 via-transparent to-[var(--accent-gold)]/2 pointer-events-none"></div>
+                    </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1226,7 +1388,7 @@ export function StudioFeaturesSection() {
                   </div>
                   <div>
                     <p className="text-lg font-semibold text-[var(--primary)] mb-2">{feature.label}</p>
-                    <p className="text-base text-[var(--muted-plum)] leading-relaxed">{feature.detail}</p>
+                    <p className="text-base text-white/80 leading-relaxed">{feature.detail}</p>
                   </div>
                 </div>
               ))}
@@ -1238,7 +1400,7 @@ export function StudioFeaturesSection() {
                 className="btn-primary w-full text-center"
                 style={{
                   boxShadow: '0 4px 16px rgba(61, 35, 80, 0.2), 0 2px 8px rgba(61, 35, 80, 0.1)',
-                  borderRadius: '0.75rem'
+                  borderRadius: '0'
                 }}
               >
                 Book Now
@@ -1248,7 +1410,7 @@ export function StudioFeaturesSection() {
                 className="btn-secondary w-full text-center"
                 style={{
                   boxShadow: '0 2px 12px rgba(61, 35, 80, 0.12), 0 1px 4px rgba(61, 35, 80, 0.08)',
-                  borderRadius: '0.75rem'
+                  borderRadius: '0'
                 }}
               >
                 Contact Us
@@ -1317,9 +1479,16 @@ export function EmailSubscriptionSection() {
   };
 
   return (
-    <section className="bg-white px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl text-center">
-        <h2 className="text-5xl font-normal text-[var(--accent-gold)] sm:text-6xl md:text-7xl mb-8">
+    <section 
+      className="relative px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8 overflow-hidden"
+      style={{ backgroundColor: 'var(--hero-background)' }}
+    >
+      {/* Gradient Bars Background */}
+      <GradientBars colors={['var(--primary)', 'transparent']} />
+      
+      {/* Content */}
+      <div className="relative z-10 mx-auto max-w-4xl text-center">
+        <h2 className="text-5xl font-normal text-[var(--primary)] sm:text-6xl md:text-7xl mb-8">
           Join the <span className="font-script">R&amp;T</span> Creator Circle
         </h2>
         <p className="text-xl text-[var(--primary)] mb-16 leading-relaxed max-w-2xl mx-auto">
@@ -1337,7 +1506,7 @@ export function EmailSubscriptionSection() {
               }}
               required
               disabled={isSubmitting}
-              className={`w-full border border-[var(--lavender)] bg-white px-6 py-5 text-lg text-[var(--muted-plum)] rounded-lg transition-colors focus:outline-none focus:border-[var(--primary)] ${
+              className={`w-full border border-white/30 bg-white/95 backdrop-blur-sm px-6 py-5 text-lg text-[var(--primary)] placeholder:text-[var(--primary)]/70 transition-colors focus:outline-none focus:border-white focus:bg-white ${
                 status === "error"
                   ? "border-red-500 focus:border-red-500"
                   : status === "success"
@@ -1362,8 +1531,8 @@ export function EmailSubscriptionSection() {
           </button>
         </form>
         {status === "success" && (
-          <div className="mt-8 p-6 border border-[var(--lavender)] bg-white rounded-lg">
-            <p className="text-lg text-[var(--muted-plum)]">Thank you for joining. Welcome to the circle.</p>
+          <div className="mt-8 p-6 border border-white/30 bg-white/95 backdrop-blur-sm">
+            <p className="text-lg text-[var(--primary)]">Thank you for joining. Welcome to the circle.</p>
           </div>
         )}
       </div>
@@ -1485,8 +1654,8 @@ export function SiteFooter() {
         </div>
       </div>
 
-      {/* Lower footer - white */}
-      <div className="bg-white px-4 py-8 text-sm text-[var(--muted-plum)] sm:px-6 lg:px-8">
+      {/* Lower footer */}
+      <div className="px-4 py-8 text-sm text-[var(--muted-plum)] sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="pt-8 border-t border-[var(--lavender)] text-center">
             <p className="text-sm text-[var(--muted-plum)]">

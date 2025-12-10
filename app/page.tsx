@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <main id="main-content" className="w-full bg-[var(--base)]">
+      <main id="main-content" className="w-full">
         <StudioHeroStats />
         <StudioFeaturesSection />
         <HowItWorksSection />
