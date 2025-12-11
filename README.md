@@ -17,10 +17,8 @@ STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxxxxxxx
 STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxx
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
-# Google Calendar Integration
-GOOGLE_CLIENT_EMAIL=your-service-account@project.iam.gserviceaccount.com
-GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-GOOGLE_CALENDAR_ID=your-calendar-id@group.calendar.google.com
+# Calendly Integration (for auto-booking)
+CALENDLY_SCHEDULING_LINK=https://calendly.com/your-username/event-type
 ```
 
 2. **Resend Setup** (for email notifications):
@@ -37,21 +35,15 @@ GOOGLE_CALENDAR_ID=your-calendar-id@group.calendar.google.com
      - Events: `checkout.session.completed`
      - Copy the webhook secret as `STRIPE_WEBHOOK_SECRET`
 
-4. **Google Calendar Setup** (for auto-booking):
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project or select existing
-   - Enable the Google Calendar API
-   - Create a Service Account:
-     - Go to "IAM & Admin" > "Service Accounts"
-     - Create a new service account
-     - Download the JSON key file
-     - Extract `client_email` as `GOOGLE_CLIENT_EMAIL`
-     - Extract `private_key` as `GOOGLE_PRIVATE_KEY` (keep the quotes and newlines)
-   - Share your calendar with the service account email:
-     - Open Google Calendar
-     - Settings > "Add calendar" > "Create new calendar" (or use existing)
-     - Share the calendar with the service account email (give "Make changes to events" permission)
-     - Copy the calendar ID (found in calendar settings) as `GOOGLE_CALENDAR_ID`
+4. **Calendly Setup** (for auto-booking):
+   - Sign up at [calendly.com](https://calendly.com) if you haven't already
+   - Create an event type in your Calendly account (e.g., "Studio Booking")
+   - Get your scheduling link:
+     - Go to your Calendly event type settings
+     - Copy your public Calendly scheduling link
+     - Format: `https://calendly.com/your-username/event-type`
+     - Add as `CALENDLY_SCHEDULING_LINK` in your `.env.local`
+   - After payment, customers will receive an email with a link to confirm their booking time in Calendly
 
 ### Running the Development Server
 
@@ -98,7 +90,7 @@ The booking system offers two booking options:
 - Payment processed securely
 - **Automated workflow triggers:**
   1. ✅ Booking confirmed automatically
-  2. ✅ Calendar event created in Google Calendar
+  2. ✅ Calendar event created in Calendly
   3. ✅ Calendar invite sent to customer
   4. ✅ Confirmation emails sent to both parties
   5. ✅ Booking saved with payment details
@@ -108,10 +100,10 @@ The booking system offers two booking options:
 1. Customer fills out form and selects "Pay & Book Now"
 2. Redirected to Stripe Checkout for secure payment
 3. After successful payment, Stripe webhook triggers:
-   - Booking status updated to "confirmed"
-   - Google Calendar event created automatically
+   - Booking saved to database
+   - Calendly event created automatically
    - Email confirmations sent
-   - Calendar invite sent to customer
+   - Calendar invite sent to customer (via Calendly)
 4. Customer redirected back with success message
 
 ### Pricing

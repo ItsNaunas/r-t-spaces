@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { headers } from 'next/headers';
+import { saveBooking } from '@/lib/bookingStore';
+import { sendBookingNotification } from '@/lib/email';
+import { createCalendlyEvent } from '@/lib/calendly';
 
 export async function POST(request: Request) {
   try {
@@ -47,11 +50,46 @@ export async function POST(request: Request) {
         const session = event.data.object as Stripe.Checkout.Session;
         console.log('Payment successful:', session.id);
         
-        // Here you could:
-        // - Send confirmation emails
-        // - Update database
-        // - Add to calendar
-        // - Trigger other business logic
+        // Extract booking data from session metadata
+        const bookingData = {
+          name: session.metadata?.customerName || session.customer_email || 'Unknown',
+          email: session.metadata?.customerEmail || session.customer_email || '',
+          date: session.metadata?.bookingDate || undefined,
+          hours: session.metadata?.bookingHours || undefined,
+          notes: session.metadata?.bookingNotes || undefined,
+        };
+
+        // Validate required fields
+        if (!bookingData.name || !bookingData.email) {
+          console.error('Missing required booking data:', bookingData);
+          break;
+        }
+
+        try {
+          // Save booking to database
+          const savedBooking = await saveBooking(bookingData);
+          console.log('Booking saved:', savedBooking);
+
+          // Create Calendly scheduling link (non-blocking - don't fail if it fails)
+          const calendlyLink = await createCalendlyEvent(savedBooking).catch((error) => {
+            console.error('Calendly link generation failed (booking still saved):', error);
+            return null;
+          });
+
+          // Send email notifications with Calendly link (non-blocking - don't fail if email fails)
+          sendBookingNotification({
+            ...savedBooking,
+            calendlyLink,
+          }).catch((error) => {
+            console.error('Email notification failed (booking still saved):', error);
+          });
+
+          console.log('Booking processed successfully', calendlyLink ? 'with Calendly link' : '');
+        } catch (error) {
+          console.error('Error processing booking:', error);
+          // Don't throw - webhook should still return success to Stripe
+          // Log the error for manual processing
+        }
         
         break;
       }

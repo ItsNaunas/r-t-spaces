@@ -14,14 +14,17 @@ export async function POST(request: Request) {
       apiVersion: '2025-11-17.clover',
     });
     const body = await request.json();
-    const { amount, name, email } = body;
+    const { amount, name, email, date, hours, notes } = body;
 
-    if (!amount || !name || !email) {
+    if (!name || !email) {
       return NextResponse.json(
-        { error: 'Missing required fields: amount, name, email' },
+        { error: 'Missing required fields: name, email' },
         { status: 400 }
       );
     }
+
+    // Use default amount if not provided (you can adjust this)
+    const bookingAmount = amount || 100; // Default to $100 if not specified
 
     // Create a Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
@@ -34,7 +37,7 @@ export async function POST(request: Request) {
               name: 'Studio Booking',
               description: `Booking for ${name}`,
             },
-            unit_amount: Math.round(amount * 100), // Convert to cents
+            unit_amount: Math.round(bookingAmount * 100), // Convert to cents
           },
           quantity: 1,
         },
@@ -46,6 +49,9 @@ export async function POST(request: Request) {
       metadata: {
         customerName: name,
         customerEmail: email,
+        bookingDate: date || '',
+        bookingHours: hours || '',
+        bookingNotes: notes || '',
       },
     });
 
