@@ -86,7 +86,14 @@ export function SiteHeader() {
       } bg-[var(--plum)] backdrop-blur-md shadow-sm`}
     >
       <div className={`mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8 relative transition-all duration-300`}>
-        <nav className={`hidden items-center gap-4 lg:gap-6 text-xs font-semibold uppercase tracking-[0.3em] ${navTextColor}/80 md:flex flex-1`}>
+        <Link
+          href="/"
+          className={`text-lg font-bold ${navTextColor} hover:opacity-80 transition-opacity whitespace-nowrap`}
+          aria-label="R&T Spaces Home"
+        >
+          R&T Spaces
+        </Link>
+        <nav className={`hidden items-center gap-4 lg:gap-6 text-xs font-semibold uppercase tracking-[0.3em] ${navTextColor}/80 md:flex flex-1 justify-center`}>
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
