@@ -966,19 +966,14 @@ export function TestimonialSection() {
     </div>
   );
 
-  // Split testimonials into two rows for marquee
-  const firstRow = testimonials.slice(0, Math.ceil(testimonials.length / 2));
-  const secondRow = testimonials.slice(Math.ceil(testimonials.length / 2));
-
-  // Duplicate arrays for seamless loop
-  const firstRowDuplicated = [...firstRow, ...firstRow];
-  const secondRowDuplicated = [...secondRow, ...secondRow];
+  // Duplicate testimonials for seamless loop
+  const duplicatedTestimonials = [...testimonials, ...testimonials];
 
   const TestimonialCard = ({ testimonial }: { testimonial: typeof testimonials[0] }) => (
-    <div className="bg-white p-8 shadow-[0_8px_32px_rgba(61,35,80,0.15)] mb-6 flex-shrink-0">
+    <div className="bg-white p-6 sm:p-8 shadow-[0_8px_32px_rgba(61,35,80,0.15)] flex-shrink-0 w-[85vw] sm:w-[400px] lg:w-[450px]">
       {/* Avatar and Header */}
       <div className="flex items-center gap-4 mb-6">
-        <div className="relative h-12 w-12  overflow-hidden flex-shrink-0 ring-2 ring-[var(--primary)]/30">
+        <div className="relative h-12 w-12 overflow-hidden flex-shrink-0 ring-2 ring-[var(--primary)]/30">
           <Image
             src={testimonial.avatar}
             alt={testimonial.author}
@@ -1006,7 +1001,7 @@ export function TestimonialSection() {
       </div>
 
       {/* Quote */}
-      <p className="font-heading text-xl text-[var(--primary)] mb-6 leading-relaxed">
+      <p className="font-heading text-lg sm:text-xl text-[var(--primary)] mb-6 leading-relaxed">
         &quot;{testimonial.quote}&quot;
       </p>
 
@@ -1020,9 +1015,9 @@ export function TestimonialSection() {
   return (
     <section className="bg-[var(--primary)] px-4 py-16 sm:py-24 lg:py-32 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-16 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
-          {/* Left Column: Editorial Content */}
-          <div className="flex flex-col justify-center space-y-8">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-16 lg:items-center">
+          {/* Left Column: Editorial Content - Desktop only */}
+          <div className="hidden lg:flex flex-col justify-center space-y-8">
             <p className="text-sm uppercase tracking-[0.4em] text-white/80">
               Community Voices
             </p>
@@ -1034,31 +1029,50 @@ export function TestimonialSection() {
             </p>
             <Link
               href="/book-online"
-              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4  font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center w-full shadow-lg hover:shadow-xl"
+              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center w-full shadow-lg hover:shadow-xl"
             >
               Reserve Your Studio Session
             </Link>
           </div>
 
-          {/* Right Column: Two-Row Vertical Marquee */}
-          <div className="relative flex h-[600px] w-full flex-row items-center justify-center gap-6 overflow-hidden hover-scroll-pause">
-            {/* First Column - Moving Down */}
-            <div className="flex flex-col animate-marquee-vertical">
-              {firstRowDuplicated.map((testimonial, index) => (
-                <TestimonialCard key={`first-${index}`} testimonial={testimonial} />
-              ))}
-            </div>
+          {/* Mobile Header - Shown only on mobile */}
+          <div className="lg:hidden mb-8">
+            <p className="text-sm uppercase tracking-[0.4em] text-white/80 mb-4">
+              Community Voices
+            </p>
+            <h2 className="font-heading text-3xl sm:text-4xl leading-tight text-white mb-4">
+              What creators are saying about R&T Spaces
+            </h2>
+            <p className="text-base sm:text-lg text-white/80 leading-relaxed">
+              From portrait sessions to brand launches, our community of photographers and creators share their experiences working in our East London studio.
+            </p>
+          </div>
 
-            {/* Second Column - Moving Up */}
-            <div className="flex flex-col animate-marquee-vertical-reverse">
-              {secondRowDuplicated.map((testimonial, index) => (
-                <TestimonialCard key={`second-${index}`} testimonial={testimonial} />
-              ))}
-            </div>
-
+          {/* Right Column: Horizontal Marquee - Both mobile and desktop */}
+          <div className="relative overflow-hidden lg:min-h-[500px]">
             {/* Gradient Overlays */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-[var(--primary)]"></div>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[var(--primary)]"></div>
+            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-[var(--primary)] to-transparent z-10"></div>
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-[var(--primary)] to-transparent z-10"></div>
+            
+            {/* Marquee Container */}
+            <div 
+              className="flex gap-6 animate-marquee hover-scroll-pause" 
+              style={{ width: 'max-content' }}
+            >
+              {duplicatedTestimonials.map((testimonial, index) => (
+                <TestimonialCard key={`testimonial-${index}`} testimonial={testimonial} />
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile CTA Button - Shown only on mobile */}
+          <div className="lg:hidden mt-8 text-center">
+            <Link
+              href="/book-online"
+              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center shadow-lg hover:shadow-xl"
+            >
+              Reserve Your Studio Session
+            </Link>
           </div>
         </div>
       </div>
