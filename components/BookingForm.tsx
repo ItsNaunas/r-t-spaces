@@ -171,7 +171,7 @@ export function BookingForm() {
       />
 
       {/* Payment Mode Selection */}
-      <div className="border-t border-[var(--lavender)]/30 pt-6 space-y-5">
+      <div className="border-t border-[var(--primary)]/30 pt-6 space-y-5">
         <label className="block text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[var(--muted-plum)]">
           Booking Type
         </label>
@@ -179,7 +179,7 @@ export function BookingForm() {
           <label className={`group flex items-start gap-4 p-5 border-2 cursor-pointer transition-all duration-300 ${
             paymentMode === "request" 
               ? "border-[var(--primary)] bg-[var(--primary)]/5" 
-              : "border-[var(--lavender)]/30 hover:border-[var(--primary)]/50 bg-white"
+              : "border-[var(--primary)]/40 hover:border-[var(--primary)]/70 bg-white"
           }`}>
             <div className="relative flex-shrink-0 mt-0.5">
               <input
@@ -214,7 +214,7 @@ export function BookingForm() {
           <label className={`group flex items-start gap-4 p-5 border-2 cursor-pointer transition-all duration-300 ${
             paymentMode === "pay" 
               ? "border-[var(--primary)] bg-[var(--primary)]/5" 
-              : "border-[var(--lavender)]/30 hover:border-[var(--primary)]/50 bg-white"
+              : "border-[var(--primary)]/40 hover:border-[var(--primary)]/70 bg-white"
           }`}>
             <div className="relative flex-shrink-0 mt-0.5">
               <input
@@ -315,7 +315,7 @@ function Field({ label, ...props }: FieldProps) {
       </label>
       <input
         {...props}
-        className="w-full border-2 border-[var(--lavender)]/30 bg-white px-4 py-3.5 text-base text-[var(--primary)] placeholder:text-[var(--muted-plum)]/50 outline-none transition-all duration-300 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:bg-white"
+        className="w-full border-2 border-[var(--primary)]/40 bg-white px-4 py-3.5 text-base text-[var(--primary)] placeholder:text-[var(--muted-plum)]/50 outline-none transition-all duration-300 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:bg-white"
         style={{ fontSize: '16px' }}
       />
     </div>
@@ -334,7 +334,7 @@ function Textarea({ label, ...props }: TextareaProps) {
       </label>
       <textarea
         {...props}
-        className="w-full border-2 border-[var(--lavender)]/30 bg-white px-4 py-3.5 text-base text-[var(--primary)] placeholder:text-[var(--muted-plum)]/50 outline-none transition-all duration-300 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:bg-white resize-y"
+        className="w-full border-2 border-[var(--primary)]/40 bg-white px-4 py-3.5 text-base text-[var(--primary)] placeholder:text-[var(--muted-plum)]/50 outline-none transition-all duration-300 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:bg-white resize-y"
         style={{ fontSize: '16px' }}
       />
     </div>

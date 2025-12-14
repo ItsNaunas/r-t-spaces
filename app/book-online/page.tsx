@@ -74,7 +74,7 @@ export default function BookOnlinePage({
           <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             Book Online
           </p>
-          <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl lg:text-6xl">
+          <h1 className="font-heading text-5xl text-[var(--primary)] sm:text-6xl lg:text-7xl">
             Reserve Your Studio Time
           </h1>
           <p className="max-w-3xl text-lg text-[var(--muted-plum)]">

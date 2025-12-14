@@ -32,7 +32,7 @@ export default function GalleryPage() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { ref: headerRef, isVisible: headerVisible } = useScrollAnimation();
-  const { ref: galleryRef, isVisible: galleryVisible } = useScrollAnimation({ threshold: 0.1 });
+  const { ref: galleryRef } = useScrollAnimation({ threshold: 0.1 });
 
   return (
     <div className="bg-[var(--base)]">
@@ -53,7 +53,7 @@ export default function GalleryPage() {
             <p className="text-sm uppercase tracking-[0.4em] text-[var(--primary)]/80 mb-4 sm:mb-6">
               Gallery
             </p>
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-[var(--primary)] leading-tight mb-6 sm:mb-8">
+            <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl text-[var(--primary)] leading-tight mb-6 sm:mb-8">
               Scenes from recent bookings
             </h1>
             <p className="text-lg sm:text-xl text-[var(--primary)]/90 leading-relaxed max-w-3xl">
@@ -147,44 +147,9 @@ export default function GalleryPage() {
                               }}
                               aria-label={`View ${item.focus} by ${item.artist}`}
                             >
-                              {/* Physical Frame Border - Purple outer border */}
-                              <div 
-                                className="relative"
-                                style={{
-                                  background: 'linear-gradient(145deg, rgba(61, 35, 80, 0.95) 0%, rgba(45, 25, 60, 0.98) 50%, rgba(61, 35, 80, 0.95) 100%)',
-                                  boxShadow: `
-                                    0 20px 60px rgba(0, 0, 0, 0.15),
-                                    0 8px 16px rgba(0, 0, 0, 0.1),
-                                    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                                    inset 0 -1px 0 rgba(0, 0, 0, 0.2)
-                                  `,
-                                  border: '1px solid rgba(0, 0, 0, 0.15)',
-                                  padding: '12px'
-                                }}
-                              >
-                                {/* Frame inner bevel/edge highlight */}
-                                <div 
-                                  className="absolute inset-0"
-                                  style={{
-                                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 30%, transparent 70%, rgba(0, 0, 0, 0.2) 100%)',
-                                    pointerEvents: 'none'
-                                  }}
-                                ></div>
-                                
-                                {/* Gold stroke border */}
-                                <div 
-                                  className="absolute inset-3 pointer-events-none z-10"
-                                  style={{
-                                    border: '4px solid var(--accent-gold)',
-                                    opacity: 0.9
-                                  }}
-                                ></div>
-                                
-                                {/* Image Container - the actual photo */}
-                                <div className="relative aspect-[4/3] overflow-hidden" style={{ 
-                                  margin: '12px',
-                                  boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.15)'
-                                }}>
+                              {/* Purple frame */}
+                              <div className="relative w-full h-full bg-white shadow-2xl overflow-hidden border-8" style={{ borderColor: 'var(--primary)' }}>
+                                <div className="relative aspect-[4/3] overflow-hidden">
                                   <Image
                                     src={item.src}
                                     alt={item.focus}
@@ -206,8 +171,6 @@ export default function GalleryPage() {
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
                                     </svg>
                                   </div>
-                                  {/* Subtle gradient overlay for depth */}
-                                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 via-transparent to-[var(--accent-gold)]/5 pointer-events-none"></div>
                                 </div>
                               </div>
                             </div>
@@ -223,7 +186,7 @@ export default function GalleryPage() {
                                 </p>
                               </div>
                               <Link 
-                                href="/book-online" 
+                                href="/#contact" 
                                 className="inline-block btn-primary btn-small"
                               >
                                 Check Availability

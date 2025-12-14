@@ -80,10 +80,10 @@ export default function ServicesPage() {
               <p className="text-sm uppercase tracking-[0.4em] text-[var(--primary)]/80">
                 Packages / Pricing
               </p>
-              <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl lg:text-6xl leading-tight">
+              <h1 className="font-heading text-5xl text-[var(--primary)] sm:text-6xl lg:text-7xl leading-tight">
                 Simple Pricing for
                 <br />
-                <span className="font-script italic text-5xl sm:text-6xl lg:text-7xl">
+                <span className="font-heading text-6xl sm:text-7xl lg:text-8xl">
                   Every Creative Need
                 </span>
               </h1>
@@ -114,7 +114,7 @@ export default function ServicesPage() {
                     </svg>
                   </span>
                 </button>
-                <Link href="/book-online" className="inline-flex items-center justify-center border-2 border-white bg-white px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-medium text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:border-white hover:scale-[1.02] hover:shadow-lg">
+                <Link href="/#contact" className="inline-flex items-center justify-center border-2 border-white bg-white px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-medium text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:border-white hover:scale-[1.02] hover:shadow-lg">
                   Book Now
                 </Link>
               </div>
@@ -128,7 +128,7 @@ export default function ServicesPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="text-center space-y-4 mb-10">
             <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-              What's Included
+              What&apos;s Included
             </p>
             <h2 className="font-heading text-3xl text-[var(--primary)] sm:text-4xl lg:text-5xl">
               Studio Support & Services
@@ -179,7 +179,7 @@ export default function ServicesPage() {
           </div>
 
           <div className="grid gap-8 md:grid-cols-3 lg:gap-6">
-            {packages.map((pkg, index) => (
+            {packages.map((pkg) => (
               <article
                 key={pkg.title}
                 className={`relative flex flex-col border-2 transition-all duration-300 ${
@@ -235,7 +235,7 @@ export default function ServicesPage() {
                   </ul>
 
                   <Link
-                    href={`/book-online?package=${encodeURIComponent(pkg.title)}`}
+                    href={`/?package=${encodeURIComponent(pkg.title)}#contact`}
                     className={`mt-auto w-full text-center ${
                       pkg.popular ? "btn-primary" : "btn-secondary"
                     }`}
@@ -280,7 +280,7 @@ export default function ServicesPage() {
             <div className="space-y-8">
               <div>
                 <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)] mb-4">
-                  What's Included
+                  What&apos;s Included
                 </p>
                 <h2 className="font-heading text-3xl text-[var(--primary)] sm:text-4xl mb-6">
                   Studio Support & Services
@@ -351,7 +351,7 @@ export default function ServicesPage() {
               </div>
 
               <Link
-                href="/contact"
+                href="/#contact"
                 className="block w-full btn-secondary text-center"
               >
                 Have Questions? Contact Us
@@ -375,7 +375,7 @@ export default function ServicesPage() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {addOns.map((addon, index) => (
+            {addOns.map((addon) => (
               <div
                 key={addon}
                 className="border border-[var(--accent)]/20 bg-white p-6 hover:border-[var(--primary)] hover:shadow-md transition-all duration-300"
@@ -408,7 +408,7 @@ export default function ServicesPage() {
             <p className="text-base text-[var(--muted-plum)] mb-6">
               Interested in adding any of these services to your booking?
             </p>
-            <Link href="/book-online" className="btn-primary">
+            <Link href="/#contact" className="btn-primary">
               Request Add-ons When Booking
             </Link>
           </div>
@@ -441,10 +441,10 @@ export default function ServicesPage() {
               </p>
             </div>
             <div className="flex flex-col gap-4">
-              <Link href="/book-online" className="btn-primary w-full text-center">
+              <Link href="/#contact" className="btn-primary w-full text-center">
                 Book Now
               </Link>
-              <Link href="/contact" className="btn-cta w-full text-center">
+              <Link href="/#contact" className="btn-cta w-full text-center">
                 Message us
               </Link>
             </div>

@@ -8,7 +8,7 @@ export default function BlogPage() {
           <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             Blog
           </p>
-          <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl">
+          <h1 className="font-heading text-5xl text-[var(--primary)] sm:text-6xl lg:text-7xl">
             Blog
           </h1>
           <p className="max-w-3xl text-lg text-[var(--muted-plum)]">

@@ -185,3 +185,4 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxx
 - Stripe Webhooks Guide: https://stripe.com/docs/webhooks
 - Stripe Dashboard: https://dashboard.stripe.com
 
+

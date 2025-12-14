@@ -6,7 +6,6 @@ import { useState } from "react";
 import {
   FinalCtaSection,
   SiteFooter,
-  GallerySection,
 } from "@/components/StudioSections";
 import { studioGallery, studioServices } from "@/lib/studioData";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
@@ -53,11 +52,11 @@ export default function StudioPage() {
 
   return (
     <div className="bg-[var(--base)]">
-      {/* Hero Section - Matching Home Page Style */}
+      {/* Hero Section - Matching Pricing Page Style */}
       <section 
         className="relative min-h-[70vh] flex items-center justify-center overflow-hidden"
         style={{
-          background: 'linear-gradient(180deg, var(--primary) 0%, oklch(0.50 0.06 312) 50%, oklch(0.70 0.05 312) 100%)'
+          backgroundColor: 'var(--hero-background)'
         }}
       >
         <GradientBars colors={['var(--primary)', 'transparent']} />
@@ -70,19 +69,19 @@ export default function StudioPage() {
             }`}
           >
             <div className="max-w-4xl mx-auto text-center space-y-8">
-              <p className="text-sm uppercase tracking-[0.4em] text-white/80">
+              <p className="text-sm uppercase tracking-[0.4em] text-[var(--primary)]/80">
                 Studio
               </p>
-              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-white leading-tight">
-                Take a tour of <span className="font-script italic">R&T Spaces</span>
+              <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl text-[var(--primary)] leading-tight">
+                Take a tour of <span className="font-heading">R&T Spaces</span>
               </h1>
-              <p className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-lg sm:text-xl text-[var(--primary)]/90 max-w-3xl mx-auto leading-relaxed">
                 Designed for content days, lookbooks, and community events, our East
                 London studio mixes daylight with controlled lighting so you can
                 pivot between clean commercial looks and warm lifestyle scenes.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <Link href="/book-online" className="btn-primary">
+                <Link href="/#contact" className="btn-primary">
                   Book This Studio
                 </Link>
                 <Link href="/equipment" className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center">
@@ -96,14 +95,14 @@ export default function StudioPage() {
 
       <main className="w-full">
         {/* Gallery Section - Using Component with Photo Frames */}
-        <section className="py-16 md:py-24 lg:py-32">
+        <section className="py-16 md:py-24 lg:py-32 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-12 md:mb-16">
               <p className="text-sm uppercase tracking-wider mb-3 text-[var(--muted-plum)]">
                 • Studio Gallery
               </p>
-              <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-[var(--primary)]">
-                Corners ready for your <span className="font-script italic">lens</span>
+              <h2 className="font-heading text-5xl sm:text-6xl md:text-7xl font-bold leading-tight text-[var(--primary)]">
+                Corners ready for your <span className="font-heading">lens</span>
               </h2>
             </div>
 
@@ -117,62 +116,27 @@ export default function StudioPage() {
                     setLightboxOpen(true);
                   }}
                 >
-                  {/* Photo Frame Effect */}
-                  <div className="relative w-full">
-                    <div 
-                      className="relative"
-                      style={{
-                        background: 'linear-gradient(145deg, rgba(61, 35, 80, 0.95) 0%, rgba(45, 25, 60, 0.98) 50%, rgba(61, 35, 80, 0.95) 100%)',
-                        boxShadow: `
-                          0 20px 60px rgba(0, 0, 0, 0.15),
-                          0 8px 16px rgba(0, 0, 0, 0.1),
-                          inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                          inset 0 -1px 0 rgba(0, 0, 0, 0.2)
-                        `,
-                        border: '1px solid rgba(0, 0, 0, 0.15)',
-                        padding: '12px'
-                      }}
-                    >
-                      <div 
-                        className="absolute inset-0"
-                        style={{
-                          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 30%, transparent 70%, rgba(0, 0, 0, 0.2) 100%)',
-                          pointerEvents: 'none'
-                        }}
-                      ></div>
-                      
-                      <div 
-                        className="absolute inset-3 pointer-events-none z-10"
-                        style={{
-                          border: '4px solid var(--accent-gold)',
-                          opacity: 0.9
-                        }}
-                      ></div>
-                      
-                      <div className="relative aspect-[4/3] overflow-hidden" style={{ 
-                        margin: '12px',
-                        boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.15)'
-                      }}>
-                        <Image
-                          src={item.src}
-                          alt={item.focus}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
-                          loading="lazy"
-                          quality={85}
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
-                          <svg 
-                            className="h-12 w-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                          </svg>
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 via-transparent to-[var(--accent-gold)]/5 pointer-events-none"></div>
+                  {/* Photo Frame Effect - Purple frame */}
+                  <div className="relative w-full bg-white shadow-2xl overflow-hidden border-8" style={{ borderColor: 'var(--primary)' }}>
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <Image
+                        src={item.src}
+                        alt={item.focus}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        loading="lazy"
+                        quality={85}
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                        <svg 
+                          className="h-12 w-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                        </svg>
                       </div>
                     </div>
                   </div>
@@ -186,55 +150,22 @@ export default function StudioPage() {
         </section>
 
         {/* Main Studio Image with Highlights - Photo Frame Style */}
-        <section className="py-16 md:py-24 lg:py-32">
+        <section className="py-16 md:py-24 lg:py-32 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-center">
               {/* Left: Large Studio Image with Photo Frame */}
               <div className="relative">
                 <div className="relative aspect-[4/3]">
-                  {/* Photo Frame Effect */}
-                  <div className="relative w-full h-full">
-                    <div 
-                      className="absolute inset-0 p-8 md:p-12"
-                      style={{
-                        background: 'linear-gradient(145deg, rgba(61, 35, 80, 0.95) 0%, rgba(45, 25, 60, 0.98) 50%, rgba(61, 35, 80, 0.95) 100%)',
-                        boxShadow: `
-                          0 20px 60px rgba(0, 0, 0, 0.3),
-                          0 8px 16px rgba(0, 0, 0, 0.2),
-                          inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                          inset 0 -1px 0 rgba(0, 0, 0, 0.3)
-                        `,
-                        border: '1px solid rgba(0, 0, 0, 0.2)'
-                      }}
-                    >
-                      <div 
-                        className="absolute inset-0"
-                        style={{
-                          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 30%, transparent 70%, rgba(0, 0, 0, 0.2) 100%)',
-                          pointerEvents: 'none'
-                        }}
-                      ></div>
-                      
-                      <div 
-                        className="absolute inset-4 pointer-events-none z-10"
-                        style={{
-                          border: '6px solid var(--accent-gold)',
-                          opacity: 0.9
-                        }}
-                      ></div>
-                      
-                      <div className="absolute inset-4 overflow-hidden" style={{ boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.15)' }}>
-                        <Image
-                          src="/assets/44919513-a2a5-4595-af6d-e23e0acb2a87.jpg"
-                          alt="R&T Spaces studio overview"
-                          fill
-                          sizes="(max-width: 1024px) 100vw, 50vw"
-                          className="object-cover"
-                          priority
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/2 via-transparent to-[var(--accent-gold)]/2 pointer-events-none"></div>
-                      </div>
-                    </div>
+                  {/* Photo Frame Effect - Purple frame */}
+                  <div className="relative w-full h-full bg-white shadow-2xl overflow-hidden border-8" style={{ borderColor: 'var(--primary)' }}>
+                    <Image
+                      src="/assets/44919513-a2a5-4595-af6d-e23e0acb2a87.jpg"
+                      alt="R&T Spaces studio overview"
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover"
+                      priority
+                    />
                   </div>
                 </div>
               </div>
@@ -296,7 +227,7 @@ export default function StudioPage() {
           </div>
         </section>
 
-        {/* Studio Services Section - Matching Home Page Style */}
+        {/* Studio Services Section - Purple Background */}
         <section 
           className="py-16 md:py-24 lg:py-32"
           style={{
@@ -310,7 +241,7 @@ export default function StudioPage() {
               </p>
               <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 <span className="text-white">What We </span>
-                <span className="font-script text-white/80">Offer</span>
+                <span className="font-heading text-white/80">Offer</span>
               </h2>
             </div>
 
@@ -344,7 +275,7 @@ export default function StudioPage() {
               <p className="text-sm uppercase tracking-wider mb-3 text-[var(--muted-plum)]">
                 • Everything Included
               </p>
-              <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-[var(--primary)]">
+              <h2 className="font-heading text-5xl sm:text-6xl md:text-7xl font-bold leading-tight text-[var(--primary)]">
                 Equipment & Backdrops
               </h2>
             </div>
@@ -487,22 +418,23 @@ export default function StudioPage() {
 
         {/* Book This Studio CTA */}
         <section 
-          className="py-16 md:py-24 lg:py-32 text-center"
+          className="relative py-16 md:py-24 lg:py-32 text-center overflow-hidden"
           style={{
-            background: 'linear-gradient(180deg, var(--primary) 0%, oklch(0.50 0.06 312) 50%, oklch(0.70 0.05 312) 100%)'
+            backgroundColor: 'var(--hero-background)'
           }}
         >
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <GradientBars colors={['var(--primary)', 'transparent']} />
+          <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto space-y-8">
-              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-white">
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-[var(--primary)]">
                 Ready to Book This Studio?
               </h2>
-              <p className="text-lg sm:text-xl text-white/90 leading-relaxed">
+              <p className="text-lg sm:text-xl text-[var(--primary)]/90 leading-relaxed">
                 Reserve your studio time today. All equipment is included and ready
                 before your call time.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <Link href="/book-online" className="btn-primary bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white">
+                <Link href="/#contact" className="btn-primary">
                   Book This Studio
                 </Link>
                 <Link href="/equipment" className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center">

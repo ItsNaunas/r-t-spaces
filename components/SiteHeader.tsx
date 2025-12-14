@@ -10,8 +10,6 @@ export const NAV_LINKS = [
   { label: "Equipment", href: "/equipment" },
   { label: "Pricing", href: "/services" },
   { label: "Gallery", href: "/gallery" },
-  { label: "About", href: "/about-us" },
-  { label: "Contact", href: "/contact" },
 ] as const;
 
 export function SiteHeader() {
@@ -88,7 +86,7 @@ export function SiteHeader() {
       <div className={`mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8 relative transition-all duration-300`}>
         <Link
           href="/"
-          className={`text-lg font-bold ${navTextColor} hover:opacity-80 transition-opacity whitespace-nowrap`}
+          className={`text-lg font-bold font-heading ${navTextColor} hover:opacity-80 transition-opacity whitespace-nowrap`}
           aria-label="R&T Spaces Home"
         >
           R&T Spaces
@@ -128,7 +126,7 @@ export function SiteHeader() {
             </svg>
           </Link>
           <Link
-            href="/book-online"
+            href="/#contact"
             className="btn-small hidden lg:inline-flex whitespace-nowrap btn-hero-white"
           >
             Book Online
@@ -169,7 +167,7 @@ export function SiteHeader() {
             </Link>
           ))}
           <Link
-            href="/book-online"
+            href="/#contact"
             className="btn-small block text-center btn-hero-white"
             onClick={closeMenu}
           >

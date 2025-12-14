@@ -44,8 +44,8 @@ export async function POST(request: Request) {
       ],
       mode: 'payment',
       customer_email: email,
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/book-online?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/book-online?canceled=true`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/?canceled=true`,
       metadata: {
         customerName: name,
         customerEmail: email,

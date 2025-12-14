@@ -20,11 +20,11 @@ export function FloatingBookButton() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Only show on mobile (below md breakpoint)
+  // Show on all screen sizes - fixed at bottom of page
   return (
     <Link
-      href="/book-online"
-      className={`fixed bottom-0 left-0 right-0 z-50 md:hidden transition-all duration-300 ${
+      href="/#contact"
+      className={`fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 ${
         isVisible
           ? "opacity-100 translate-y-0"
           : "opacity-0 translate-y-full pointer-events-none"
@@ -36,7 +36,7 @@ export function FloatingBookButton() {
       }}
       aria-label="Book Online"
     >
-      <div className="btn-cta shadow-lg hover:shadow-xl w-full text-center">
+      <div className="btn-cta shadow-lg hover:shadow-xl w-full text-center max-w-7xl mx-auto">
         <span className="flex items-center justify-center gap-2">
           <svg
             className="h-5 w-5"

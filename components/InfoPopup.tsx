@@ -186,13 +186,13 @@ export function InfoPopup() {
           {/* Quick Action Buttons */}
           <div className="flex flex-wrap gap-3 pt-4 border-t border-[var(--accent)]/10">
             <Link
-              href="/book-online"
+              href="/#contact"
               className="btn-primary btn-small"
             >
               Book Online
             </Link>
             <Link
-              href="/contact"
+              href="/#contact"
               className="btn-secondary btn-small"
             >
               Contact Us

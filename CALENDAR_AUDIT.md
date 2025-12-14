@@ -181,3 +181,4 @@ Ensure these are set:
 5. Test with Stripe test mode
 6. Update documentation if needed
 
+

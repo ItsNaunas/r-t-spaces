@@ -194,7 +194,7 @@ function EquipmentTabs() {
                         {item.description}
                       </p>
                       <Link 
-                        href="/book-online" 
+                        href="/#contact" 
                         className="btn-primary text-center mt-auto"
                       >
                         Check Availability
@@ -235,11 +235,11 @@ export default function EquipmentPage() {
             <p className="text-sm uppercase tracking-[0.4em] text-[var(--primary)] mb-4">
               Equipment & Backdrops
             </p>
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl leading-tight mb-6 text-[var(--primary)]">
+            <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl leading-tight mb-6 text-[var(--primary)]">
               Complete Studio Equipment
             </h1>
             <p className="text-lg md:text-xl lg:text-2xl mb-4 text-[var(--primary)] font-light">
-              <span className="font-script italic">Ready for Your Vision</span>
+              <span>Ready for Your Vision</span>
             </p>
             
             {/* Social Proof */}
@@ -263,7 +263,7 @@ export default function EquipmentPage() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link 
-                href="/book-online"
+                href="/#contact"
                 className="btn-primary group"
               >
                 <span className="flex items-center gap-2">
@@ -363,11 +363,11 @@ export default function EquipmentPage() {
                   your creative needs.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                  <Link href="/book-online" className="btn-primary">
+                  <Link href="/#contact" className="btn-primary">
                     Book Now
                   </Link>
                   <Link 
-                    href="/contact" 
+                    href="/#contact" 
                     className="group inline-flex items-center justify-center border border-white bg-white px-6 py-3.5 sm:px-8 sm:py-4 text-sm sm:text-base font-medium text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:text-[var(--primary)] hover:scale-[1.02] hover:shadow-lg"
                   >
                     Ask About Equipment

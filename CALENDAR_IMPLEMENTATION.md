@@ -145,3 +145,4 @@ If you encounter issues:
 3. Check webhook logs for errors
 4. Ensure email service (Resend) is configured correctly
 
+

@@ -1,4 +1,6 @@
 import {
+  AboutUsSection,
+  ContactSection,
   EmailSubscriptionSection,
   HowItWorksSection,
   SiteFooter,
@@ -17,6 +19,8 @@ export default function Home() {
         <StudioFeaturesSection />
         <HowItWorksSection />
         <TestimonialSection />
+        <AboutUsSection />
+        <ContactSection />
         <EmailSubscriptionSection />
       </main>
       <SiteFooter />
