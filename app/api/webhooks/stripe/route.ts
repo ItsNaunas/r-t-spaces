@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { saveBooking } from '@/lib/bookingStore';
 import { sendBookingNotification } from '@/lib/email';
 import { createCalendlyEvent } from '@/lib/calendly';
+import { getPendingBookingByStripeSession, confirmPendingBooking } from '@/lib/pendingBookings';
 
 export async function POST(request: Request) {
   try {
@@ -50,6 +51,27 @@ export async function POST(request: Request) {
         const session = event.data.object as Stripe.Checkout.Session;
         console.log('Payment successful:', session.id);
         
+        // Check if this is a pending booking (Pay & Book Now flow)
+        const pendingBookingId = session.metadata?.pendingBookingId;
+        let pendingBooking = null;
+        
+        if (pendingBookingId) {
+          // Try to get by ID first
+          const { getPendingBooking } = await import('@/lib/pendingBookings');
+          pendingBooking = await getPendingBooking(pendingBookingId);
+        }
+        
+        // If not found by ID, try by Stripe session ID
+        if (!pendingBooking) {
+          pendingBooking = await getPendingBookingByStripeSession(session.id);
+        }
+        
+        // If we have a pending booking, confirm it (this prevents auto-cancellation)
+        if (pendingBooking) {
+          await confirmPendingBooking(pendingBooking.id, session.id);
+          console.log('Pending booking confirmed:', pendingBooking.id);
+        }
+        
         // Extract booking data from session metadata
         const bookingData = {
           name: session.metadata?.customerName || session.customer_email || 'Unknown',
@@ -70,21 +92,25 @@ export async function POST(request: Request) {
           const savedBooking = await saveBooking(bookingData);
           console.log('Booking saved:', savedBooking);
 
-          // Create Calendly scheduling link (non-blocking - don't fail if it fails)
-          const calendlyLink = await createCalendlyEvent(savedBooking).catch((error) => {
-            console.error('Calendly link generation failed (booking still saved):', error);
-            return null;
-          });
+          // If this was a pending booking with Calendly event, it's already scheduled
+          // Otherwise, create Calendly scheduling link (for request flow)
+          let calendlyLink = null;
+          if (!pendingBooking || !pendingBooking.calendlyEventUri) {
+            calendlyLink = await createCalendlyEvent(savedBooking);
+          }
 
-          // Send email notifications with Calendly link (non-blocking - don't fail if email fails)
+          // Send email notifications
           sendBookingNotification({
             ...savedBooking,
-            calendlyLink,
+            calendlyLink: calendlyLink || undefined,
+            totalPrice: session.metadata?.totalPrice,
+            depositAmount: session.metadata?.depositAmount,
+            balanceDue: session.metadata?.balanceDue,
           }).catch((error) => {
             console.error('Email notification failed (booking still saved):', error);
           });
 
-          console.log('Booking processed successfully', calendlyLink ? 'with Calendly link' : '');
+          console.log('Booking processed successfully. Calendly event:', pendingBooking?.calendlyEventUri ? 'already scheduled' : (calendlyLink ? 'link created' : 'not created'));
         } catch (error) {
           console.error('Error processing booking:', error);
           // Don't throw - webhook should still return success to Stripe
@@ -93,14 +119,27 @@ export async function POST(request: Request) {
         
         break;
       }
+      case 'checkout.session.async_payment_failed':
+      case 'payment_intent.payment_failed': {
+        const session = event.data.object as Stripe.Checkout.Session | Stripe.PaymentIntent;
+        console.log('Payment failed:', 'id' in session ? session.id : 'unknown');
+        
+        // In payment-first flow, no Calendly event exists yet, so no cleanup needed
+        // But we can log this for tracking
+        console.log('Payment failed - no Calendly cleanup needed (payment-first flow)');
+        break;
+      }
+      case 'charge.refunded': {
+        const charge = event.data.object as Stripe.Charge;
+        console.log('Refund processed:', charge.id);
+        
+        // TODO: Update booking status to 'refunded' if you add status tracking
+        // For now, just log it
+        break;
+      }
       case 'payment_intent.succeeded': {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         console.log('PaymentIntent successful:', paymentIntent.id);
-        break;
-      }
-      case 'payment_intent.payment_failed': {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.log('PaymentIntent failed:', paymentIntent.id);
         break;
       }
       default:

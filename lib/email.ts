@@ -7,6 +7,9 @@ interface BookingData {
   hours?: string;
   notes?: string;
   calendlyLink?: string | null;
+  totalPrice?: string;
+  depositAmount?: string;
+  balanceDue?: string;
 }
 
 export async function sendBookingNotification(booking: BookingData) {
@@ -22,17 +25,32 @@ export async function sendBookingNotification(booking: BookingData) {
 
   try {
     // Send notification to studio
+    const pricingSection = booking.totalPrice 
+      ? `
+        <div style="margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-radius: 6px;">
+          <p><strong>Pricing:</strong></p>
+          <ul style="margin: 5px 0; padding-left: 20px;">
+            <li>Total: $${parseFloat(booking.totalPrice).toFixed(2)}</li>
+            <li>Deposit Paid: $${parseFloat(booking.depositAmount || '0').toFixed(2)}</li>
+            <li>Balance Due: $${parseFloat(booking.balanceDue || '0').toFixed(2)}</li>
+          </ul>
+        </div>
+      `
+      : '';
+
     await resend.emails.send({
       from: fromEmail,
       to: studioEmail,
-      subject: `New Booking Request from ${booking.name}`,
+      subject: `New Booking ${booking.calendlyLink ? '(Paid)' : 'Request'} from ${booking.name}`,
       html: `
-        <h2>New Booking Request</h2>
+        <h2>New Booking ${booking.calendlyLink ? '(Paid)' : 'Request'}</h2>
         <p><strong>Name:</strong> ${booking.name}</p>
         <p><strong>Email:</strong> ${booking.email}</p>
         ${booking.date ? `<p><strong>Date:</strong> ${booking.date}</p>` : ''}
         ${booking.hours ? `<p><strong>Hours:</strong> ${booking.hours}</p>` : ''}
+        ${pricingSection}
         ${booking.notes ? `<p><strong>Notes:</strong> ${booking.notes}</p>` : ''}
+        ${booking.calendlyLink ? `<p><strong>Calendly Link:</strong> <a href="${booking.calendlyLink}">${booking.calendlyLink}</a></p>` : ''}
       `,
     });
 
@@ -68,6 +86,16 @@ export async function sendBookingNotification(booking: BookingData) {
         }
         ${booking.date ? `<p><strong>Requested Date:</strong> ${booking.date}</p>` : ''}
         ${booking.hours ? `<p><strong>Requested Hours:</strong> ${booking.hours}</p>` : ''}
+        ${booking.totalPrice ? `
+          <div style="margin: 15px 0; padding: 10px; background-color: #f0f9ff; border-radius: 6px;">
+            <p><strong>Payment Summary:</strong></p>
+            <ul style="margin: 5px 0; padding-left: 20px;">
+              <li>Total Price: $${parseFloat(booking.totalPrice).toFixed(2)}</li>
+              <li>Deposit Paid: $${parseFloat(booking.depositAmount || '0').toFixed(2)}</li>
+              <li>Balance Due (48h before): $${parseFloat(booking.balanceDue || '0').toFixed(2)}</li>
+            </ul>
+          </div>
+        ` : ''}
         ${calendlySection}
         <p>If you have any questions, feel free to reach out to us.</p>
         <p>Best regards,<br>R&T Spaces Team</p>

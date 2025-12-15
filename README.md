@@ -17,8 +17,8 @@ STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxxxxxxx
 STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxx
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
-# Calendly Integration (for auto-booking)
-CALENDLY_SCHEDULING_LINK=https://calendly.com/your-username/event-type
+# Calendly Integration (for scheduling)
+NEXT_PUBLIC_CALENDLY_SCHEDULING_LINK=https://calendly.com/your-username/event-type
 ```
 
 2. **Resend Setup** (for email notifications):
@@ -35,15 +35,15 @@ CALENDLY_SCHEDULING_LINK=https://calendly.com/your-username/event-type
      - Events: `checkout.session.completed`
      - Copy the webhook secret as `STRIPE_WEBHOOK_SECRET`
 
-4. **Calendly Setup** (for auto-booking):
+4. **Calendly Setup** (for scheduling):
    - Sign up at [calendly.com](https://calendly.com) if you haven't already
    - Create an event type in your Calendly account (e.g., "Studio Booking")
    - Get your scheduling link:
      - Go to your Calendly event type settings
      - Copy your public Calendly scheduling link
      - Format: `https://calendly.com/your-username/event-type`
-     - Add as `CALENDLY_SCHEDULING_LINK` in your `.env.local`
-   - After payment, customers will receive an email with a link to confirm their booking time in Calendly
+     - Add as `NEXT_PUBLIC_CALENDLY_SCHEDULING_LINK` in your `.env.local`
+   - The Calendly widget will be embedded on the booking page, allowing customers to see availability and select times before payment
 
 ### Running the Development Server
 
@@ -86,25 +86,36 @@ The booking system offers two booking options:
 - Manual confirmation required (within 24 hours)
 
 ### 2. Pay & Book Now (Automated)
-- Customer submits booking and pays via Stripe
+- Customer selects time from Calendly calendar (shows real availability)
+- Customer completes booking form and pays via Stripe
 - Payment processed securely
 - **Automated workflow triggers:**
-  1. ✅ Booking confirmed automatically
-  2. ✅ Calendar event created in Calendly
-  3. ✅ Calendar invite sent to customer
+  1. ✅ Calendly event created when time is selected
+  2. ✅ Booking confirmed automatically after payment
+  3. ✅ Booking saved to database with payment details
   4. ✅ Confirmation emails sent to both parties
-  5. ✅ Booking saved with payment details
+  5. ✅ Calendar invite already sent (via Calendly)
 
 ### Booking Flow (Pay & Book)
 
-1. Customer fills out form and selects "Pay & Book Now"
-2. Redirected to Stripe Checkout for secure payment
-3. After successful payment, Stripe webhook triggers:
+1. **Customer selects time in Calendly widget** (embedded on booking page)
+   - Sees all available time slots in real-time
+   - Selects preferred date/time
+   - Calendly event is created (reserves the time slot)
+
+2. **Booking form appears with pre-filled data**
+   - Name, email, date, and time from Calendly
+   - Customer adds notes/requirements
+
+3. **Customer clicks "Proceed to Payment"**
+   - Redirected to Stripe Checkout for secure payment
+
+4. **After successful payment, Stripe webhook triggers:**
    - Booking saved to database
-   - Calendly event created automatically
    - Email confirmations sent
-   - Calendar invite sent to customer (via Calendly)
-4. Customer redirected back with success message
+   - Calendly event already exists (from step 1)
+
+5. **Customer redirected back with success message**
 
 ### Pricing
 

@@ -690,6 +690,26 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Calendly Widget - Remove scroll */
+.calendly-widget-container {
+  overflow: hidden;
+}
+
+.calendly-inline-widget {
+  overflow: hidden !important;
+  position: relative;
+}
+
+.calendly-inline-widget iframe {
+  overflow: hidden !important;
+  border: none !important;
+  height: 100% !important;
+}
+
+.calendly-badge-widget {
+  display: none !important;
+}
+
 /* Safe area insets support for fixed/sticky elements */
 header[class*="sticky"],
 header[class*="fixed"],

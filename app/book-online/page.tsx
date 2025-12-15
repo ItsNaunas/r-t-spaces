@@ -48,21 +48,23 @@ const availabilityInfo = {
   ],
 };
 
-export default function BookOnlinePage({
+export default async function BookOnlinePage({
   searchParams,
 }: {
-  searchParams?: { success?: string; canceled?: string; session_id?: string };
+  searchParams?: Promise<{ success?: string; canceled?: string; session_id?: string }>;
 }) {
+  const params = await searchParams;
+  
   return (
     <div className="bg-[var(--base)]">
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         {/* Success Message */}
-        {searchParams?.success === "true" && (
+        {params?.success === "true" && (
           <BookingSuccessMessage />
         )}
         
         {/* Cancel Message */}
-        {searchParams?.canceled === "true" && (
+        {params?.canceled === "true" && (
           <div className="border border-yellow-500/20 bg-yellow-500/10 p-6 text-yellow-600 ">
             <p className="font-semibold">Booking Canceled</p>
             <p className="text-sm mt-2">
@@ -78,9 +80,8 @@ export default function BookOnlinePage({
             Reserve Your Studio Time
           </h1>
           <p className="max-w-3xl text-lg text-[var(--muted-plum)]">
-            Fill out the form below with your preferred date, time, and
-            requirements. We&apos;ll confirm availability and send you all the
-            details within 24 hours.
+            Select an available time slot from the calendar, then complete your booking details and payment. 
+            Your booking will be confirmed immediately after payment.
           </p>
         </section>
 
@@ -133,7 +134,7 @@ export default function BookOnlinePage({
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <h2 className="font-heading text-2xl text-[var(--primary)] mb-6">
-              Booking Request
+              Book Your Studio Time
             </h2>
             <Suspense
               fallback={
