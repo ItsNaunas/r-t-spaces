@@ -95,7 +95,7 @@ export function HeroSection() {
             <h1 
               className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 md:mb-8 text-[var(--primary)]"
             >
-              THE <span className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl">STUDIO SPACE</span>
+              THE STUDIO SPACE
               <br className="hidden sm:block" />
               WHERE CREATIVITY MEETS
               <br className="hidden sm:block" />
