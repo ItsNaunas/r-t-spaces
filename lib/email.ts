@@ -75,8 +75,8 @@ export async function sendBookingNotification(booking: BookingData) {
       from: fromEmail,
       to: booking.email,
       subject: booking.calendlyLink 
-        ? 'Booking Confirmed - Confirm Your Time - R&T Spaces'
-        : 'Booking Request Received - R&T Spaces',
+        ? 'Booking Confirmed - Confirm Your Time - RT Spaces'
+        : 'Booking Request Received - RT Spaces',
       html: `
         <h2>${booking.calendlyLink ? 'Booking Confirmed!' : 'Thank you for your booking request!'}</h2>
         <p>Hi ${booking.name},</p>
@@ -98,7 +98,7 @@ export async function sendBookingNotification(booking: BookingData) {
         ` : ''}
         ${calendlySection}
         <p>If you have any questions, feel free to reach out to us.</p>
-        <p>Best regards,<br>R&T Spaces Team</p>
+        <p>Best regards,<br>RT Spaces Team</p>
       `,
     });
 

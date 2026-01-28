@@ -83,9 +83,7 @@ export default function ServicesPage() {
               <h1 className="font-heading text-5xl text-[var(--primary)] sm:text-6xl lg:text-7xl leading-tight">
                 Simple Pricing for
                 <br />
-                <span className="font-heading text-6xl sm:text-7xl lg:text-8xl">
-                  Every Creative Need
-                </span>
+                Every Creative Need
               </h1>
               <p className="text-lg sm:text-xl text-[var(--primary)]/90 max-w-2xl mx-auto leading-relaxed">
                 Choose a simple studio hire or plug into our resident crew for
@@ -317,7 +315,7 @@ export default function ServicesPage() {
             <div className="space-y-6">
               <div className="border border-[var(--accent)]/20 bg-white p-8">
                 <h3 className="font-heading text-2xl text-[var(--primary)] mb-6">
-                  Why Choose R&T Spaces?
+                  Why Choose RT Spaces?
                 </h3>
                 <ul className="space-y-4">
                   {[
@@ -433,7 +431,7 @@ export default function ServicesPage() {
                 Ready to Book Your Session?
               </h2>
               <h3 className="font-heading text-2xl sm:text-3xl text-[var(--primary)]">
-                Book R&amp;T Spaces for your <span className="text-[var(--accent-gold)]">next</span> shoot
+                Book RT Spaces for your <span className="text-[var(--accent-gold)]">next</span> shoot
               </h3>
               <p className="text-lg text-[var(--primary)] leading-relaxed">
                 Choose your package and book your studio session today. All

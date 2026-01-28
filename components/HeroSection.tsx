@@ -125,7 +125,7 @@ export function HeroSection() {
             <p 
               className="text-base md:text-lg lg:text-xl mb-8 md:mb-10 lg:mb-12 leading-relaxed font-light text-left text-[var(--primary)]"
             >
-              R&T Spaces delivers world-class studio environments designed for creators who demand excellence. 
+              RT Spaces delivers world-class studio environments designed for creators who demand excellence. 
               Our approach combines cutting-edge equipment, versatile spaces, and unparalleled service to transform 
               your creative concepts into compelling visual stories.
             </p>

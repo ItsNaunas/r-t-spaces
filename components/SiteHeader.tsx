@@ -87,9 +87,9 @@ export function SiteHeader() {
         <Link
           href="/"
           className={`text-lg font-bold font-heading ${navTextColor} hover:opacity-80 transition-opacity whitespace-nowrap`}
-          aria-label="R&T Spaces Home"
+          aria-label="RT Spaces Home"
         >
-          R&T Spaces
+          RT Spaces
         </Link>
         <nav className={`hidden items-center gap-4 lg:gap-6 text-xs font-semibold uppercase tracking-[0.3em] ${navTextColor}/80 md:flex flex-1 justify-center`}>
           {NAV_LINKS.map((link) => (

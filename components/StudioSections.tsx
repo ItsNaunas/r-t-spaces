@@ -82,14 +82,14 @@ export function StorySection() {
       <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
         <div className="space-y-6">
           <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-            About R&amp;T Spaces
+            About RT Spaces
           </p>
           <h2 className="font-heading text-5xl sm:text-6xl leading-tight text-[var(--primary)] lg:text-7xl">
             A home for creators, brand launches, and portrait sessions in East
             London.
           </h2>
           <p className="text-lg text-[var(--muted-plum)]">
-            Founded by Rose &amp; Teddy, R&amp;T Spaces pairs a calming studio
+            Founded by Rose &amp; Teddy, RT Spaces pairs a calming studio
             with ready-to-roll equipment so you can focus on directing talent,
             shooting content, or hosting clients.
           </p>
@@ -304,7 +304,7 @@ export function FinalCtaSection() {
           Ready when you are
         </p>
         <h3 className="mt-4 font-heading text-4xl text-white">
-          Book R&amp;T Spaces for your <span className="text-[var(--accent-gold)]">next</span> shoot
+          Book RT Spaces for your <span className="text-[var(--accent-gold)]">next</span> shoot
         </h3>
       </div>
       <div className="flex items-center justify-end">
@@ -451,7 +451,7 @@ export function StudioHeroStats() {
                 >
                   <Image
                     src={src}
-                    alt={`R&T Spaces Studio ${index + 1} - Professional content creation environment`}
+                    alt={`RT Spaces Studio ${index + 1} - Professional content creation environment`}
                     fill
                     sizes="100vw"
                     className="object-cover"
@@ -485,7 +485,7 @@ export function StudioHeroStats() {
               </Link>
               <Link 
                 href="/studio"
-                className="group/btn whitespace-nowrap bg-[var(--accent-gold)] backdrop-blur-sm border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4  font-medium text-sm sm:text-sm tracking-[0.05em]"
+                className="group/btn whitespace-nowrap bg-[var(--accent-gold)] backdrop-blur-sm border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4  font-medium text-sm tracking-[0.05em]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="flex items-center gap-2">
@@ -699,7 +699,7 @@ export function HowItWorksSection() {
             HOW IT WORKS
           </p>
           <h2 className="font-heading text-5xl font-bold text-white sm:text-6xl md:text-7xl">
-            <span className="font-heading">Book</span> your studio space in three simple steps
+            Book your studio space in three simple steps
           </h2>
         </div>
       </div>
@@ -788,7 +788,7 @@ export function TestimonialSection() {
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
     },
     {
-      quote: "R&T Spaces transformed our brand shoot. The lighting setup was flawless, and the team's attention to detail made all the difference.",
+      quote: "RT Spaces transformed our brand shoot. The lighting setup was flawless, and the team's attention to detail made all the difference.",
       author: "Emma R.",
       role: "Brand Creative Director",
       rating: 5,
@@ -907,14 +907,14 @@ export function TestimonialSection() {
               Community Voices
             </p>
             <h2 className="font-heading text-4xl leading-tight text-white lg:text-5xl">
-              What creators are saying about R&T Spaces
+              What creators are saying about RT Spaces
             </h2>
             <p className="text-lg text-white/80 leading-relaxed">
               From portrait sessions to brand launches, our community of photographers and creators share their experiences working in our East London studio.
             </p>
             <Link
               href="/#contact"
-              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center w-full shadow-lg hover:shadow-xl"
+              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center w-full shadow-lg hover:shadow-xl"
             >
               Reserve Your Studio Session
             </Link>
@@ -926,7 +926,7 @@ export function TestimonialSection() {
               Community Voices
             </p>
             <h2 className="font-heading text-3xl sm:text-4xl leading-tight text-white mb-4">
-              What creators are saying about R&T Spaces
+              What creators are saying about RT Spaces
             </h2>
             <p className="text-base sm:text-lg text-white/80 leading-relaxed">
               From portrait sessions to brand launches, our community of photographers and creators share their experiences working in our East London studio.
@@ -1014,7 +1014,7 @@ export function TestimonialSection() {
           <div className="lg:hidden mt-8 text-center">
             <Link
               href="/#contact"
-              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center shadow-lg hover:shadow-xl"
+              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center shadow-lg hover:shadow-xl"
             >
               Reserve Your Studio Session
             </Link>
@@ -1062,7 +1062,7 @@ export function AboutUsSection() {
                 A home for creators, brand launches, and portrait sessions in East London.
               </h2>
               <p className="text-lg text-[var(--muted-plum)] leading-relaxed">
-                Founded by Rose &amp; Teddy, R&amp;T Spaces pairs a calming studio
+                Founded by Rose &amp; Teddy, RT Spaces pairs a calming studio
                 with ready-to-roll equipment so you can focus on directing talent,
                 shooting content, or hosting clients.
               </p>
@@ -1098,7 +1098,7 @@ export function AboutUsSection() {
               <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-8 transition-transform duration-500 group-hover:scale-[1.02]" style={{ borderColor: 'var(--primary)' }}>
                 <Image
                   src="/assets/8eb25501-7cc0-4ccf-a906-3a2a747836fd.jpg"
-                  alt="R&T Spaces studio - creative workspace"
+                  alt="RT Spaces studio - creative workspace"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -1318,7 +1318,7 @@ export function ContactSection() {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="R&T Spaces Location"
+                  title="RT Spaces Location"
                   className="absolute inset-0"
                 />
               </div>
@@ -1424,7 +1424,7 @@ export function SocialProofSection() {
             Join the community
           </p>
           <h2 className="font-heading text-3xl font-bold text-[var(--primary)] sm:text-4xl">
-            Join 500+ creators who&apos;ve chosen R&T Spaces
+            Join 500+ creators who&apos;ve chosen RT Spaces
           </h2>
         </div>
         <div 
@@ -1788,7 +1788,7 @@ export function SiteFooter() {
           <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
             {/* Column 1: Brand */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">R&amp;T Spaces</h3>
+              <h3 className="text-lg font-semibold text-white">RT Spaces</h3>
               <p className="text-base text-white/80 leading-relaxed">
                 London creative studio for photographers &amp; creators.
               </p>
@@ -1895,7 +1895,7 @@ export function SiteFooter() {
         <div className="mx-auto max-w-7xl">
           <div className="pt-8 border-t border-[var(--lavender)] text-center">
             <p className="text-sm text-[var(--muted-plum)]">
-              © 2025 R&amp;T Spaces. All Rights Reserved.
+              © 2025 RT Spaces. All Rights Reserved.
             </p>
           </div>
         </div>

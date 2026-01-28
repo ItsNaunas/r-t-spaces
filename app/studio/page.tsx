@@ -73,7 +73,7 @@ export default function StudioPage() {
                 Studio
               </p>
               <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl text-[var(--primary)] leading-tight">
-                Take a tour of <span className="font-heading">R&T Spaces</span>
+                Take a tour of RT Spaces
               </h1>
               <p className="text-lg sm:text-xl text-[var(--primary)]/90 max-w-3xl mx-auto leading-relaxed">
                 Designed for content days, lookbooks, and community events, our East
@@ -84,7 +84,7 @@ export default function StudioPage() {
                 <Link href="/#contact" className="btn-primary">
                   Book This Studio
                 </Link>
-                <Link href="/equipment" className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center">
+                <Link href="/equipment" className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center">
                   View Equipment
                 </Link>
               </div>
@@ -102,7 +102,7 @@ export default function StudioPage() {
                 • Studio Gallery
               </p>
               <h2 className="font-heading text-5xl sm:text-6xl md:text-7xl font-bold leading-tight text-[var(--primary)]">
-                Corners ready for your <span className="font-heading">lens</span>
+                Corners ready for your lens
               </h2>
             </div>
 
@@ -160,7 +160,7 @@ export default function StudioPage() {
                   <div className="relative w-full h-full bg-white shadow-2xl overflow-hidden border-8" style={{ borderColor: 'var(--primary)' }}>
                     <Image
                       src="/assets/44919513-a2a5-4595-af6d-e23e0acb2a87.jpg"
-                      alt="R&T Spaces studio overview"
+                      alt="RT Spaces studio overview"
                       fill
                       sizes="(max-width: 1024px) 100vw, 50vw"
                       className="object-cover"
@@ -437,7 +437,7 @@ export default function StudioPage() {
                 <Link href="/#contact" className="btn-primary">
                   Book This Studio
                 </Link>
-                <Link href="/equipment" className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm sm:text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center">
+                <Link href="/equipment" className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center">
                   View Equipment
                 </Link>
               </div>

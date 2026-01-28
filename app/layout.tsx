@@ -37,9 +37,37 @@ const glacialIndifference = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "R&T Spaces — Photography Studio Hire East London",
+  title: "RT Spaces — Photography Studio Hire East London",
   description:
-    "R&T Spaces offers daylight-ready studio hire, creative sessions, and photobooth packages in East London from 8 AM to 11 PM daily.",
+    "RT Spaces offers daylight-ready studio hire, creative sessions, and photobooth packages in East London from 8 AM to 11 PM daily.",
+  icons: {
+    icon: "/assets/logo/favicon.png", // Square logo for browser favicon
+    apple: "/assets/logo/favicon.png", // Square logo for Apple devices
+  },
+  openGraph: {
+    title: "RT Spaces — Photography Studio Hire East London",
+    description:
+      "RT Spaces offers daylight-ready studio hire, creative sessions, and photobooth packages in East London from 8 AM to 11 PM daily.",
+    url: "https://www.rtspaces.co.uk",
+    siteName: "RT Spaces",
+    images: [
+      {
+        url: "/assets/logo/social.png", // Landscape image (1200x630) for social sharing
+        width: 1200,
+        height: 630,
+        alt: "RT Spaces - Photography Studio Hire East London",
+      },
+    ],
+    locale: "en_GB",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RT Spaces — Photography Studio Hire East London",
+    description:
+      "RT Spaces offers daylight-ready studio hire, creative sessions, and photobooth packages in East London from 8 AM to 11 PM daily.",
+    images: ["/assets/logo/social.png"], // Landscape image for Twitter
+  },
 };
 
 export const viewport: Viewport = {
