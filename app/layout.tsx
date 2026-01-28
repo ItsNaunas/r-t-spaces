@@ -40,8 +40,17 @@ export const metadata: Metadata = {
   title: "RT Spaces — Photography Studio Hire East London",
   description:
     "RT Spaces offers daylight-ready studio hire, creative sessions, and photobooth packages in East London from 8 AM to 11 PM daily.",
-  // Icons are handled via file-based metadata (icon.png/icon.ico in app directory)
-  // Next.js 13+ automatically uses icon files placed in the app directory
+  icons: {
+    icon: [
+      { url: '/assets/logo/social.png', sizes: 'any' },
+      { url: '/assets/logo/social.png', sizes: '192x192', type: 'image/png' },
+      { url: '/assets/logo/social.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/assets/logo/social.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/assets/logo/social.png',
+  },
   openGraph: {
     title: "RT Spaces — Photography Studio Hire East London",
     description:
