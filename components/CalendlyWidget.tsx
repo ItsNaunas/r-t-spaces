@@ -31,21 +31,18 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
 
   useEffect(() => {
     // Check if script already exists
-    let script = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]') as HTMLScriptElement;
+    const existingScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
     
-    if (!script) {
-      // Load Calendly embed script
-      script = document.createElement("script");
-      script.src = "https://assets.calendly.com/assets/external/widget.js";
-      script.async = true;
-      document.body.appendChild(script);
-    }
-
-    const handleLoad = () => setIsLoaded(true);
-    if (script.complete) {
+    if (existingScript) {
+      // Script already in document, treat as loaded
       setIsLoaded(true);
     } else {
-      script.onload = handleLoad;
+      // Load Calendly embed script
+      const script = document.createElement("script");
+      script.src = "https://assets.calendly.com/assets/external/widget.js";
+      script.async = true;
+      script.onload = () => setIsLoaded(true);
+      document.body.appendChild(script);
     }
 
     // Listen for Calendly events
