@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CalendlyWidget } from "./CalendlyWidget";
-import { calculateHours, calculatePrice, calculateDeposit, calculateBalance, BOOKING_PACKAGES, type BookingPackage } from "@/lib/pricing";
+import { calculateHours, calculatePrice, calculateDeposit, calculateBalance, BOOKING_PACKAGES, PRICING_CONFIG, type BookingPackage } from "@/lib/pricing";
 
 type BookingPayload = {
   name: string;
@@ -91,14 +91,25 @@ export function BookingForm() {
   useEffect(() => {
     if (paymentMode === "pay") {
       if (selectedPackage) {
-        // Use package price
-        const totalPrice = selectedPackage.price;
-        const deposit = calculateDeposit(totalPrice);
-        const balance = calculateBalance(totalPrice, deposit);
-        
-        setBookingPrice(totalPrice);
-        setDepositAmount(deposit);
-        setBalanceAmount(balance);
+        // Standard Rate: price from selected time only (min 2 hrs); fixed packages use package price
+        if (selectedPackage.id === "standard-rate") {
+          if (calendlyData?.startTime && calendlyData?.endTime) {
+            const hours = Math.max(calculateHours(calendlyData.startTime, calendlyData.endTime), PRICING_CONFIG.minimumHours);
+            const totalPrice = calculatePrice(hours);
+            setBookingPrice(totalPrice);
+            setDepositAmount(calculateDeposit(totalPrice));
+            setBalanceAmount(calculateBalance(totalPrice, calculateDeposit(totalPrice)));
+          } else {
+            setBookingPrice(null);
+            setDepositAmount(null);
+            setBalanceAmount(null);
+          }
+        } else {
+          const totalPrice = selectedPackage.price;
+          setBookingPrice(totalPrice);
+          setDepositAmount(calculateDeposit(totalPrice));
+          setBalanceAmount(calculateBalance(totalPrice, calculateDeposit(totalPrice)));
+        }
       } else if (calendlyData && calendlyData.startTime && calendlyData.endTime) {
         // Calculate from Calendly times (fallback if no package selected)
         const hours = calculateHours(calendlyData.startTime, calendlyData.endTime);
@@ -231,7 +242,10 @@ export function BookingForm() {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch event details');
+          const errorData = await response.json().catch(() => ({}));
+          const errorMessage = errorData?.error || `Failed to fetch event details (${response.status})`;
+          console.error('API error response:', errorData);
+          throw new Error(errorMessage);
         }
 
         const eventData = await response.json();
@@ -552,8 +566,13 @@ export function BookingForm() {
                     </h4>
                     <div className="flex items-baseline gap-1">
                       <span className="text-2xl font-semibold text-[var(--primary)]">
-                        £{pkg.price}
+                        {pkg.id === "standard-rate"
+                          ? `£${PRICING_CONFIG.hourlyRate}/hr`
+                          : `£${pkg.price}`}
                       </span>
+                      {pkg.id === "standard-rate" && (
+                        <span className="text-sm text-[var(--muted-plum)]">(min 2 hrs)</span>
+                      )}
                     </div>
                   </div>
                   <ul className="space-y-2 mb-4 flex-grow text-sm text-[var(--muted-plum)]">
@@ -716,7 +735,11 @@ export function BookingForm() {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm font-semibold text-[var(--primary)]">{selectedPackage.title}</span>
-              <span className="text-base font-semibold text-[var(--primary)]">£{selectedPackage.price}</span>
+              <span className="text-base font-semibold text-[var(--primary)]">
+                {selectedPackage.id === "standard-rate" && bookingPrice != null
+                  ? `£${bookingPrice.toFixed(2)}`
+                  : `£${selectedPackage.price}`}
+              </span>
             </div>
             <p className="text-xs text-[var(--muted-plum)]">{selectedPackage.duration}</p>
           </div>

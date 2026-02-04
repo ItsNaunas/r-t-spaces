@@ -30,9 +30,9 @@ export async function sendBookingNotification(booking: BookingData) {
         <div style="margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-radius: 6px;">
           <p><strong>Pricing:</strong></p>
           <ul style="margin: 5px 0; padding-left: 20px;">
-            <li>Total: $${parseFloat(booking.totalPrice).toFixed(2)}</li>
-            <li>Deposit Paid: $${parseFloat(booking.depositAmount || '0').toFixed(2)}</li>
-            <li>Balance Due: $${parseFloat(booking.balanceDue || '0').toFixed(2)}</li>
+            <li>Total: £${parseFloat(booking.totalPrice).toFixed(2)}</li>
+            <li>Deposit Paid: £${parseFloat(booking.depositAmount || '0').toFixed(2)}</li>
+            <li>Balance Due: £${parseFloat(booking.balanceDue || '0').toFixed(2)}</li>
           </ul>
         </div>
       `
@@ -90,9 +90,9 @@ export async function sendBookingNotification(booking: BookingData) {
           <div style="margin: 15px 0; padding: 10px; background-color: #f0f9ff; border-radius: 6px;">
             <p><strong>Payment Summary:</strong></p>
             <ul style="margin: 5px 0; padding-left: 20px;">
-              <li>Total Price: $${parseFloat(booking.totalPrice).toFixed(2)}</li>
-              <li>Deposit Paid: $${parseFloat(booking.depositAmount || '0').toFixed(2)}</li>
-              <li>Balance Due (48h before): $${parseFloat(booking.balanceDue || '0').toFixed(2)}</li>
+              <li>Total Price: £${parseFloat(booking.totalPrice).toFixed(2)}</li>
+              <li>Deposit Paid: £${parseFloat(booking.depositAmount || '0').toFixed(2)}</li>
+              <li>Balance Due (48h before): £${parseFloat(booking.balanceDue || '0').toFixed(2)}</li>
             </ul>
           </div>
         ` : ''}

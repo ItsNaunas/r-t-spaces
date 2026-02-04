@@ -119,9 +119,11 @@ The booking system offers two booking options:
 
 ### Pricing
 
-- Default: £50/hour (configurable in `lib/stripe.ts`)
-- Price calculated automatically based on hours requested
-- Supports time ranges (e.g., "8 AM – 2 PM") or hour counts (e.g., "4 hours")
+- Standard rate: £55/hour with minimum 2 hours (configurable in `lib/pricing.ts`)
+- Half-Day (5 hrs): £260 · Full-Day (9 hrs): £450
+- Complimentary snacks and drinks included
+- Price calculated automatically based on hours or package
+- Supports time ranges (e.g., "8 AM – 2 PM") or package selection
 
 ### Production Deployment
 

@@ -4,39 +4,40 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/StudioSections";
 import { studioServices } from "@/lib/studioData";
 import { GradientBars } from "@/components/ui/gradient-bars";
-
 const packages = [
   {
-    title: "Half-Day Hire",
-    price: "£320",
-    duration: "4 hours",
+    title: "Standard Rate",
+    price: "£55/hr",
+    duration: "Minimum 2 hours",
     popular: false,
     includes: [
-      "4 hours · Monday–Friday",
+      "Minimum 2 hours booking",
+      "Equipment & studio access",
+      "Complimentary snacks and drinks",
+    ],
+  },
+  {
+    title: "Half-Day Hire",
+    price: "£260",
+    duration: "5 hours",
+    popular: false,
+    includes: [
+      "5 hours · Monday–Friday",
       "Lighting kit + tether station",
       "Pre-set backgrounds + props",
+      "Complimentary snacks and drinks",
     ],
   },
   {
     title: "Full-Day Hire",
-    price: "£580",
+    price: "£450",
     duration: "9 hours",
     popular: true,
     includes: [
       "9 hours · any day",
       "Lighting, grip, and crew support",
       "Load-in assistance + storage",
-    ],
-  },
-  {
-    title: "Resident Creative Session",
-    price: "From £750",
-    duration: "Full Day",
-    popular: false,
-    includes: [
-      "Photographer + light tech",
-      "Tethered capture workflow",
-      "In-session direction + selects",
+      "Complimentary snacks and drinks",
     ],
   },
 ];
@@ -173,6 +174,9 @@ export default function ServicesPage() {
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-[var(--muted-plum)]">
               All packages include equipment setup and studio access. Select the option that fits your production timeline.
+            </p>
+            <p className="text-base font-medium text-[var(--primary)]">
+              All options include complimentary snacks and drinks.
             </p>
           </div>
 

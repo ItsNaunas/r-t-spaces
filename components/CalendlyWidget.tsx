@@ -42,26 +42,17 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
     }
 
     const handleLoad = () => setIsLoaded(true);
-    // If script was just created, set up load handler
-    // If script already exists, assume it's loaded
-    if (script.parentNode) {
-      // Script already in DOM, assume loaded
+    if (script.complete) {
       setIsLoaded(true);
     } else {
-      // New script, wait for load
       script.onload = handleLoad;
     }
 
     // Listen for Calendly events
     const handleCalendlyEvent = (e: MessageEvent) => {
-      if (e.data && typeof e.data === "object" && "event" in e.data) {
-        // Log raw payload once for debugging
-        if (e.data.event === "calendly.event_scheduled") {
-          console.log("Calendly raw event data:", e.data);
-          console.log("Calendly payload structure:", JSON.stringify(e.data.payload, null, 2));
-          if (onEventScheduled) {
-            onEventScheduled(e.data as any);
-          }
+      if (e.data.event && e.data.event.indexOf("calendly") === 0) {
+        if (e.data.event === "calendly.event_scheduled" && onEventScheduled) {
+          onEventScheduled(e.data);
         }
       }
     };

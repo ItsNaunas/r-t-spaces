@@ -146,3 +146,4 @@ If you encounter issues:
 4. Ensure email service (Resend) is configured correctly
 
 
+

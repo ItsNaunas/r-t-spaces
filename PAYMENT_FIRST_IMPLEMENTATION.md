@@ -131,8 +131,8 @@ NEXT_PUBLIC_CALENDLY_SCHEDULING_LINK=https://calendly.com/your-username/event-ty
 Edit `lib/pricing.ts`:
 ```typescript
 export const PRICING_CONFIG = {
-  hourlyRate: 50, // Change to your hourly rate
-  minimumHours: 1,
+  hourlyRate: 55, // £55/hr standard rate
+  minimumHours: 2,
   depositPercentage: 0.5, // Change deposit percentage
 };
 ```
@@ -215,4 +215,5 @@ Edit `components/BookingSuccessMessage.tsx` to customize success message.
 - `lib/email.ts` - Email notifications
 - `lib/calendly.ts` - Calendly link generation
 - `components/BookingSuccessMessage.tsx` - Success page
+
 

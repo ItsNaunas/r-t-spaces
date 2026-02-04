@@ -1,6 +1,6 @@
 export const PRICING_CONFIG = {
-  hourlyRate: 50, // $50 per hour (fallback)
-  minimumHours: 1,
+  hourlyRate: 55, // £55 per hour (standard rate)
+  minimumHours: 2,
   depositPercentage: 0.5, // 50% deposit
 };
 
@@ -16,22 +16,36 @@ export type BookingPackage = {
 
 export const BOOKING_PACKAGES: BookingPackage[] = [
   {
-    id: "half-day",
-    title: "Half-Day Hire",
-    price: 320,
-    duration: "4 hours",
-    hours: 4,
+    id: "standard-rate",
+    title: "Standard Rate",
+    price: 110, // minimum (2 hrs × £55) — actual price from selected time
+    duration: "£55/hr (min 2 hrs)",
+    hours: 2,
     popular: false,
     includes: [
-      "4 hours · Monday–Friday",
+      "Minimum 2 hours booking",
+      "Equipment & studio access",
+      "Complimentary snacks and drinks",
+    ],
+  },
+  {
+    id: "half-day",
+    title: "Half-Day Hire",
+    price: 260,
+    duration: "5 hours",
+    hours: 5,
+    popular: false,
+    includes: [
+      "5 hours · Monday–Friday",
       "Lighting kit + tether station",
       "Pre-set backgrounds + props",
+      "Complimentary snacks and drinks",
     ],
   },
   {
     id: "full-day",
     title: "Full-Day Hire",
-    price: 580,
+    price: 450,
     duration: "9 hours",
     hours: 9,
     popular: true,
@@ -39,19 +53,7 @@ export const BOOKING_PACKAGES: BookingPackage[] = [
       "9 hours · any day",
       "Lighting, grip, and crew support",
       "Load-in assistance + storage",
-    ],
-  },
-  {
-    id: "resident-creative",
-    title: "Resident Creative Session",
-    price: 750,
-    duration: "Full Day",
-    hours: 9, // approximate
-    popular: false,
-    includes: [
-      "Photographer + light tech",
-      "Tethered capture workflow",
-      "In-session direction + selects",
+      "Complimentary snacks and drinks",
     ],
   },
 ];
