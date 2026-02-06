@@ -106,6 +106,8 @@ export async function POST(request: Request) {
             totalPrice: session.metadata?.totalPrice,
             depositAmount: session.metadata?.depositAmount,
             balanceDue: session.metadata?.balanceDue,
+            addonsSummary: session.metadata?.addonsSummary || undefined,
+            addonsTotal: session.metadata?.addonsTotal || undefined,
           }).catch((error) => {
             console.error('Email notification failed (booking still saved):', error);
           });

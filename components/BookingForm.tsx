@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CalendlyWidget } from "./CalendlyWidget";
-import { calculateHours, calculatePrice, calculateDeposit, calculateBalance, BOOKING_PACKAGES, PRICING_CONFIG, type BookingPackage } from "@/lib/pricing";
+import { calculateHours, calculatePrice, calculateDeposit, calculateBalance, getDepositForPackage, getBalanceForPackage, BOOKING_PACKAGES, ADDONS, computeAddonsTotal, type BookingPackage, type SelectedAddon } from "@/lib/pricing";
 
 type BookingPayload = {
   name: string;
@@ -67,9 +67,20 @@ export function BookingForm() {
   const [depositAmount, setDepositAmount] = useState<number | null>(null);
   const [balanceAmount, setBalanceAmount] = useState<number | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<BookingPackage | null>(null);
+  const [expandedPackageId, setExpandedPackageId] = useState<string | null>(null);
+  const [addonQuantities, setAddonQuantities] = useState<Record<string, number>>({});
+  const [requestPrintsAlbums, setRequestPrintsAlbums] = useState(false);
   const [pendingBookingExpiresAt, setPendingBookingExpiresAt] = useState<Date | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const searchParams = useSearchParams();
+
+  const selectedAddons: SelectedAddon[] = ADDONS.filter((a) => a.price != null && a.id !== "prints-albums")
+    .map((a) => ({
+      id: a.id,
+      quantity: a.unit ? (addonQuantities[a.id] ?? 0) : (addonQuantities[a.id] ? 1 : 0),
+    }))
+    .filter((s) => (s.quantity ?? 0) > 0);
+  const { total: addonsTotal, summary: addonsSummary } = computeAddonsTotal(selectedAddons);
   
   const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_SCHEDULING_LINK || "";
 
@@ -87,53 +98,37 @@ export function BookingForm() {
     }
   }, [searchParams]);
 
-  // Calculate pricing when package or Calendly time changes
+  // Calculate pricing: total = package + add-ons; deposit on package only; balance = package balance + add-ons total
   useEffect(() => {
     if (paymentMode === "pay") {
       if (selectedPackage) {
-        // Standard Rate: price from selected time only (min 2 hrs); fixed packages use package price
-        if (selectedPackage.id === "standard-rate") {
-          if (calendlyData?.startTime && calendlyData?.endTime) {
-            const hours = Math.max(calculateHours(calendlyData.startTime, calendlyData.endTime), PRICING_CONFIG.minimumHours);
-            const totalPrice = calculatePrice(hours);
-            setBookingPrice(totalPrice);
-            setDepositAmount(calculateDeposit(totalPrice));
-            setBalanceAmount(calculateBalance(totalPrice, calculateDeposit(totalPrice)));
-          } else {
-            setBookingPrice(null);
-            setDepositAmount(null);
-            setBalanceAmount(null);
-          }
-        } else {
-          const totalPrice = selectedPackage.price;
-          setBookingPrice(totalPrice);
-          setDepositAmount(calculateDeposit(totalPrice));
-          setBalanceAmount(calculateBalance(totalPrice, calculateDeposit(totalPrice)));
-        }
+        const packageDeposit = getDepositForPackage(selectedPackage, selectedPackage.price);
+        const packageBalance = getBalanceForPackage(selectedPackage, selectedPackage.price, packageDeposit);
+        const totalPrice = selectedPackage.price + addonsTotal;
+        const balance = packageBalance + addonsTotal;
+        setBookingPrice(totalPrice);
+        setDepositAmount(packageDeposit);
+        setBalanceAmount(balance);
       } else if (calendlyData && calendlyData.startTime && calendlyData.endTime) {
-        // Calculate from Calendly times (fallback if no package selected)
         const hours = calculateHours(calendlyData.startTime, calendlyData.endTime);
         const totalPrice = calculatePrice(hours);
         const deposit = calculateDeposit(totalPrice);
         const balance = calculateBalance(totalPrice, deposit);
-        
         setBookingPrice(totalPrice);
         setDepositAmount(deposit);
         setBalanceAmount(balance);
       } else {
-        // Reset if no package or time
         setBookingPrice(null);
         setDepositAmount(null);
         setBalanceAmount(null);
       }
     } else {
-      // Reset for request mode
       setBookingPrice(null);
       setDepositAmount(null);
       setBalanceAmount(null);
       setSelectedPackage(null);
     }
-  }, [selectedPackage, calendlyData, paymentMode]);
+  }, [selectedPackage, calendlyData, paymentMode, addonsTotal]);
 
   // Create pending booking when both package is selected AND Calendly event is scheduled (Pay & Book Now only)
   useEffect(() => {
@@ -167,6 +162,8 @@ export function BookingForm() {
                 packageTitle: selectedPackage.title,
                 totalPrice: bookingPrice,
                 depositAmount: depositAmount,
+                addonsTotal: addonsTotal || 0,
+                addonsSummary: addonsSummary || "",
               }),
             });
             
@@ -188,7 +185,7 @@ export function BookingForm() {
         createPendingBooking();
       }
     }
-  }, [paymentMode, calendlyTimeSelected, calendlyData, selectedPackage, bookingPrice, depositAmount, formData.calendlyEventUri, formData.pendingBookingId]);
+  }, [paymentMode, calendlyTimeSelected, calendlyData, selectedPackage, bookingPrice, depositAmount, addonsTotal, addonsSummary, formData.calendlyEventUri, formData.pendingBookingId]);
 
   // Countdown timer for pending booking
   useEffect(() => {
@@ -357,6 +354,9 @@ export function BookingForm() {
     try {
       if (paymentMode === "pay") {
         // Use checkout flow for payment
+        const notesWithAddons = requestPrintsAlbums
+          ? (formData.notes || "").trim() + (formData.notes ? "\n\n" : "") + "Prints & albums requested."
+          : formData.notes;
         const response = await fetch("/api/checkout", {
           method: "POST",
           headers: {
@@ -364,12 +364,15 @@ export function BookingForm() {
           },
           body: JSON.stringify({
             ...formData,
+            notes: notesWithAddons,
             startTime: calendlyData?.startTime,
             endTime: calendlyData?.endTime,
             totalPrice: bookingPrice,
             depositAmount: depositAmount,
             selectedPackage: selectedPackage?.id,
             packageTitle: selectedPackage?.title,
+            addonsTotal: addonsTotal || 0,
+            addonsSummary: addonsSummary || "",
             pendingBookingId: formData.pendingBookingId,
             calendlyEventUri: formData.calendlyEventUri,
             calendlyInviteeUri: formData.calendlyInviteeUri,
@@ -423,6 +426,19 @@ export function BookingForm() {
 
   return (
     <div className="space-y-8">
+      {paymentMode === "pay" && (
+        <div className="flex items-center justify-center gap-2 text-sm text-[var(--muted-plum)]">
+          <span className="font-medium text-[var(--primary)]">1</span>
+          <span>—</span>
+          <span>2</span>
+          <span>—</span>
+          <span>3</span>
+          <span>—</span>
+          <span>4</span>
+          <span>—</span>
+          <span>5</span>
+        </div>
+      )}
       {/* Step 1: Booking Type Selection */}
       <div className="space-y-4">
         <div>
@@ -511,7 +527,7 @@ export function BookingForm() {
         </div>
       </div>
 
-      {/* Step 2: Package Selection - Only for Pay & Book Now */}
+      {/* Step 2: Package Selection - Expandable accordion cards (Pay & Book Now only) */}
       {paymentMode === "pay" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -520,7 +536,7 @@ export function BookingForm() {
                 Step 2: Choose Your Package
               </h3>
               <p className="text-sm text-[var(--muted-plum)]">
-                Select the package that best fits your needs. All packages include equipment and studio access.
+                Expand a session to see full details, then select.
               </p>
             </div>
             <Link 
@@ -531,88 +547,201 @@ export function BookingForm() {
             </Link>
           </div>
           
-          <div className="grid gap-4 sm:grid-cols-3">
-            {BOOKING_PACKAGES.map((pkg) => (
-              <label
-                key={pkg.id}
-                className={`relative flex flex-col border-2 cursor-pointer transition-all duration-300 ${
-                  selectedPackage?.id === pkg.id
-                    ? "border-[var(--primary)] bg-[var(--primary)]/5 shadow-md"
-                    : "border-[var(--accent)]/20 hover:border-[var(--primary)]/50 bg-white"
-                } ${pkg.popular ? "ring-2 ring-[var(--primary)]/20" : ""}`}
-              >
-                <input
-                  type="radio"
-                  name="bookingPackage"
-                  value={pkg.id}
-                  checked={selectedPackage?.id === pkg.id}
-                  onChange={() => setSelectedPackage(pkg)}
-                  className="sr-only"
-                />
-                {pkg.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-[var(--primary)] text-white px-3 py-1 text-xs font-semibold uppercase tracking-wider">
-                      Popular
-                    </span>
-                  </div>
-                )}
-                <div className="p-5 flex flex-col h-full">
-                  <div className="mb-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-plum)] mb-2">
-                      {pkg.duration}
-                    </p>
-                    <h4 className="font-heading text-lg text-[var(--primary)] mb-3">
-                      {pkg.title}
-                    </h4>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-2xl font-semibold text-[var(--primary)]">
-                        {pkg.id === "standard-rate"
-                          ? `£${PRICING_CONFIG.hourlyRate}/hr`
-                          : `£${pkg.price}`}
+          <div className="space-y-2 pt-4" role="list">
+            {BOOKING_PACKAGES.map((pkg) => {
+              const isExpanded = expandedPackageId === pkg.id;
+              const isSelected = selectedPackage?.id === pkg.id;
+              return (
+                <div
+                  key={pkg.id}
+                  className={`relative border-2 transition-all duration-300 ${
+                    isSelected
+                      ? "border-[var(--primary)] bg-[var(--primary)]/10 shadow-md ring-2 ring-[var(--primary)]"
+                      : "border-[var(--accent)]/20 bg-white hover:border-[var(--primary)]/50"
+                  } ${pkg.limitedOffer && !isSelected ? "ring-2 ring-[var(--primary)]/20" : ""}`}
+                >
+                  {pkg.limitedOffer && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                      <span className="bg-[var(--primary)] text-white px-3 py-1 text-xs font-semibold uppercase tracking-wider">
+                        Limited offer
                       </span>
-                      {pkg.id === "standard-rate" && (
-                        <span className="text-sm text-[var(--muted-plum)]">(min 2 hrs)</span>
-                      )}
+                    </div>
+                  )}
+                  {/* Accordion header: click to expand/collapse */}
+                  <button
+                    type="button"
+                    onClick={() => setExpandedPackageId(isExpanded ? null : pkg.id)}
+                    aria-expanded={isExpanded}
+                    aria-controls={`package-details-${pkg.id}`}
+                    id={`package-header-${pkg.id}`}
+                    className="w-full flex items-center gap-4 p-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
+                  >
+                    <span className="flex-1 min-w-0">
+                      <span className="font-heading text-[var(--primary)] font-medium block truncate">
+                        {pkg.title}
+                      </span>
+                      <span className="text-sm text-[var(--muted-plum)]">
+                        {pkg.duration}
+                      </span>
+                    </span>
+                    <span className="text-lg font-semibold text-[var(--primary)] whitespace-nowrap">
+                      £{pkg.price}
+                    </span>
+                    <span
+                      className={`flex-shrink-0 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                      aria-hidden
+                    >
+                      <svg className="h-5 w-5 text-[var(--muted-plum)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </span>
+                    {isSelected && (
+                      <span className="flex-shrink-0 text-sm font-semibold text-[var(--primary)]">✓ Selected</span>
+                    )}
+                  </button>
+                  {/* Expandable details */}
+                  <div
+                    id={`package-details-${pkg.id}`}
+                    role="region"
+                    aria-labelledby={`package-header-${pkg.id}`}
+                    className={`grid transition-all duration-300 ease-out ${
+                      isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="border-t border-[var(--accent)]/20 p-4 pt-4 bg-white/50">
+                        <ul className="space-y-2 mb-4 text-sm text-[var(--muted-plum)]">
+                          {pkg.includes.map((item, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <svg
+                                className="h-4 w-4 text-[var(--primary)] mt-0.5 flex-shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        {pkg.bestFor && (
+                          <p className="text-sm text-[var(--muted-plum)] mb-2">
+                            <span className="font-medium text-[var(--primary)]">Best for:</span> {pkg.bestFor}
+                          </p>
+                        )}
+                        {pkg.availabilityNote && (
+                          <p className="text-xs text-[var(--muted-plum)] mb-4">{pkg.availabilityNote}</p>
+                        )}
+                        {pkg.depositAmount != null && pkg.balanceOnDay != null && (
+                          <p className="text-xs text-[var(--muted-plum)] mb-4">
+                            £{pkg.depositAmount} non-refundable deposit to book. Remaining £{pkg.balanceOnDay} paid on the day.
+                          </p>
+                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedPackage(pkg);
+                            setExpandedPackageId(null);
+                          }}
+                          className={`w-full sm:w-auto px-4 py-2 font-medium transition-colors ${
+                            isSelected
+                              ? "bg-[var(--primary)]/20 text-[var(--primary)] cursor-default"
+                              : "bg-[var(--primary)] text-white hover:opacity-90"
+                          }`}
+                        >
+                          {isSelected ? "✓ Selected" : "Select this package"}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <ul className="space-y-2 mb-4 flex-grow text-sm text-[var(--muted-plum)]">
-                    {pkg.includes.slice(0, 2).map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <svg
-                          className="h-4 w-4 text-[var(--primary)] mt-0.5 flex-shrink-0"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span className="text-xs">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className={`mt-auto pt-3 border-t border-[var(--accent)]/20 text-center ${
-                    selectedPackage?.id === pkg.id ? "text-[var(--primary)] font-semibold" : "text-[var(--muted-plum)]"
-                  }`}>
-                    {selectedPackage?.id === pkg.id ? "✓ Selected" : "Select"}
-                  </div>
                 </div>
-              </label>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Step 2/3: Select Time via Calendly - Show for both booking types */}
+      {/* Step 3: Add-ons - Pay & Book Now only */}
+      {paymentMode === "pay" && (
+        <div className="space-y-4">
+          <div>
+            <h3 className="font-heading text-xl text-[var(--primary)] mb-2">
+              Step 3: Add-ons
+            </h3>
+            <p className="text-sm text-[var(--muted-plum)]">
+              Add extra images, time, or people. Add-ons are paid with your balance on the day.
+            </p>
+          </div>
+          <div className="border-2 border-[var(--accent)]/20 bg-white p-6 space-y-6">
+            {ADDONS.filter((a) => a.id !== "prints-albums").map((addon) => (
+              <div key={addon.id} className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--accent)]/10 pb-4 last:border-0 last:pb-0">
+                <div>
+                  <p className="font-medium text-[var(--primary)]">{addon.label}</p>
+                  {addon.price != null && (
+                    <p className="text-sm text-[var(--muted-plum)]">
+                      {addon.unit === "person" ? `£${addon.price} per person` : addon.unit === "image" ? `£${addon.price} each` : addon.unit === "hour" ? `£${addon.price} per hour` : `£${addon.price}`}
+                    </p>
+                  )}
+                </div>
+                {addon.unit ? (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setAddonQuantities((q) => ({ ...q, [addon.id]: Math.max(0, (q[addon.id] ?? 0) - 1) }))}
+                      className="w-8 h-8 border border-[var(--accent)]/40 text-[var(--primary)] font-medium hover:bg-[var(--accent)]/10"
+                    >
+                      −
+                    </button>
+                    <span className="w-8 text-center font-semibold text-[var(--primary)]">{addonQuantities[addon.id] ?? 0}</span>
+                    <button
+                      type="button"
+                      onClick={() => setAddonQuantities((q) => ({ ...q, [addon.id]: (q[addon.id] ?? 0) + 1 }))}
+                      className="w-8 h-8 border border-[var(--accent)]/40 text-[var(--primary)] font-medium hover:bg-[var(--accent)]/10"
+                    >
+                      +
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={!!addonQuantities[addon.id]}
+                      onChange={(e) => setAddonQuantities((q) => ({ ...q, [addon.id]: e.target.checked ? 1 : 0 }))}
+                      className="border-[var(--accent)]/40 text-[var(--primary)]"
+                    />
+                    <span className="text-sm text-[var(--muted-plum)]">Add</span>
+                  </label>
+                )}
+              </div>
+            ))}
+            <div className="pt-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={requestPrintsAlbums}
+                  onChange={(e) => setRequestPrintsAlbums(e.target.checked)}
+                  className="border-[var(--accent)]/40 text-[var(--primary)]"
+                />
+                <span className="text-sm text-[var(--muted-plum)]">I&apos;d like to enquire about prints & albums</span>
+              </label>
+            </div>
+            {addonsTotal > 0 && (
+              <p className="text-sm font-semibold text-[var(--primary)] pt-2 border-t border-[var(--accent)]/20">
+                Add-ons total: £{addonsTotal}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Step 4/2: Select Time via Calendly - Show for both booking types */}
       {calendlyUrl && (
         <div className="space-y-4">
           <div>
             <h3 className="font-heading text-xl text-[var(--primary)] mb-2">
-              {paymentMode === "pay" ? "Step 3: Select Your Preferred Time" : "Step 2: Select Your Preferred Time"}
+              {paymentMode === "pay" ? "Step 4: Select Your Preferred Time" : "Step 2: Select Your Preferred Time"}
             </h3>
             <p className="text-sm text-[var(--muted-plum)] mb-4">
               {paymentMode === "request" 
@@ -661,7 +790,7 @@ export function BookingForm() {
       }`}>
         <div className="mb-6">
           <h3 className="font-heading text-xl text-[var(--primary)] mb-2">
-            {paymentMode === "request" ? "Step 3: Review & Submit" : "Step 4: Review & Proceed to Payment"}
+            {paymentMode === "request" ? "Step 3: Review & Submit" : "Step 5: Review & Proceed to Payment"}
           </h3>
           <p className="text-sm text-[var(--muted-plum)]">
             {paymentMode === "pay" 
@@ -677,7 +806,7 @@ export function BookingForm() {
 
       {/* Booking Details Summary */}
       {calendlyTimeSelected && calendlyData && (
-        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 rounded-sm space-y-3">
+        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 rounded-lg space-y-3">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)] mb-3">
             Booking Details
           </p>
@@ -728,7 +857,7 @@ export function BookingForm() {
 
       {/* Selected Package Display */}
       {paymentMode === "pay" && selectedPackage && (
-        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 rounded-sm space-y-3">
+        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 rounded-lg space-y-3">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)]">
             Selected Package
           </p>
@@ -736,9 +865,7 @@ export function BookingForm() {
             <div className="flex justify-between items-center">
               <span className="text-sm font-semibold text-[var(--primary)]">{selectedPackage.title}</span>
               <span className="text-base font-semibold text-[var(--primary)]">
-                {selectedPackage.id === "standard-rate" && bookingPrice != null
-                  ? `£${bookingPrice.toFixed(2)}`
-                  : `£${selectedPackage.price}`}
+                £{selectedPackage.price}
               </span>
             </div>
             <p className="text-xs text-[var(--muted-plum)]">{selectedPackage.duration}</p>
@@ -747,28 +874,43 @@ export function BookingForm() {
       )}
 
       {/* Pricing Display */}
-      {paymentMode === "pay" && bookingPrice && depositAmount && balanceAmount && (
-        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 rounded-sm space-y-3">
+      {paymentMode === "pay" && bookingPrice != null && depositAmount != null && balanceAmount != null && selectedPackage && (
+        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 rounded-lg space-y-3">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)]">
             Payment Summary
           </p>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted-plum)]">Total Price:</span>
+              <span className="text-sm text-[var(--muted-plum)]">{selectedPackage.title}:</span>
+              <span className="text-base font-semibold text-[var(--primary)]">£{selectedPackage.price}</span>
+            </div>
+            {addonsTotal > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-[var(--muted-plum)]">Add-ons:</span>
+                <span className="text-base font-semibold text-[var(--primary)]">£{addonsTotal}</span>
+              </div>
+            )}
+            <div className="flex justify-between items-center pt-1 border-t border-[var(--accent)]/20">
+              <span className="text-sm font-medium text-[var(--muted-plum)]">Total:</span>
               <span className="text-lg font-semibold text-[var(--primary)]">£{bookingPrice.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted-plum)]">Deposit (50%):</span>
+              <span className="text-sm text-[var(--muted-plum)]">
+                {selectedPackage.depositAmount != null ? "Deposit:" : "Deposit (50%):"}
+              </span>
               <span className="text-base font-semibold text-[var(--primary)]">£{depositAmount.toFixed(2)}</span>
             </div>
             <div className="pt-2 border-t border-[var(--accent)]/20">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-[var(--muted-plum)]">Balance Due:</span>
-                <span className="text-sm text-[var(--muted-plum)]">£{balanceAmount.toFixed(2)} (48h before booking)</span>
+                <span className="text-xs text-[var(--muted-plum)]">Balance due on the day:</span>
+                <span className="text-sm text-[var(--muted-plum)]">
+                  £{balanceAmount.toFixed(2)}
+                  {addonsTotal > 0 ? " (includes add-ons)" : selectedPackage.balanceOnDay != null ? " (on the day of your session)" : " (48h before booking)"}
+                </span>
               </div>
             </div>
             <p className="text-xs text-[var(--muted-plum)] pt-2">
-              * You'll pay the deposit now. The remaining balance will be due 48 hours before your booking.
+              * You'll pay the deposit now. The remaining balance is due on the day of your session{addonsTotal > 0 ? " (includes add-ons)" : selectedPackage.balanceOnDay != null ? "" : " (48 hours before your booking)"}.
             </p>
           </div>
         </div>

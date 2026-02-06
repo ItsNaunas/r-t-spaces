@@ -15,6 +15,8 @@ export async function POST(request: Request) {
       packageTitle,
       totalPrice,
       depositAmount,
+      addonsTotal,
+      addonsSummary,
     } = body;
 
     if (!calendlyEventUri || !customerName || !customerEmail || !startTime || !endTime) {
@@ -37,6 +39,8 @@ export async function POST(request: Request) {
         packageTitle,
         totalPrice,
         depositAmount,
+        addonsTotal,
+        addonsSummary,
       },
     });
 
