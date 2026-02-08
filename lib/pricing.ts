@@ -22,6 +22,8 @@ export type BookingPackage = {
   balanceOnDay?: number;
   /** Show a "Limited offer" badge (e.g. seasonal packages) */
   limitedOffer?: boolean;
+  /** When true, total price is computed from Calendly hours (hourly rate × hours) instead of using price */
+  priceFromTime?: boolean;
 };
 
 export const BOOKING_PACKAGES: BookingPackage[] = [
@@ -94,6 +96,49 @@ export const BOOKING_PACKAGES: BookingPackage[] = [
     availabilityNote: "Package available Monday to Thursday",
   },
   {
+    id: "standard-rate",
+    title: "Standard Rate",
+    price: 110,
+    duration: "£55/hr, 2 hr minimum",
+    hours: 2,
+    popular: false,
+    priceFromTime: true,
+    includes: [
+      "Studio hire by the hour",
+      "Professional equipment included",
+      "Minimum 2 hours booking",
+    ],
+    availabilityNote: "Price calculated from your selected time",
+  },
+  {
+    id: "half-day",
+    title: "Half Day",
+    price: 260,
+    duration: "5 Hours",
+    hours: 5,
+    popular: false,
+    includes: [
+      "5-hour studio hire",
+      "Professional equipment included",
+      "Full use of studio space",
+    ],
+    availabilityNote: "Fixed rate for 5 hours",
+  },
+  {
+    id: "full-day",
+    title: "Full Day",
+    price: 450,
+    duration: "9 Hours",
+    hours: 9,
+    popular: false,
+    includes: [
+      "9-hour studio hire",
+      "Professional equipment included",
+      "Full use of studio space",
+    ],
+    availabilityNote: "Fixed rate for 9 hours",
+  },
+  {
     id: "mothers-day-mini",
     title: "Mother's Day Mini Session",
     price: 65,
@@ -136,6 +181,9 @@ export const BOOKING_PACKAGES: BookingPackage[] = [
     limitedOffer: true,
   },
 ];
+
+/** IDs for studio hire / standard rate packages (Standard Rate, Half Day, Full Day) */
+export const HIRE_RATE_IDS = ["standard-rate", "half-day", "full-day"];
 
 export type PricingAddon = {
   id: string;

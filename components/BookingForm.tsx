@@ -102,13 +102,23 @@ export function BookingForm() {
   useEffect(() => {
     if (paymentMode === "pay") {
       if (selectedPackage) {
-        const packageDeposit = getDepositForPackage(selectedPackage, selectedPackage.price);
-        const packageBalance = getBalanceForPackage(selectedPackage, selectedPackage.price, packageDeposit);
-        const totalPrice = selectedPackage.price + addonsTotal;
-        const balance = packageBalance + addonsTotal;
-        setBookingPrice(totalPrice);
-        setDepositAmount(packageDeposit);
-        setBalanceAmount(balance);
+        const isTimeBased = selectedPackage.priceFromTime && calendlyData?.startTime && calendlyData?.endTime;
+        if (selectedPackage.priceFromTime && !isTimeBased) {
+          setBookingPrice(null);
+          setDepositAmount(null);
+          setBalanceAmount(null);
+        } else {
+          const packagePrice = isTimeBased
+            ? calculatePrice(calculateHours(calendlyData!.startTime, calendlyData!.endTime))
+            : selectedPackage.price;
+          const packageDeposit = getDepositForPackage(selectedPackage, packagePrice);
+          const packageBalance = getBalanceForPackage(selectedPackage, packagePrice, packageDeposit);
+          const totalPrice = packagePrice + addonsTotal;
+          const balance = packageBalance + addonsTotal;
+          setBookingPrice(totalPrice);
+          setDepositAmount(packageDeposit);
+          setBalanceAmount(balance);
+        }
       } else if (calendlyData && calendlyData.startTime && calendlyData.endTime) {
         const hours = calculateHours(calendlyData.startTime, calendlyData.endTime);
         const totalPrice = calculatePrice(hours);
@@ -865,7 +875,7 @@ export function BookingForm() {
             <div className="flex justify-between items-center">
               <span className="text-sm font-semibold text-[var(--primary)]">{selectedPackage.title}</span>
               <span className="text-base font-semibold text-[var(--primary)]">
-                £{selectedPackage.price}
+                £{bookingPrice != null && selectedPackage.priceFromTime ? (bookingPrice - addonsTotal).toFixed(2) : selectedPackage.price}
               </span>
             </div>
             <p className="text-xs text-[var(--muted-plum)]">{selectedPackage.duration}</p>
@@ -882,7 +892,7 @@ export function BookingForm() {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm text-[var(--muted-plum)]">{selectedPackage.title}:</span>
-              <span className="text-base font-semibold text-[var(--primary)]">£{selectedPackage.price}</span>
+              <span className="text-base font-semibold text-[var(--primary)]">£{selectedPackage.priceFromTime ? (bookingPrice - addonsTotal).toFixed(2) : selectedPackage.price}</span>
             </div>
             {addonsTotal > 0 && (
               <div className="flex justify-between items-center">

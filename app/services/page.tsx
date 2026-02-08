@@ -4,12 +4,13 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/StudioSections";
 import { studioServices } from "@/lib/studioData";
 import { GradientBars } from "@/components/ui/gradient-bars";
-import { BOOKING_PACKAGES, ADDONS, type BookingPackage } from "@/lib/pricing";
+import { BOOKING_PACKAGES, ADDONS, HIRE_RATE_IDS, type BookingPackage } from "@/lib/pricing";
 
 const MAIN_PACKAGE_IDS = ["essential-studio", "signature-studio", "luxury-studio", "engagement-story"];
 const MOTHERS_DAY_IDS = ["mothers-day-mini", "mothers-day-premium"];
 
 const mainPackages = BOOKING_PACKAGES.filter((p) => MAIN_PACKAGE_IDS.includes(p.id));
+const hirePackages = BOOKING_PACKAGES.filter((p) => HIRE_RATE_IDS.includes(p.id));
 const mothersDayPackages = BOOKING_PACKAGES.filter((p) => MOTHERS_DAY_IDS.includes(p.id));
 
 function PackageCard({ pkg }: { pkg: BookingPackage }) {
@@ -226,6 +227,26 @@ export default function ServicesPage() {
             {mainPackages.map((pkg) => (
               <PackageCard key={pkg.id} pkg={pkg} />
             ))}
+          </div>
+
+          {/* Studio Hire & Standard Rates */}
+          <div className="mt-16">
+            <div className="text-center space-y-4 mb-10">
+              <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
+                Studio Hire & Standard Rates
+              </p>
+              <h2 className="font-heading text-2xl text-[var(--primary)] sm:text-3xl">
+                Hourly & Block Bookings
+              </h2>
+              <p className="max-w-2xl mx-auto text-lg text-[var(--muted-plum)]">
+                Need the space without a session package? Book by the hour or choose a half or full day.
+              </p>
+            </div>
+            <div className="grid gap-8 md:grid-cols-3 lg:gap-6">
+              {hirePackages.map((pkg) => (
+                <PackageCard key={pkg.id} pkg={pkg} />
+              ))}
+            </div>
           </div>
 
           {/* Booking Terms */}

@@ -363,6 +363,7 @@ export function StudioHeroStats() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const stats = [
+    { value: "5m × 5m", label: "Studio", sublabel: "Floor space" },
     { value: "500+", label: "Creators", sublabel: "Served" },
     { value: "4.9/5", label: "Average", sublabel: "Rating" },
     { value: "50+", label: "Bookings", sublabel: "This Month" },
@@ -417,7 +418,7 @@ export function StudioHeroStats() {
           </div>
 
           {/* Stats Grid */}
-          <div className="mt-8 lg:mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
+          <div className="mt-8 lg:mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6">
             {stats.map((stat, index) => (
               <div 
                 key={index} 
