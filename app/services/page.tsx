@@ -4,49 +4,96 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/StudioSections";
 import { studioServices } from "@/lib/studioData";
 import { GradientBars } from "@/components/ui/gradient-bars";
+import { BOOKING_PACKAGES, ADDONS, type BookingPackage } from "@/lib/pricing";
 
-const packages = [
-  {
-    title: "Half-Day Hire",
-    price: "£320",
-    duration: "4 hours",
-    popular: false,
-    includes: [
-      "4 hours · Monday–Friday",
-      "Lighting kit + tether station",
-      "Pre-set backgrounds + props",
-    ],
-  },
-  {
-    title: "Full-Day Hire",
-    price: "£580",
-    duration: "9 hours",
-    popular: true,
-    includes: [
-      "9 hours · any day",
-      "Lighting, grip, and crew support",
-      "Load-in assistance + storage",
-    ],
-  },
-  {
-    title: "Resident Creative Session",
-    price: "From £750",
-    duration: "Full Day",
-    popular: false,
-    includes: [
-      "Photographer + light tech",
-      "Tethered capture workflow",
-      "In-session direction + selects",
-    ],
-  },
-];
+const MAIN_PACKAGE_IDS = ["essential-studio", "signature-studio", "luxury-studio", "engagement-story"];
+const MOTHERS_DAY_IDS = ["mothers-day-mini", "mothers-day-premium"];
 
-const addOns = [
-  "Neon photobooth wall with custom wraps",
-  "Instant prints + branded templates",
-  "Editorial stylist + grooming partners",
-  "Catering recommendations & concierge",
-];
+const mainPackages = BOOKING_PACKAGES.filter((p) => MAIN_PACKAGE_IDS.includes(p.id));
+const mothersDayPackages = BOOKING_PACKAGES.filter((p) => MOTHERS_DAY_IDS.includes(p.id));
+
+function PackageCard({ pkg }: { pkg: BookingPackage }) {
+  return (
+    <article
+      className={`relative flex flex-col border-2 rounded-lg shadow-md transition-all duration-300 ${
+        pkg.popular
+          ? "border-[var(--primary)] shadow-lg scale-105 md:scale-110"
+          : "border-[var(--accent)]/20 hover:border-[var(--primary)] hover:shadow-md"
+      } bg-white`}
+    >
+      {pkg.limitedOffer && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+          <span className="bg-[var(--primary)] text-white px-4 py-1 text-xs font-semibold uppercase tracking-wider">
+            Limited offer
+          </span>
+        </div>
+      )}
+
+      <div className="p-8 flex flex-col flex-grow">
+        <div className="mb-6 pb-4 border-b border-[var(--accent)]/20">
+          <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-plum)] mb-2">
+            {pkg.duration}
+          </p>
+          <h3 className="font-heading text-2xl text-[var(--primary)] mb-4">
+            {pkg.title}
+          </h3>
+          <div className="flex items-baseline gap-2">
+            <span className="text-4xl font-semibold text-[var(--primary)]">
+              £{pkg.price}
+            </span>
+          </div>
+          {pkg.depositAmount != null && pkg.balanceOnDay != null && (
+            <p className="text-sm text-[var(--muted-plum)] mt-2">
+              £{pkg.depositAmount} non-refundable deposit to book. Remaining £{pkg.balanceOnDay} paid on the day.
+            </p>
+          )}
+        </div>
+
+        <ul className="space-y-4 mb-8 flex-grow">
+          {pkg.includes.map((detail) => (
+            <li key={detail} className="flex items-start gap-3">
+              <svg
+                className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              <span className="text-base text-[var(--muted-plum)] leading-relaxed">
+                {detail}
+              </span>
+            </li>
+          ))}
+        </ul>
+        {pkg.bestFor && (
+          <p className="text-sm text-[var(--muted-plum)] mb-4">
+            <strong className="text-[var(--primary)]">Best for:</strong> {pkg.bestFor}
+          </p>
+        )}
+        {pkg.availabilityNote && (
+          <p className="text-xs text-[var(--muted-plum)] mb-4">
+            {pkg.availabilityNote}
+          </p>
+        )}
+
+        <Link
+          href={`/?package=${encodeURIComponent(pkg.title)}#contact`}
+          className={`mt-auto w-full text-center ${
+            pkg.popular ? "btn-primary" : "btn-secondary"
+          }`}
+        >
+          Book Now
+        </Link>
+      </div>
+    </article>
+  );
+}
 
 export default function ServicesPage() {
   const scrollToSection = (id: string) => {
@@ -86,9 +133,8 @@ export default function ServicesPage() {
                 Every Creative Need
               </h1>
               <p className="text-lg sm:text-xl text-[var(--primary)]/90 max-w-2xl mx-auto leading-relaxed">
-                Choose a simple studio hire or plug into our resident crew for
-                content direction, tethered capture, and photobooth moments that
-                keep your community engaged.
+                Studio sessions for every moment—portraits, couples, families, and
+                special occasions. Choose your package and book with confidence.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <button
@@ -172,81 +218,18 @@ export default function ServicesPage() {
               Flexible Booking Options
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-[var(--muted-plum)]">
-              All packages include equipment setup and studio access. Select the option that fits your production timeline.
+              All packages include professional guidance and private online gallery. Select the option that fits your session.
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-3 lg:gap-6">
-            {packages.map((pkg) => (
-              <article
-                key={pkg.title}
-                className={`relative flex flex-col border-2 transition-all duration-300 ${
-                  pkg.popular
-                    ? "border-[var(--primary)] shadow-lg scale-105 md:scale-110"
-                    : "border-[var(--accent)]/20 hover:border-[var(--primary)] hover:shadow-md"
-                } bg-white`}
-              >
-                {pkg.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="bg-[var(--primary)] text-white px-4 py-1 text-xs font-semibold uppercase tracking-wider">
-                      Most Popular
-                    </span>
-                  </div>
-                )}
-
-                <div className="p-8 flex flex-col flex-grow">
-                  <div className="mb-6">
-                    <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-plum)] mb-2">
-                      {pkg.duration}
-                    </p>
-                    <h3 className="font-heading text-2xl text-[var(--primary)] mb-4">
-                      {pkg.title}
-                    </h3>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-semibold text-[var(--primary)]">
-                        {pkg.price}
-                      </span>
-                    </div>
-                  </div>
-
-                  <ul className="space-y-4 mb-8 flex-grow">
-                    {pkg.includes.map((detail) => (
-                      <li key={detail} className="flex items-start gap-3">
-                        <svg
-                          className="h-5 w-5 text-[var(--primary)] mt-0.5 flex-shrink-0"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span className="text-base text-[var(--muted-plum)] leading-relaxed">
-                          {detail}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link
-                    href={`/?package=${encodeURIComponent(pkg.title)}#contact`}
-                    className={`mt-auto w-full text-center ${
-                      pkg.popular ? "btn-primary" : "btn-secondary"
-                    }`}
-                  >
-                    Book Now
-                  </Link>
-                </div>
-              </article>
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+            {mainPackages.map((pkg) => (
+              <PackageCard key={pkg.id} pkg={pkg} />
             ))}
           </div>
 
-          {/* Quick Comparison Note */}
-          <div className="mt-12 p-6 bg-[var(--accent)]/5 border border-[var(--accent)]/20">
+          {/* Booking Terms */}
+          <div className="mt-12 p-6 bg-[var(--accent)]/5 border border-[var(--accent)]/20 border-l-4 border-l-[var(--primary)] rounded-lg">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-shrink-0">
                 <svg
@@ -263,11 +246,11 @@ export default function ServicesPage() {
                   />
                 </svg>
               </div>
-              <div className="flex-grow">
-                <p className="text-base text-[var(--muted-plum)]">
-                  <strong className="text-[var(--primary)]">Need help choosing?</strong> Our full-day package is perfect for most productions and includes extended hours, crew support, and storage. For smaller shoots, the half-day option offers everything you need in a compact timeframe.
-                </p>
-              </div>
+              <ul className="flex-grow space-y-2 text-base text-[var(--muted-plum)] list-disc list-inside">
+                <li>A non-refundable deposit is required to secure your booking.</li>
+                <li>Remaining balance is due on the day of your session.</li>
+                <li>Special mini sessions are released for limited events only (Valentine&apos;s, Mother&apos;s Day, Christmas).</li>
+              </ul>
             </div>
           </div>
         </section>
@@ -365,18 +348,18 @@ export default function ServicesPage() {
               Enhance Your Session
             </p>
             <h2 className="font-heading text-3xl text-[var(--primary)] sm:text-4xl lg:text-5xl">
-              Premium Add-ons
+              Optional Add-ons
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-[var(--muted-plum)]">
-              Elevate your production with our curated add-on services. Perfect for events, brand launches, and special projects.
+              Add extra images, time, or people to your session. Ask about prints and albums when you book.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {addOns.map((addon) => (
+          <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+            {ADDONS.map((addon) => (
               <div
-                key={addon}
-                className="border border-[var(--accent)]/20 bg-white p-6 hover:border-[var(--primary)] hover:shadow-md transition-all duration-300"
+                key={addon.id}
+                className="border-2 border-[var(--accent)]/20 shadow-md bg-white p-6 hover:border-[var(--primary)] hover:shadow-lg transition-all duration-300"
               >
                 <div className="mb-4">
                   <div className="w-12 h-12 bg-[var(--primary)]/10 flex items-center justify-center mb-4">
@@ -396,7 +379,14 @@ export default function ServicesPage() {
                   </div>
                 </div>
                 <p className="text-base text-[var(--muted-plum)] leading-relaxed">
-                  {addon}
+                  {addon.label}
+                  {addon.price != null ? (
+                    <span className="font-semibold text-[var(--primary)] block mt-1">
+                      {addon.unit === "person" ? `£${addon.price} per person` : addon.unit === "image" ? `£${addon.price} each` : `£${addon.price}`}
+                    </span>
+                  ) : (
+                    <span className="text-[var(--muted-plum)] block mt-1">On request</span>
+                  )}
                 </p>
               </div>
             ))}
@@ -404,11 +394,35 @@ export default function ServicesPage() {
 
           <div className="mt-12 text-center">
             <p className="text-base text-[var(--muted-plum)] mb-6">
-              Interested in adding any of these services to your booking?
+              Interested in adding any of these to your booking?
             </p>
             <Link href="/#contact" className="btn-primary">
               Request Add-ons When Booking
             </Link>
+          </div>
+        </section>
+
+        {/* Mother's Day Section */}
+        <section id="mothers-day" className="scroll-mt-24">
+          <div className="text-center space-y-4 mb-12 relative">
+            <span className="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider bg-[var(--accent)]/20 text-[var(--primary)] rounded-full border border-[var(--primary)]/30">
+              Limited time
+            </span>
+            <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
+              Mother&apos;s Day
+            </p>
+            <h2 className="font-heading text-3xl text-[var(--primary)] sm:text-4xl lg:text-5xl">
+              Mother&apos;s Day Mini Sessions
+            </h2>
+            <p className="max-w-2xl mx-auto text-lg text-[var(--muted-plum)]">
+              A special way to celebrate Mum. Only the Mother&apos;s Day packages are available for a limited time until Mother&apos;s Day.
+            </p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2 lg:gap-6 max-w-4xl mx-auto">
+            {mothersDayPackages.map((pkg) => (
+              <PackageCard key={pkg.id} pkg={pkg} />
+            ))}
           </div>
         </section>
       </main>

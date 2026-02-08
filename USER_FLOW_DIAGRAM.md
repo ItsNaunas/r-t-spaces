@@ -271,3 +271,4 @@ User Confirms Time
 4. **🟡 Important**: Add refund handling
 5. **🟢 Nice-to-have**: Booking management interface
 
+

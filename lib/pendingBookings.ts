@@ -19,6 +19,8 @@ export type PendingBooking = {
     packageTitle?: string;
     totalPrice?: number;
     depositAmount?: number;
+    addonsTotal?: number;
+    addonsSummary?: string;
   };
 };
 

@@ -48,24 +48,22 @@ const availabilityInfo = {
   ],
 };
 
-export default async function BookOnlinePage({
+export default function BookOnlinePage({
   searchParams,
 }: {
-  searchParams?: Promise<{ success?: string; canceled?: string; session_id?: string }>;
+  searchParams?: { success?: string; canceled?: string; session_id?: string };
 }) {
-  const params = await searchParams;
-  
   return (
     <div className="bg-[var(--base)]">
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         {/* Success Message */}
-        {params?.success === "true" && (
+        {searchParams?.success === "true" && (
           <BookingSuccessMessage />
         )}
         
         {/* Cancel Message */}
-        {params?.canceled === "true" && (
-          <div className="border border-yellow-500/20 bg-yellow-500/10 p-6 text-yellow-600 ">
+        {searchParams?.canceled === "true" && (
+          <div className="border border-yellow-500/20 bg-yellow-500/10 p-6 text-yellow-600 rounded-lg">
             <p className="font-semibold">Booking Canceled</p>
             <p className="text-sm mt-2">
               Your booking was not completed. You can try again or contact us directly.
@@ -76,17 +74,18 @@ export default async function BookOnlinePage({
           <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             Book Online
           </p>
-          <h1 className="font-heading text-5xl text-[var(--primary)] sm:text-6xl lg:text-7xl">
+          <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl lg:text-6xl">
             Reserve Your Studio Time
           </h1>
           <p className="max-w-3xl text-lg text-[var(--muted-plum)]">
-            Select an available time slot from the calendar, then complete your booking details and payment. 
-            Your booking will be confirmed immediately after payment.
+            Fill out the form below with your preferred date, time, and
+            requirements. We&apos;ll confirm availability and send you all the
+            details within 24 hours.
           </p>
         </section>
 
         {/* Availability Section */}
-        <section className="border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-6 lg:p-8 ">
+        <section className="border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-6 lg:p-8 rounded-lg">
           <h2 className="font-heading text-2xl text-[var(--primary)] mb-4">
             {availabilityInfo.title}
           </h2>
@@ -134,11 +133,11 @@ export default async function BookOnlinePage({
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <h2 className="font-heading text-2xl text-[var(--primary)] mb-6">
-              Book Your Studio Time
+              Booking Request
             </h2>
             <Suspense
               fallback={
-                <div className="flex h-full items-center justify-center border border-[var(--accent)]/20 p-6 text-sm text-[var(--muted-plum)] ">
+                <div className="flex h-full items-center justify-center border border-[var(--accent)]/20 p-6 text-sm text-[var(--muted-plum)] rounded-lg">
                   Loading form…
                 </div>
               }
@@ -149,7 +148,7 @@ export default async function BookOnlinePage({
 
           <div className="space-y-6">
             {/* Quick Contact */}
-            <div className="border border-[var(--accent)]/20 p-6 space-y-4 ">
+            <div className="border border-[var(--accent)]/20 p-6 space-y-4 rounded-lg">
               <h3 className="font-heading text-xl text-[var(--primary)]">
                 Need Immediate Assistance?
               </h3>
@@ -193,7 +192,7 @@ export default async function BookOnlinePage({
             </div>
 
             {/* Studio Hours */}
-            <div className="border border-[var(--accent)]/20 p-6 ">
+            <div className="border border-[var(--accent)]/20 p-6 rounded-lg">
               <h3 className="font-heading text-xl text-[var(--primary)] mb-4">
                 Studio Hours
               </h3>
@@ -224,7 +223,7 @@ export default async function BookOnlinePage({
             {bookingPolicies.map((policy) => (
               <article
                 key={policy.title}
-                className="border border-[var(--accent)]/20 p-6 space-y-3 "
+                className="border border-[var(--accent)]/20 p-6 space-y-3 rounded-lg"
               >
                 <h3 className="font-heading text-xl text-[var(--primary)]">
                   {policy.title}

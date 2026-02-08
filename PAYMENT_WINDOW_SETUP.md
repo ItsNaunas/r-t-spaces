@@ -144,3 +144,4 @@ Pending bookings are stored in `data/pending-bookings.json`. This file is automa
 - The cleanup job should run frequently (every 5 minutes) to catch expired bookings quickly
 - Cancelled Calendly events can be manually rescheduled if needed
 
+

@@ -26,6 +26,8 @@ export async function POST(request: Request) {
       endTime, 
       totalPrice, 
       depositAmount,
+      addonsTotal,
+      addonsSummary,
       selectedPackage,
       packageTitle,
       pendingBookingId,
@@ -47,12 +49,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Calculate pricing if not provided
+    // Use provided pricing when present; otherwise calculate from startTime/endTime
     let bookingTotalPrice = totalPrice;
     let bookingDeposit = depositAmount;
 
     if (!bookingTotalPrice || !bookingDeposit) {
-      // Try to calculate from startTime/endTime (fallback)
       if (startTime && endTime) {
         const calculatedHours = calculateHours(startTime, endTime);
         bookingTotalPrice = calculatePrice(calculatedHours);
@@ -65,18 +66,26 @@ export async function POST(request: Request) {
       }
     }
 
+    const usedProvidedPricing = totalPrice != null && depositAmount != null;
+    const addonsNote = addonsSummary ? ` Add-ons (£${Number(addonsTotal) || 0}) due on the day.` : '';
+    const depositDescription = (usedProvidedPricing
+      ? `Deposit for ${packageTitle || 'studio booking'}${date ? ` on ${date}` : ''}${hours ? ` (${hours})` : ''}`
+      : `50% deposit for ${packageTitle || 'studio booking'}${date ? ` on ${date}` : ''}${hours ? ` (${hours})` : ''}`) + addonsNote;
+
+    const balanceDue = bookingTotalPrice - bookingDeposit;
+
     // Create a Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
           price_data: {
-            currency: 'gbp', // British Pounds
+            currency: 'gbp',
             product_data: {
               name: packageTitle || 'Studio Booking Deposit',
-              description: `50% deposit for ${packageTitle || 'studio booking'}${date ? ` on ${date}` : ''}${hours ? ` (${hours})` : ''}`,
+              description: depositDescription,
             },
-            unit_amount: Math.round(bookingDeposit * 100), // Convert to pence
+            unit_amount: Math.round(bookingDeposit * 100),
           },
           quantity: 1,
         },
@@ -93,7 +102,9 @@ export async function POST(request: Request) {
         bookingNotes: notes || '',
         totalPrice: bookingTotalPrice.toString(),
         depositAmount: bookingDeposit.toString(),
-        balanceDue: (bookingTotalPrice - bookingDeposit).toString(),
+        balanceDue: balanceDue.toString(),
+        addonsTotal: (addonsTotal != null ? String(addonsTotal) : '') || '',
+        addonsSummary: addonsSummary || '',
         startTime: startTime || '',
         endTime: endTime || '',
         selectedPackage: selectedPackage || '',

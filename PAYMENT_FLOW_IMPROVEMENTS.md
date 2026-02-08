@@ -8,8 +8,8 @@ Create `lib/pricing.ts`:
 
 ```typescript
 export const PRICING_CONFIG = {
-  hourlyRate: 50, // $50 per hour
-  minimumHours: 1,
+  hourlyRate: 55, // £55 per hour (standard rate)
+  minimumHours: 2,
   depositPercentage: 0.5, // 50% deposit
 };
 
@@ -18,7 +18,7 @@ export function calculateHours(startTime: string, endTime: string): number {
   const end = new Date(endTime);
   const diffMs = end.getTime() - start.getTime();
   const diffHours = diffMs / (1000 * 60 * 60);
-  return Math.max(diffHours, PRICING_CONFIG.minimumHours);
+  return Math.max(Math.ceil(diffHours), PRICING_CONFIG.minimumHours);
 }
 
 export function calculatePrice(hours: number): number {
@@ -339,4 +339,5 @@ DEPOSIT_PERCENTAGE=0.5
 - **Calendly API Docs**: https://developer.calendly.com/api-docs
 - **Stripe Webhooks**: https://stripe.com/docs/webhooks
 - **Stripe Refunds**: https://stripe.com/docs/refunds
+
 

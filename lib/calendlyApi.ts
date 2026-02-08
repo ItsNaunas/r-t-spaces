@@ -68,7 +68,7 @@ export async function createCalendlyEventInvitee(
           timezone: params.timezone || 'UTC',
         },
         start_time: params.startTime,
-        end_time: new Date(new Date(params.startTime).getTime() + 60 * 60 * 1000).toISOString(), // Default 1 hour
+        end_time: new Date(new Date(params.startTime).getTime() + 2 * 60 * 60 * 1000).toISOString(), // Default 2 hours (minimum booking)
         location: {
           type: 'physical',
           location: 'Studio', // Update with your studio address
@@ -197,4 +197,5 @@ export async function createCalendlyBookingViaSchedulingLink(
     startTime,
   });
 }
+
 
