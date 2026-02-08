@@ -51,7 +51,7 @@ const availabilityInfo = {
 export default function BookOnlinePage({
   searchParams,
 }: {
-  searchParams?: { success?: string; canceled?: string; session_id?: string };
+  searchParams?: { success?: string; cancelled?: string; session_id?: string };
 }) {
   return (
     <div className="bg-[var(--base)]">
@@ -62,9 +62,9 @@ export default function BookOnlinePage({
         )}
         
         {/* Cancel Message */}
-        {searchParams?.canceled === "true" && (
+        {searchParams?.cancelled === "true" && (
           <div className="border border-yellow-500/20 bg-yellow-500/10 p-6 text-yellow-600 rounded-lg">
-            <p className="font-semibold">Booking Canceled</p>
+            <p className="font-semibold">Booking Cancelled</p>
             <p className="text-sm mt-2">
               Your booking was not completed. You can try again or contact us directly.
             </p>

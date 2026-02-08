@@ -1198,7 +1198,7 @@ export function ContactSection() {
                 </h3>
                 <p className="text-base sm:text-lg text-[var(--muted-plum)] mt-4 leading-relaxed">
                   Fill out the form below and we&apos;ll get back to you as soon as possible. 
-                  For urgent inquiries, give us a call.
+                  For urgent enquiries, give us a call.
                 </p>
               </div>
               

@@ -19,7 +19,7 @@ npm run build
 ✓ Finished TypeScript
 ✓ Collecting page data
 ✓ Generating static pages
-✓ Finalizing page optimization
+✓ Finalising page optimisation
 ```
 
 ### 2. **Linting Status** ✅
@@ -222,7 +222,7 @@ npm run lint
 - ✅ All pages have proper default exports
 - ✅ Client components properly marked with `"use client"`
 - ✅ Server components properly implemented
-- ✅ Image optimization used throughout
+- ✅ Image optimisation used throughout
 - ✅ Proper error boundaries
 
 ### Best Practices ✅

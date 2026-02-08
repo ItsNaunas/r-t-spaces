@@ -33,7 +33,7 @@ wget https://github.com/stripe/stripe-cli/releases/latest/download/stripe_X.X.X_
 stripe login
 ```
 
-This will open your browser to authorize the CLI.
+This will open your browser to authorise the CLI.
 
 ### Step 3: Forward Webhooks to Your Local Server
 

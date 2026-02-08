@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Use provided pricing when present; otherwise calculate from startTime/endTime
+    // Use provided pricing when present (includes time-based for standard-rate); otherwise calculate from startTime/endTime
     let bookingTotalPrice = totalPrice;
     let bookingDeposit = depositAmount;
 
@@ -93,7 +93,7 @@ export async function POST(request: Request) {
       mode: 'payment',
       customer_email: email,
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/book-online?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/book-online?canceled=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/book-online?cancelled=true`,
       metadata: {
         customerName: name,
         customerEmail: email,

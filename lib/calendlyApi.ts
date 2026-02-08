@@ -122,7 +122,7 @@ export async function cancelCalendlyEvent(eventUri: string, reason?: string): Pr
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        reason: reason || 'Payment failed or canceled',
+        reason: reason || 'Payment failed or cancelled',
       }),
     });
 
@@ -132,10 +132,10 @@ export async function cancelCalendlyEvent(eventUri: string, reason?: string): Pr
       return false;
     }
 
-    console.log('Calendly event canceled successfully:', eventId);
+    console.log('Calendly event cancelled successfully:', eventId);
     return true;
   } catch (error) {
-    console.error('Error canceling Calendly event:', error);
+    console.error('Error cancelling Calendly event:', error);
     return false;
   }
 }

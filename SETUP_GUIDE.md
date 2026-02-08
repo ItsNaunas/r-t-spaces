@@ -132,7 +132,7 @@ GOOGLE_CALENDAR_ID=...@group.calendar.google.com
 
 ## Pricing Configuration
 
-Edit `lib/pricing.ts` to customize pricing:
+Edit `lib/pricing.ts` to customise pricing:
 - `hourlyRate`: Standard rate per hour in GBP (e.g. 55 for £55/hr)
 - `minimumHours`: Minimum booking length in hours (e.g. 2)
 - `BOOKING_PACKAGES`: Half-day, full-day, and resident creative package prices

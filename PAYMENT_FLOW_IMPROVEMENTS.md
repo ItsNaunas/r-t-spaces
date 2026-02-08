@@ -165,7 +165,7 @@ export async function cancelCalendlyEvent(eventUri: string) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        reason: 'Payment failed or canceled',
+        reason: 'Payment failed or cancelled',
       }),
     });
 
@@ -173,9 +173,9 @@ export async function cancelCalendlyEvent(eventUri: string) {
       throw new Error(`Failed to cancel Calendly event: ${response.statusText}`);
     }
 
-    console.log('Calendly event canceled successfully:', eventId);
+    console.log('Calendly event cancelled successfully:', eventId);
   } catch (error) {
-    console.error('Error canceling Calendly event:', error);
+    console.error('Error cancelling Calendly event:', error);
     // Don't throw - log and continue
   }
 }
@@ -195,7 +195,7 @@ case 'payment_intent.payment_failed': {
   const calendlyEventUri = 'metadata' in session ? session.metadata?.calendlyEventUri : undefined;
   
   if (calendlyEventUri) {
-    console.log('Payment failed, canceling Calendly event:', calendlyEventUri);
+    console.log('Payment failed, cancelling Calendly event:', calendlyEventUri);
     await cancelCalendlyEvent(calendlyEventUri);
   }
   break;
@@ -318,7 +318,7 @@ DEPOSIT_PERCENTAGE=0.5
 - [ ] Deposit amount is calculated correctly (50% of total)
 - [ ] Checkout shows correct deposit amount
 - [ ] Payment success page shows booking reference
-- [ ] Calendly event is canceled when payment fails
+- [ ] Calendly event is cancelled when payment fails
 - [ ] Email confirmation includes pricing details
 - [ ] Refund webhook updates booking status
 

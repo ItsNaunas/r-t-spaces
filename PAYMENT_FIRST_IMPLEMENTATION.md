@@ -139,11 +139,11 @@ export const PRICING_CONFIG = {
 
 ### Adjust Email Content
 
-Edit `lib/email.ts` to customize email templates.
+Edit `lib/email.ts` to customise email templates.
 
 ### Adjust Success Page
 
-Edit `components/BookingSuccessMessage.tsx` to customize success message.
+Edit `components/BookingSuccessMessage.tsx` to customise success message.
 
 ## 📝 Notes
 

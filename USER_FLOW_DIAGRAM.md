@@ -52,7 +52,7 @@
 ┌──────────────────┐      ┌──────────────────────────┐
 │ Redirect to      │      │ Redirect to              │
 │ /book-online?    │      │ /book-online?            │
-│ success=true     │      │ canceled=true            │
+│ success=true     │      │ cancelled=true           │
 └────────┬─────────┘      └──────────────────────────┘
          │                      │
          │                      │ ⚠️ CALENDLY EVENT
@@ -115,7 +115,7 @@
 ┌──────────────────┐      ┌──────────────────────────┐
 │ Redirect to      │      │ Redirect to              │
 │ /book-online?    │      │ /book-online?            │
-│ success=true     │      │ canceled=true            │
+│ success=true     │      │ cancelled=true           │
 └────────┬─────────┘      └──────────────────────────┘
          │                      │
          │                      │ ✅ NO CALENDLY EVENT

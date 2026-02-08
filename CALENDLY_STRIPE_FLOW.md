@@ -62,7 +62,7 @@ FROM_EMAIL=onboarding@resend.dev
 
 - **Calendly events are created immediately** when the customer selects a time (before payment)
 - This is by design - it reserves the time slot
-- If payment fails or is canceled, you may need to manually cancel the Calendly event
+- If payment fails or is cancelled, you may need to manually cancel the Calendly event
 - Future enhancement: Add automatic cancellation if payment fails
 
 ### Payment Flow
