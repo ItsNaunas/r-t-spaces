@@ -41,7 +41,7 @@ const availabilityBlocks = [
   },
   {
     label: "Contact",
-    value: "Teddy77723@gmail.com · 07944667000",
+    value: "enquires@rtspaces.co.uk · 07944667000",
   },
 ];
 

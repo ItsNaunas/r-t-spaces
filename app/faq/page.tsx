@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     question: "How do I book?",
-    answer: "You can book by contacting us at Teddy77723@gmail.com or calling 07944667000. We offer both hourly and daily rates.",
+    answer: "You can book by contacting us at enquires@rtspaces.co.uk or calling 07944667000. We offer both hourly and daily rates.",
   },
 ];
 

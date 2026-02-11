@@ -9,7 +9,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ```env
 # Email Configuration (Resend)
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
-STUDIO_EMAIL=Teddy77723@gmail.com
+STUDIO_EMAIL=enquires@rtspaces.co.uk
 FROM_EMAIL=onboarding@resend.dev
 
 # Stripe Payment Configuration

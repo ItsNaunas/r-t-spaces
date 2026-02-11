@@ -93,7 +93,7 @@ Create `.env.local` with all variables:
 ```env
 # Email
 RESEND_API_KEY=re_...
-STUDIO_EMAIL=Teddy77723@gmail.com
+STUDIO_EMAIL=enquires@rtspaces.co.uk
 FROM_EMAIL=onboarding@resend.dev
 
 # Stripe

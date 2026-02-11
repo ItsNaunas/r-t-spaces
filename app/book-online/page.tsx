@@ -7,7 +7,7 @@ const bookingPolicies = [
   {
     title: "Booking Confirmation",
     content:
-      "We'll confirm your booking within 24 hours via email. For last-minute bookings (within 48 hours), please DM us on Instagram @randtspace.",
+      "We'll confirm your booking within 24 hours via email. For last-minute bookings (within 48 hours), please DM us on Instagram @rtspaces.",
   },
   {
     title: "Cancellation Policy",
@@ -169,10 +169,10 @@ export default function BookOnlinePage({
                     Email
                   </p>
                   <a
-                    href="mailto:Teddy77723@gmail.com"
+                    href="mailto:enquires@rtspaces.co.uk"
                     className="text-base text-[var(--primary)] hover:text-[var(--accent)] transition-colors"
                   >
-                    Teddy77723@gmail.com
+                    enquires@rtspaces.co.uk
                   </a>
                 </div>
                 <div>
@@ -180,12 +180,12 @@ export default function BookOnlinePage({
                     Instagram
                   </p>
                   <a
-                    href="https://www.instagram.com/randtspace"
+                    href="https://www.instagram.com/rtspaces/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-base text-[var(--primary)] hover:text-[var(--accent)] transition-colors"
                   >
-                    @randtspace
+                    @rtspaces
                   </a>
                 </div>
               </div>
@@ -253,7 +253,7 @@ export default function BookOnlinePage({
               Call Now
             </a>
             <a
-              href="https://www.instagram.com/randtspace"
+              href="https://www.instagram.com/rtspaces/"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-secondary"

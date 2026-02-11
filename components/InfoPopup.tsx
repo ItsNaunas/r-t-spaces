@@ -9,7 +9,7 @@ export function InfoPopup() {
 
   const location = "Unit 3E, 736-740 Romford Road, London E12 6BT";
   const phone = "07944667000";
-  const email = "Teddy77723@gmail.com";
+  const email = "enquires@rtspaces.co.uk";
 
   const copyToClipboard = async (text: string, field: string) => {
     try {

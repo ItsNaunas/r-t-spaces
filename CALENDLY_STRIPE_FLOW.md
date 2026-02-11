@@ -52,7 +52,7 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 # Email Configuration
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
-STUDIO_EMAIL=Teddy77723@gmail.com
+STUDIO_EMAIL=enquires@rtspaces.co.uk
 FROM_EMAIL=onboarding@resend.dev
 ```
 

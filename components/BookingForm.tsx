@@ -427,7 +427,7 @@ export function BookingForm() {
       setMessage(
         error instanceof Error
           ? error.message
-          : "Unable to send enquiry. Please email Teddy77723@gmail.com.",
+          : "Unable to send enquiry. Please email enquires@rtspaces.co.uk.",
       );
     }
   };
@@ -971,12 +971,12 @@ export function BookingForm() {
       <p className="text-sm text-[var(--muted-plum)] leading-relaxed pt-2">
         We respond within 24 hours. For last-minute bookings, DM{" "}
         <a
-          href="https://www.instagram.com/randtspace"
+          href="https://www.instagram.com/rtspaces/"
           target="_blank"
           rel="noreferrer"
           className="font-semibold text-[var(--primary)] hover:text-[var(--accent-gold)] transition-colors underline underline-offset-2"
         >
-          @randtspace
+          @rtspaces
         </a>
         .
       </p>

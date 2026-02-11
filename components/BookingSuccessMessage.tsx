@@ -47,10 +47,10 @@ export function BookingSuccessMessage() {
             <p className="text-sm text-emerald-700/80">
               If you have any questions, contact us at{" "}
               <a
-                href="mailto:Teddy77723@gmail.com"
+                href="mailto:enquires@rtspaces.co.uk"
                 className="font-semibold text-emerald-800 hover:underline"
               >
-                Teddy77723@gmail.com
+                enquires@rtspaces.co.uk
               </a>{" "}
               or call{" "}
               <a

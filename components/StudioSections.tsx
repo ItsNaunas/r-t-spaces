@@ -185,11 +185,11 @@ export function GallerySection() {
         <div className="flex items-center justify-between">
           <h3 className="font-heading text-3xl text-[var(--primary)]">Studio Archive</h3>
           <Link
-            href="https://www.instagram.com/randtspace"
+            href="https://www.instagram.com/rtspaces/"
             className="text-sm font-semibold uppercase tracking-[0.3em] text-[var(--primary)] hover:text-[var(--accent-gold)] transition-colors"
             target="_blank"
           >
-            Follow @randtspace →
+            Follow @rtspaces →
           </Link>
         </div>
         <div 
@@ -1078,8 +1078,8 @@ export function ContactSection() {
   const contactDetails = [
     { 
       label: "Email", 
-      value: "Teddy77723@gmail.com",
-      href: "mailto:Teddy77723@gmail.com",
+      value: "enquires@rtspaces.co.uk",
+      href: "mailto:enquires@rtspaces.co.uk",
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -1088,8 +1088,8 @@ export function ContactSection() {
     },
     { 
       label: "Instagram", 
-      value: "@randtspace",
-      href: "https://www.instagram.com/randtspace",
+      value: "@rtspaces",
+      href: "https://www.instagram.com/rtspaces/",
       external: true,
       icon: (
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -1629,7 +1629,7 @@ export function GiveUsAFollowSection() {
           {instagramImages.map((src, index) => (
             <Link
               key={index}
-              href="https://www.instagram.com/randtspace"
+              href="https://www.instagram.com/rtspaces/"
               target="_blank"
               className="group relative aspect-square overflow-hidden"
             >
@@ -1784,8 +1784,8 @@ export function SiteFooter() {
                   London E12 6BT
                 </p>
                 <p>
-                  <a href="mailto:Teddy77723@gmail.com" className="hover:text-white transition">
-                    Teddy77723@gmail.com
+                  <a href="mailto:enquires@rtspaces.co.uk" className="hover:text-white transition">
+                    enquires@rtspaces.co.uk
                   </a>
                 </p>
                 <p>
@@ -1801,7 +1801,7 @@ export function SiteFooter() {
               <h3 className="text-lg font-semibold text-white">Follow Us</h3>
               <div className="flex gap-4">
                 <Link
-                  href="https://www.instagram.com/randtspace"
+                  href="https://www.instagram.com/rtspaces/"
                   className="text-white/80 hover:text-white transition"
                   target="_blank"
                   aria-label="Instagram"
@@ -1821,7 +1821,7 @@ export function SiteFooter() {
                   </svg>
                 </Link>
                 <Link
-                  href="https://www.tiktok.com/@randtspace"
+                  href="https://www.tiktok.com/@rtspaces"
                   className="text-white/80 hover:text-white transition"
                   target="_blank"
                   aria-label="TikTok"

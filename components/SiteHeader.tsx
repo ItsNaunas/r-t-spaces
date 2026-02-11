@@ -106,7 +106,7 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center gap-2 lg:gap-4 justify-end">
           <Link
-            href="https://www.instagram.com/randtspace"
+            href="https://www.instagram.com/rtspaces/"
             target="_blank"
             aria-label="Instagram"
             className="flex items-center justify-center min-w-[44px] min-h-[44px] text-white/80 hover:text-white transition"
@@ -116,7 +116,7 @@ export function SiteHeader() {
             </svg>
           </Link>
           <Link
-            href="https://www.tiktok.com/@randtspace"
+            href="https://www.tiktok.com/@rtspaces"
             target="_blank"
             aria-label="TikTok"
             className="flex items-center justify-center min-w-[44px] min-h-[44px] text-white/80 hover:text-white transition"
