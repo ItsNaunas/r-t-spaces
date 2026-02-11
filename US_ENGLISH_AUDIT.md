@@ -24,10 +24,8 @@ UK alternatives are suggested where applicable. Items that are **API/standard** 
 |----------|--------------|--------|
 | `app/api/checkout/route.ts` | `canceled=true` in `cancel_url` | Stripe redirect; changing would require updating the book-online page check. |
 | `app/book-online/page.tsx` | `searchParams?.canceled === "true"` | Must match checkout `cancel_url` if you change it. |
-| `r-t-spaces/app/api/checkout/route.ts` | Same as above | Duplicate in `r-t-spaces/`. |
-| `r-t-spaces/app/book-online/page.tsx` | Same as above | Duplicate in `r-t-spaces/`. |
 
-If you standardise on UK spelling, use `cancelled=true` in the URL and in both book-online pages.
+If you standardise on UK spelling, use `cancelled=true` in the URL and in the book-online page.
 
 ---
 
@@ -36,13 +34,12 @@ If you standardise on UK spelling, use `cancelled=true` in the URL and in both b
 | Location | Current (US) | Suggested (UK) |
 |----------|--------------|-----------------|
 | `lib/calendlyApi.ts` (lines 125, 135, 138) | `'Payment failed or canceled'`, `'Calendly event canceled successfully'`, `'Error canceling Calendly event'` | Use **cancelled** / **cancelling** if you want consistency in logs. |
-| `r-t-spaces/lib/calendlyApi.ts` | Same as above | Same. |
 
 ---
 
 ## 4. Documentation (`.md` files)
 
-### 4.1 Root docs (and `r-t-spaces/` copies where present)
+### 4.1 Root docs
 
 | File | US usage | Suggested (UK) |
 |------|----------|-----------------|
@@ -55,14 +52,6 @@ If you standardise on UK spelling, use `cancelled=true` in the URL and in both b
 | `PAYMENT_FLOW_ANALYSIS.md` | "cancellation" (noun is same in UK) | No change. |
 | `CALENDLY_STRIPE_FLOW.md` | "is canceled", "canceled" | "is cancelled", "cancelled" |
 | `USER_FLOW_DIAGRAM.md` | `canceled=true` in diagrams | Could use `cancelled=true` for consistency. |
-| `r-t-spaces/SETUP_GUIDE.md` | "customize" (e.g. stripe/pricing) | "customise" |
-| `r-t-spaces/PAYMENT_FIRST_IMPLEMENTATION.md` | "customize" | "customise" |
-| `r-t-spaces/WEBHOOK_SETUP_GUIDE.md` | "authorize" | "authorise" |
-| `r-t-spaces/README.md` | "optimize" | As per README above. |
-| `r-t-spaces/AUDIT_REPORT.md` | "optimization" | "optimisation" |
-| `r-t-spaces/PAYMENT_FLOW_IMPROVEMENTS.md` | "canceled", "canceling" | "cancelled", "cancelling" |
-| `r-t-spaces/CALENDLY_STRIPE_FLOW.md` | "canceled" | "cancelled" |
-| `r-t-spaces/USER_FLOW_DIAGRAM.md` | `canceled=true` | "cancelled" if desired. |
 
 Other docs (e.g. CODEBASE_AUDIT.md, PAYMENT_WINDOW_SETUP.md) use "cancellation" (same in UK) or "configured" (same in UK); no change needed for US vs UK.
 
@@ -88,5 +77,3 @@ No code changes are recommended for these.
 - **User-facing:** 2 clear fixes for UK consistency: **"Booking Canceled" → "Booking Cancelled"** and **"inquiries" → "enquiries"** in `StudioSections.tsx`.
 - **Optional:** URL param `canceled` → `cancelled`, log/comment strings, and all documentation spellings above.
 - **Leave as-is:** All uses of `behavior`, `color`, `center` (and similar) in CSS, Tailwind, and JavaScript APIs.
-
-**Duplicate folder:** Many of the same files exist under `r-t-spaces/`. If that folder is part of the active project, apply the same edits there for consistency.
