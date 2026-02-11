@@ -8,7 +8,7 @@ import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import { Lightbox } from "@/components/Lightbox";
 import { GradientBars } from "@/components/ui/gradient-bars";
 import { BookingForm } from "@/components/BookingForm";
-import { studioGallery } from "@/lib/studioData";
+import { studioGallery, studioServices } from "@/lib/studioData";
 
 const valueList = [
   {
@@ -29,22 +29,7 @@ const valueList = [
   },
 ];
 
-export const studioServices = [
-  {
-    title: "Studio Hire",
-    meta: "Hourly + daily rates · East London · Equipment included",
-  },
-  {
-    title: "Creative Session",
-    meta: "Resident photographer, tethered capture, direction support",
-  },
-  {
-    title: "Photobooth Packages",
-    meta: "Neon wall, instant prints, on-site host",
-  },
-];
-
-export { studioGallery };
+export { studioGallery, studioServices };
 
 export function StorySection() {
   return (
@@ -344,7 +329,7 @@ export function StudioHeroStats() {
   // Studio images for rotation
   const rotatingImages = [
     "/assets/studios/IMG_7854.JPG",
-    "/assets/studios/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg",
+    "/assets/studios/919177f2-e71e-4881-90d0-b0eef3b4ccfc.jpg",
     "/assets/studios/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg",
     "/assets/home/IMG_7808.JPG",
     "/assets/equipment/f8c6e9ae-3bde-4eb0-a641-4d937ede8ef1.jpg",
@@ -634,7 +619,7 @@ export function HowItWorksSection() {
       number: "02",
       title: "Arrive & Get Started",
       description: "Walk in and begin your session. Our team greets you with everything prepped—professional lighting configured, stands positioned, and refreshments ready. Everything is set up for you.",
-      image: "/assets/gallery/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg",
+      image: "/assets/gallery/IMG_7807.JPG",
       icon: (
         <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

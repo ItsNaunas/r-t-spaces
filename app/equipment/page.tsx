@@ -46,7 +46,7 @@ const equipmentCategories = [
       {
         name: "Tethering Station",
         description: "Dedicated tethering setup for immediate review",
-        image: "/assets/equipment/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg",
+        image: "/assets/equipment/13bad677-2b14-47e9-9797-3bd7cd6b030a.jpg",
       },
       {
         name: "Rolling Wardrobe Rack",
@@ -77,12 +77,12 @@ const equipmentCategories = [
       {
         name: "Colour Rolls",
         description: "Curated collection of coloured backdrop rolls",
-        image: "/assets/equipment/IMG_7860.JPG",
+        image: "/assets/equipment/778a9017-2de1-4356-9b68-319676e1ca7d.jpg",
       },
       {
         name: "Lifestyle Setups",
         description: "Styled lounge corners and lifestyle setups",
-        image: "/assets/equipment/IMG_7857.JPG",
+        image: "/assets/equipment/841f2228-3c39-4fed-9332-ae597017fca7.jpg",
       },
     ],
   },
@@ -98,7 +98,7 @@ const equipmentCategories = [
       {
         name: "Furniture Pieces",
         description: "Curated furniture for styled lifestyle shots",
-        image: "/assets/equipment/IMG_7860.JPG",
+        image: "/assets/equipment/IMG_7861.JPG",
       },
       {
         name: "Neon Photo Booth Wall",
@@ -108,7 +108,7 @@ const equipmentCategories = [
       {
         name: "Styling Accessories",
         description: "Various styling accessories and decorative elements",
-        image: "/assets/equipment/IMG_7857.JPG",
+        image: "/assets/equipment/IMG_7863.PNG",
       },
     ],
   },

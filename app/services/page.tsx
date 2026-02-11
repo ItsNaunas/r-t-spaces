@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/StudioSections";
 import { studioServices } from "@/lib/studioData";
@@ -187,9 +188,21 @@ export default function ServicesPage() {
             {studioServices.map((service, index) => (
               <article
                 key={service.title}
-                className="border border-[var(--accent)]/20 bg-white p-6 hover:border-[var(--primary)] transition-all duration-300 group"
+                className="border border-[var(--accent)]/20 bg-white overflow-hidden hover:border-[var(--primary)] transition-all duration-300 group"
               >
-                <div className="flex items-start gap-4">
+                {service.image && (
+                  <div className="relative aspect-[4/3] w-full overflow-hidden">
+                    <Image
+                      src={service.image}
+                      alt={service.imageAlt ?? service.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+                <div className="p-6 flex items-start gap-4">
                   <div className="flex-shrink-0 w-10 h-10 bg-[var(--primary)] text-white flex items-center justify-center font-heading text-lg">
                     {String(index + 1).padStart(2, "0")}
                   </div>

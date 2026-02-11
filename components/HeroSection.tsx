@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 
 const carouselImages = [
   {
-    src: "/assets/home/0597e892-11ea-4d66-858d-c956f9f6fc6e.jpg",
+    src: "/assets/gallery/5F978C66-0CA5-46F1-8156-3E610244CDD4.jpg",
     alt: "Content Creation",
     label: "Content Creation"
   },
@@ -17,7 +17,7 @@ const carouselImages = [
     label: "Photography Sessions"
   },
   {
-    src: "/assets/home/13bad677-2b14-47e9-9797-3bd7cd6b030a.jpg",
+    src: "/assets/equipment/f8c6e9ae-3bde-4eb0-a641-4d937ede8ef1.jpg",
     alt: "Video Production",
     label: "Video Production"
   },
