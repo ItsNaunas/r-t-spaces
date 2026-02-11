@@ -8,6 +8,7 @@ import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import { Lightbox } from "@/components/Lightbox";
 import { GradientBars } from "@/components/ui/gradient-bars";
 import { BookingForm } from "@/components/BookingForm";
+import { studioGallery } from "@/lib/studioData";
 
 const valueList = [
   {
@@ -43,38 +44,7 @@ export const studioServices = [
   },
 ];
 
-export const studioGallery = [
-  {
-    artist: "Behind the Lens",
-    focus: "Tethered capture",
-    src: "/assets/71d985ec-e79d-4ac5-89e4-f5785077064a.jpg",
-  },
-  {
-    artist: "Rose on Set",
-    focus: "Content day",
-    src: "/assets/9664d1b7-9f9a-4c82-bf63-5befb91b0102.jpg",
-  },
-  {
-    artist: "Studio Corners",
-    focus: "Styled lounge",
-    src: "/assets/aaeebd1e-e1b8-4548-9052-39a53a169559.jpg",
-  },
-  {
-    artist: "Gear Prep",
-    focus: "Lighting ready",
-    src: "/assets/5448c683-ea0d-43cb-8ca6-c407b47ba93e.jpg",
-  },
-  {
-    artist: "Minimal Props",
-    focus: "Stools & plinths",
-    src: "/assets/9450092a-7996-44d5-87f7-ec9281017f5d.jpg",
-  },
-  {
-    artist: "Neon Motto",
-    focus: "Photo booth wall",
-    src: "/assets/00cb384c-557d-425f-ae56-72d83509cef7.jpg",
-  },
-];
+export { studioGallery };
 
 export function StorySection() {
   return (
@@ -139,7 +109,7 @@ export function MissionSection() {
       <div className="space-y-6">
         <div className="overflow-hidden bg-white  shadow-lg">
           <Image
-            src="/assets/8eb25501-7cc0-4ccf-a906-3a2a747836fd.jpg"
+            src="/assets/studios/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg"
             alt="Creative direction"
             width={800}
             height={600}
@@ -179,7 +149,7 @@ export function FeaturedWorkSection() {
 
       <div className="mt-10 overflow-hidden bg-white  shadow-lg">
         <Image
-          src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80"
+          src="/assets/gallery/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg"
           alt="Featured project"
           width={1400}
           height={800}
@@ -347,16 +317,16 @@ const videoCarouselImages = [
 
 // Instagram images for social proof
 const instagramImages = [
-  "/assets/00cb384c-557d-425f-ae56-72d83509cef7.jpg",
-  "/assets/041d64cf-da31-4924-bea4-0aa2823648f6.jpg",
-  "/assets/1f96f7e5-8759-4f14-8f74-7677f828e019.jpg",
-  "/assets/2a18f8ef-1393-4f8a-acfe-b6b8eb5a1cee.jpg",
-  "/assets/2c432d2e-bfd8-4632-810b-ce75af0f8287.jpg",
-  "/assets/2e94519f-81c1-4889-8e20-d33581fb17ef.jpg",
-  "/assets/4aca7aa7-e1b2-4b69-8438-c9484fa5bb71.jpg",
-  "/assets/5448c683-ea0d-43cb-8ca6-c407b47ba93e.jpg",
-  "/assets/5cd64b86-f29d-4b35-8806-162c18542a5b.jpg",
-  "/assets/6191004c-40dd-4cc2-92ac-85eefb30dbad.jpg",
+  "/assets/gallery/5F978C66-0CA5-46F1-8156-3E610244CDD4.jpg",
+  "/assets/gallery/0597e892-11ea-4d66-858d-c956f9f6fc6e.jpg",
+  "/assets/gallery/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg",
+  "/assets/gallery/B152F374-AA91-4F11-B52F-FB6F0907342C.jpg",
+  "/assets/gallery/IMG_7807.JPG",
+  "/assets/gallery/AED2EF36-E44C-48A6-B44C-5E30E05B3815.jpg",
+  "/assets/gallery/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg",
+  "/assets/gallery/IMG_7854.JPG",
+  "/assets/gallery/IMG_7860.JPG",
+  "/assets/gallery/6504BBB4-A551-4117-9E3D-FA7E74837027.jpg",
 ];
 
 export function StudioHeroStats() {
@@ -373,12 +343,12 @@ export function StudioHeroStats() {
 
   // Studio images for rotation
   const rotatingImages = [
-    "/assets/71d985ec-e79d-4ac5-89e4-f5785077064a.jpg",
-    "/assets/9664d1b7-9f9a-4c82-bf63-5befb91b0102.jpg",
-    "/assets/aaeebd1e-e1b8-4548-9052-39a53a169559.jpg",
-    "/assets/5448c683-ea0d-43cb-8ca6-c407b47ba93e.jpg",
-    "/assets/9450092a-7996-44d5-87f7-ec9281017f5d.jpg",
-    "/assets/00cb384c-557d-425f-ae56-72d83509cef7.jpg",
+    "/assets/studios/IMG_7854.JPG",
+    "/assets/studios/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg",
+    "/assets/studios/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg",
+    "/assets/home/IMG_7808.JPG",
+    "/assets/equipment/f8c6e9ae-3bde-4eb0-a641-4d937ede8ef1.jpg",
+    "/assets/gallery/5F978C66-0CA5-46F1-8156-3E610244CDD4.jpg",
   ];
 
   // Auto-rotate images every 4 seconds
@@ -632,7 +602,7 @@ export function Bookings2025Section() {
           </div>
           <div className="relative aspect-video overflow-hidden ">
             <Image
-              src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
+              src="/assets/gallery/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg"
               alt="Studio booking space"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -653,7 +623,7 @@ export function HowItWorksSection() {
       number: "01",
       title: "Choose Your Studio Space",
       description: "Browse our range of fully-equipped spaces. From seamless white cyclorama to cozy lounge corners—find the perfect space that matches your needs.",
-      image: "/assets/6191004c-40dd-4cc2-92ac-85eefb30dbad.jpg",
+      image: "/assets/gallery/IMG_7854.JPG",
       icon: (
         <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -664,7 +634,7 @@ export function HowItWorksSection() {
       number: "02",
       title: "Arrive & Get Started",
       description: "Walk in and begin your session. Our team greets you with everything prepped—professional lighting configured, stands positioned, and refreshments ready. Everything is set up for you.",
-      image: "/assets/62408639-2e32-466b-9174-3ab6cff5e3ae.jpg",
+      image: "/assets/gallery/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg",
       icon: (
         <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -675,7 +645,7 @@ export function HowItWorksSection() {
       number: "03",
       title: "Join the Community",
       description: "Become part of our growing community. Enjoy monthly studio access at member rates, plus weekly newsletters with exclusive discounts and updates.",
-      image: "/assets/8eb25501-7cc0-4ccf-a906-3a2a747836fd.jpg",
+      image: "/assets/gallery/5F978C66-0CA5-46F1-8156-3E610244CDD4.jpg",
       icon: (
         <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -1098,7 +1068,7 @@ export function AboutUsSection() {
               {/* Photo Frame Effect - Purple frame matching other sections */}
               <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-8 transition-transform duration-500 group-hover:scale-[1.02]" style={{ borderColor: 'var(--primary)' }}>
                 <Image
-                  src="/assets/8eb25501-7cc0-4ccf-a906-3a2a747836fd.jpg"
+                  src="/assets/studios/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg"
                   alt="RT Spaces studio - creative workspace"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -1357,7 +1327,7 @@ export function LatestNewsSection() {
         <div className="mt-12 grid gap-8 lg:grid-cols-2 lg:gap-12">
           <div className="relative aspect-[4/3] overflow-hidden bg-white  shadow-lg">
             <Image
-              src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80"
+              src="/assets/gallery/919177f2-e71e-4881-90d0-b0eef3b4ccfc.jpg"
               alt="New studio room"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -1603,7 +1573,7 @@ export function StudioFeaturesSection() {
               {/* Photo Frame Effect - Purple frame */}
               <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-8" style={{ borderColor: 'var(--primary)' }}>
                 <Image
-                  src="/assets/5448c683-ea0d-43cb-8ca6-c407b47ba93e.jpg"
+                  src="/assets/equipment/13bad677-2b14-47e9-9797-3bd7cd6b030a.jpg"
                   alt="Professional studio setup with lighting equipment"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"

@@ -7,22 +7,22 @@ import { useState, useEffect, useRef } from "react";
 
 const carouselImages = [
   {
-    src: "/assets/9664d1b7-9f9a-4c82-bf63-5befb91b0102(1).jpg",
+    src: "/assets/home/0597e892-11ea-4d66-858d-c956f9f6fc6e.jpg",
     alt: "Content Creation",
     label: "Content Creation"
   },
   {
-    src: "/assets/2a18f8ef-1393-4f8a-acfe-b6b8eb5a1cee.jpg",
+    src: "/assets/home/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg",
     alt: "Photography",
     label: "Photography Sessions"
   },
   {
-    src: "/assets/2c432d2e-bfd8-4632-810b-ce75af0f8287.jpg",
+    src: "/assets/home/13bad677-2b14-47e9-9797-3bd7cd6b030a.jpg",
     alt: "Video Production",
     label: "Video Production"
   },
   {
-    src: "/assets/5cd64b86-f29d-4b35-8806-162c18542a5b(1).jpg",
+    src: "/assets/home/IMG_7808.JPG",
     alt: "Live Streaming",
     label: "Live Streaming"
   },

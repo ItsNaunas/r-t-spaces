@@ -17,32 +17,32 @@ export const studioGallery = [
   {
     artist: "Behind the Lens",
     focus: "Tethered capture",
-    src: "/assets/71d985ec-e79d-4ac5-89e4-f5785077064a.jpg",
+    src: "/assets/gallery/0597e892-11ea-4d66-858d-c956f9f6fc6e.jpg",
   },
   {
     artist: "Rose on Set",
     focus: "Content day",
-    src: "/assets/9664d1b7-9f9a-4c82-bf63-5befb91b0102.jpg",
+    src: "/assets/gallery/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg",
   },
   {
     artist: "Studio Corners",
     focus: "Styled lounge",
-    src: "/assets/aaeebd1e-e1b8-4548-9052-39a53a169559.jpg",
+    src: "/assets/gallery/IMG_7808.JPG",
   },
   {
     artist: "Gear Prep",
     focus: "Lighting ready",
-    src: "/assets/5448c683-ea0d-43cb-8ca6-c407b47ba93e.jpg",
+    src: "/assets/gallery/IMG_7807.JPG",
   },
   {
     artist: "Minimal Props",
     focus: "Stools & plinths",
-    src: "/assets/9450092a-7996-44d5-87f7-ec9281017f5d.jpg",
+    src: "/assets/gallery/B152F374-AA91-4F11-B52F-FB6F0907342C.jpg",
   },
   {
     artist: "Neon Motto",
     focus: "Photo booth wall",
-    src: "/assets/00cb384c-557d-425f-ae56-72d83509cef7.jpg",
+    src: "/assets/gallery/5F978C66-0CA5-46F1-8156-3E610244CDD4.jpg",
   },
 ];
 
