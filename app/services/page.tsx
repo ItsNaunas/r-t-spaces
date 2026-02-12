@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/StudioSections";
@@ -98,16 +97,13 @@ function PackageCard({ pkg }: { pkg: BookingPackage }) {
   );
 }
 
-type PricingSectionId = "basic" | "package" | "offers";
-
-const PRICING_SECTIONS: { id: PricingSectionId; label: string; description: string; packages: BookingPackage[] }[] = [
-  { id: "basic", label: "Basic", description: "Studio hire by the hour or block. Just the space, no session package.", packages: hirePackages },
-  { id: "package", label: "Package", description: "Session packages with time, images, and guidance included.", packages: mainPackages },
-  { id: "offers", label: "Offers", description: "Limited-time seasonal packages.", packages: mothersDayPackages },
+const PRICING_SECTIONS: { id: string; label: string; description: string; packages: BookingPackage[] }[] = [
+  { id: "basic", label: "Studio hire", description: "By the hour or block. Just the space, no session package.", packages: hirePackages },
+  { id: "package", label: "Session packages", description: "Time, images, and guidance included.", packages: mainPackages },
+  { id: "offers", label: "Limited offers", description: "Seasonal packages for a limited time.", packages: mothersDayPackages },
 ];
 
 export default function ServicesPage() {
-  const [expandedSection, setExpandedSection] = useState<PricingSectionId | null>("package");
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -233,7 +229,7 @@ export default function ServicesPage() {
       </section>
 
       <main className="mx-auto w-full max-w-7xl space-y-16 px-4 pb-16 pt-12 sm:space-y-20 sm:px-6 lg:px-8">
-        {/* Packages Section — Basic / Package / Offers dropdowns */}
+        {/* Packages Section — all options visible */}
         <section id="packages" className="scroll-mt-24">
           <div className="text-center space-y-4 mb-12">
             <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
@@ -243,59 +239,38 @@ export default function ServicesPage() {
               Flexible Booking Options
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-[var(--muted-plum)]">
-              Expand a section below to see options. All packages include professional guidance and private online gallery where applicable.
+              All packages include professional guidance and private online gallery where applicable.
             </p>
+            <nav className="flex flex-wrap justify-center gap-4 pt-2" aria-label="Jump to pricing section">
+              {PRICING_SECTIONS.map((sec) => (
+                <a
+                  key={sec.id}
+                  href={`#pricing-${sec.id}`}
+                  className="text-sm font-medium text-[var(--primary)] underline underline-offset-4 hover:text-[var(--primary)]/80 transition-colors"
+                >
+                  {sec.label}
+                </a>
+              ))}
+            </nav>
           </div>
 
-          <div className="space-y-2" role="list">
+          <div className="space-y-16">
             {PRICING_SECTIONS.map((sec) => {
-              const isExpanded = expandedSection === sec.id;
               const gridCols = sec.packages.length <= 2 ? "md:grid-cols-2" : sec.packages.length <= 3 ? "md:grid-cols-3" : "md:grid-cols-2 lg:grid-cols-4";
               return (
-                <div
-                  key={sec.id}
-                  className="border-2 border-[var(--accent)]/20 bg-white overflow-hidden transition-all duration-300 hover:border-[var(--primary)]/50"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setExpandedSection(isExpanded ? null : sec.id)}
-                    aria-expanded={isExpanded}
-                    aria-controls={`pricing-content-${sec.id}`}
-                    id={`pricing-header-${sec.id}`}
-                    className="w-full flex items-center gap-4 p-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
-                  >
-                    <span className="flex-1 min-w-0">
-                      <span className="font-heading text-xl text-[var(--primary)] font-semibold block">
-                        {sec.label}
-                      </span>
-                      <span className="text-sm text-[var(--muted-plum)]">
-                        {sec.description}
-                      </span>
-                    </span>
-                    <span
-                      className={`flex-shrink-0 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
-                      aria-hidden
-                    >
-                      <svg className="h-6 w-6 text-[var(--muted-plum)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </span>
-                  </button>
-                  <div
-                    id={`pricing-content-${sec.id}`}
-                    role="region"
-                    aria-labelledby={`pricing-header-${sec.id}`}
-                    className={`grid transition-all duration-300 ease-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
-                  >
-                    <div className="overflow-hidden">
-                      <div className="border-t border-[var(--accent)]/20 p-6 pt-6">
-                        <div className={`grid gap-8 ${gridCols} lg:gap-6`}>
-                          {sec.packages.map((pkg) => (
-                            <PackageCard key={pkg.id} pkg={pkg} />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                <div key={sec.id} id={`pricing-${sec.id}`} className="scroll-mt-24">
+                  <div className="mb-6">
+                    <h3 className="font-heading text-2xl text-[var(--primary)] font-semibold">
+                      {sec.label}
+                    </h3>
+                    <p className="text-[var(--muted-plum)] mt-1">
+                      {sec.description}
+                    </p>
+                  </div>
+                  <div className={`grid gap-8 ${gridCols} lg:gap-6`}>
+                    {sec.packages.map((pkg) => (
+                      <PackageCard key={pkg.id} pkg={pkg} />
+                    ))}
                   </div>
                 </div>
               );
