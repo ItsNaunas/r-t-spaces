@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/StudioSections";
@@ -97,7 +98,17 @@ function PackageCard({ pkg }: { pkg: BookingPackage }) {
   );
 }
 
+type PricingSectionId = "basic" | "package" | "offers";
+
+const PRICING_SECTIONS: { id: PricingSectionId; label: string; description: string; packages: BookingPackage[] }[] = [
+  { id: "basic", label: "Basic", description: "Studio hire by the hour or block. Just the space, no session package.", packages: hirePackages },
+  { id: "package", label: "Package", description: "Session packages with time, images, and guidance included.", packages: mainPackages },
+  { id: "offers", label: "Offers", description: "Limited-time seasonal packages.", packages: mothersDayPackages },
+];
+
 export default function ServicesPage() {
+  const [expandedSection, setExpandedSection] = useState<PricingSectionId | null>("package");
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -222,7 +233,7 @@ export default function ServicesPage() {
       </section>
 
       <main className="mx-auto w-full max-w-7xl space-y-16 px-4 pb-16 pt-12 sm:space-y-20 sm:px-6 lg:px-8">
-        {/* Packages Section */}
+        {/* Packages Section — Basic / Package / Offers dropdowns */}
         <section id="packages" className="scroll-mt-24">
           <div className="text-center space-y-4 mb-12">
             <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
@@ -232,34 +243,63 @@ export default function ServicesPage() {
               Flexible Booking Options
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-[var(--muted-plum)]">
-              All packages include professional guidance and private online gallery. Select the option that fits your session.
+              Expand a section below to see options. All packages include professional guidance and private online gallery where applicable.
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-            {mainPackages.map((pkg) => (
-              <PackageCard key={pkg.id} pkg={pkg} />
-            ))}
-          </div>
-
-          {/* Studio Hire & Standard Rates */}
-          <div className="mt-16">
-            <div className="text-center space-y-4 mb-10">
-              <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-                Studio Hire & Standard Rates
-              </p>
-              <h2 className="font-heading text-2xl text-[var(--primary)] sm:text-3xl">
-                Hourly & Block Bookings
-              </h2>
-              <p className="max-w-2xl mx-auto text-lg text-[var(--muted-plum)]">
-                Need the space without a session package? Book by the hour or choose a half or full day.
-              </p>
-            </div>
-            <div className="grid gap-8 md:grid-cols-3 lg:gap-6">
-              {hirePackages.map((pkg) => (
-                <PackageCard key={pkg.id} pkg={pkg} />
-              ))}
-            </div>
+          <div className="space-y-2" role="list">
+            {PRICING_SECTIONS.map((sec) => {
+              const isExpanded = expandedSection === sec.id;
+              const gridCols = sec.packages.length <= 2 ? "md:grid-cols-2" : sec.packages.length <= 3 ? "md:grid-cols-3" : "md:grid-cols-2 lg:grid-cols-4";
+              return (
+                <div
+                  key={sec.id}
+                  className="border-2 border-[var(--accent)]/20 bg-white rounded-lg overflow-hidden transition-all duration-300 hover:border-[var(--primary)]/50"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setExpandedSection(isExpanded ? null : sec.id)}
+                    aria-expanded={isExpanded}
+                    aria-controls={`pricing-content-${sec.id}`}
+                    id={`pricing-header-${sec.id}`}
+                    className="w-full flex items-center gap-4 p-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
+                  >
+                    <span className="flex-1 min-w-0">
+                      <span className="font-heading text-xl text-[var(--primary)] font-semibold block">
+                        {sec.label}
+                      </span>
+                      <span className="text-sm text-[var(--muted-plum)]">
+                        {sec.description}
+                      </span>
+                    </span>
+                    <span
+                      className={`flex-shrink-0 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                      aria-hidden
+                    >
+                      <svg className="h-6 w-6 text-[var(--muted-plum)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </span>
+                  </button>
+                  <div
+                    id={`pricing-content-${sec.id}`}
+                    role="region"
+                    aria-labelledby={`pricing-header-${sec.id}`}
+                    className={`grid transition-all duration-300 ease-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="border-t border-[var(--accent)]/20 p-6 pt-6">
+                        <div className={`grid gap-8 ${gridCols} lg:gap-6`}>
+                          {sec.packages.map((pkg) => (
+                            <PackageCard key={pkg.id} pkg={pkg} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Booking Terms */}
@@ -433,30 +473,6 @@ export default function ServicesPage() {
             <Link href="/#contact" className="btn-primary">
               Request Add-ons When Booking
             </Link>
-          </div>
-        </section>
-
-        {/* Mother's Day Section */}
-        <section id="mothers-day" className="scroll-mt-24">
-          <div className="text-center space-y-4 mb-12 relative">
-            <span className="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider bg-[var(--accent)]/20 text-[var(--primary)] rounded-full border border-[var(--primary)]/30">
-              Limited time
-            </span>
-            <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-              Mother&apos;s Day
-            </p>
-            <h2 className="font-heading text-3xl text-[var(--primary)] sm:text-4xl lg:text-5xl">
-              Mother&apos;s Day Mini Sessions
-            </h2>
-            <p className="max-w-2xl mx-auto text-lg text-[var(--muted-plum)]">
-              A special way to celebrate Mum. Only the Mother&apos;s Day packages are available for a limited time until Mother&apos;s Day.
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-2 lg:gap-6 max-w-4xl mx-auto">
-            {mothersDayPackages.map((pkg) => (
-              <PackageCard key={pkg.id} pkg={pkg} />
-            ))}
           </div>
         </section>
       </main>
