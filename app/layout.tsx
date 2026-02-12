@@ -42,14 +42,13 @@ export const metadata: Metadata = {
     "RT Spaces offers daylight-ready studio hire, creative sessions, and photobooth packages in East London from 8 AM to 11 PM daily.",
   icons: {
     icon: [
-      { url: '/assets/logo/social.png', sizes: 'any' },
-      { url: '/assets/logo/social.png', sizes: '192x192', type: 'image/png' },
-      { url: '/assets/logo/social.png', sizes: '512x512', type: 'image/png' },
+      { url: '/assets/logo/favicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/assets/logo/favicon.png', sizes: '192x192', type: 'image/png' },
     ],
     apple: [
-      { url: '/assets/logo/social.png', sizes: '180x180', type: 'image/png' },
+      { url: '/assets/logo/favicon.png', sizes: '180x180', type: 'image/png' },
     ],
-    shortcut: '/assets/logo/social.png',
+    shortcut: '/assets/logo/favicon.png',
   },
   openGraph: {
     title: "RT Spaces — Photography Studio Hire East London",
