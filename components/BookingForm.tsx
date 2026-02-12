@@ -4,7 +4,20 @@ import { FormEvent, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CalendlyWidget } from "./CalendlyWidget";
-import { calculateHours, calculatePrice, calculateDeposit, calculateBalance, getDepositForPackage, getBalanceForPackage, BOOKING_PACKAGES, ADDONS, computeAddonsTotal, type BookingPackage, type SelectedAddon } from "@/lib/pricing";
+import { calculateHours, calculatePrice, calculateDeposit, calculateBalance, getDepositForPackage, getBalanceForPackage, BOOKING_PACKAGES, HIRE_RATE_IDS, ADDONS, computeAddonsTotal, type BookingPackage, type SelectedAddon } from "@/lib/pricing";
+
+const MAIN_PACKAGE_IDS = ["essential-studio", "signature-studio", "luxury-studio", "engagement-story"];
+const MOTHERS_DAY_IDS = ["mothers-day-mini", "mothers-day-premium"];
+
+const hirePackages = BOOKING_PACKAGES.filter((p) => HIRE_RATE_IDS.includes(p.id));
+const mainPackages = BOOKING_PACKAGES.filter((p) => MAIN_PACKAGE_IDS.includes(p.id));
+const mothersDayPackages = BOOKING_PACKAGES.filter((p) => MOTHERS_DAY_IDS.includes(p.id));
+
+const BOOKING_SECTIONS = [
+  { id: "basic" as const, label: "Basic", description: "Studio hire by the hour or block", packages: hirePackages },
+  { id: "package" as const, label: "Package", description: "Session packages with time & images", packages: mainPackages },
+  { id: "offers" as const, label: "Offers", description: "Limited-time seasonal packages", packages: mothersDayPackages },
+];
 
 type BookingPayload = {
   name: string;
@@ -68,6 +81,7 @@ export function BookingForm() {
   const [balanceAmount, setBalanceAmount] = useState<number | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<BookingPackage | null>(null);
   const [expandedPackageId, setExpandedPackageId] = useState<string | null>(null);
+  const [expandedPricingSection, setExpandedPricingSection] = useState<"basic" | "package" | "offers" | null>("package");
   const [addonQuantities, setAddonQuantities] = useState<Record<string, number>>({});
   const [requestPrintsAlbums, setRequestPrintsAlbums] = useState(false);
   const [pendingBookingExpiresAt, setPendingBookingExpiresAt] = useState<Date | null>(null);
@@ -546,7 +560,7 @@ export function BookingForm() {
                 Step 2: Choose Your Package
               </h3>
               <p className="text-sm text-[var(--muted-plum)]">
-                Expand a session to see full details, then select.
+                Expand Basic, Package, or Offers to see options; then expand a session for details and select.
               </p>
             </div>
             <Link 
@@ -558,111 +572,155 @@ export function BookingForm() {
           </div>
           
           <div className="space-y-2 pt-4" role="list">
-            {BOOKING_PACKAGES.map((pkg) => {
-              const isExpanded = expandedPackageId === pkg.id;
-              const isSelected = selectedPackage?.id === pkg.id;
+            {BOOKING_SECTIONS.map((sec) => {
+              const sectionExpanded = expandedPricingSection === sec.id;
               return (
                 <div
-                  key={pkg.id}
-                  className={`relative border-2 transition-all duration-300 ${
-                    isSelected
-                      ? "border-[var(--primary)] bg-[var(--primary)]/10 shadow-md ring-2 ring-[var(--primary)]"
-                      : "border-[var(--accent)]/20 bg-white hover:border-[var(--primary)]/50"
-                  } ${pkg.limitedOffer && !isSelected ? "ring-2 ring-[var(--primary)]/20" : ""}`}
+                  key={sec.id}
+                  className="border-2 border-[var(--accent)]/20 bg-white overflow-hidden transition-all duration-300 hover:border-[var(--primary)]/50"
                 >
-                  {pkg.limitedOffer && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                      <span className="bg-[var(--primary)] text-white px-3 py-1 text-xs font-semibold uppercase tracking-wider">
-                        Limited offer
-                      </span>
-                    </div>
-                  )}
-                  {/* Accordion header: click to expand/collapse */}
                   <button
                     type="button"
-                    onClick={() => setExpandedPackageId(isExpanded ? null : pkg.id)}
-                    aria-expanded={isExpanded}
-                    aria-controls={`package-details-${pkg.id}`}
-                    id={`package-header-${pkg.id}`}
+                    onClick={() => setExpandedPricingSection(sectionExpanded ? null : sec.id)}
+                    aria-expanded={sectionExpanded}
+                    aria-controls={`booking-section-${sec.id}`}
+                    id={`booking-section-header-${sec.id}`}
                     className="w-full flex items-center gap-4 p-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
                   >
                     <span className="flex-1 min-w-0">
-                      <span className="font-heading text-[var(--primary)] font-medium block truncate">
-                        {pkg.title}
+                      <span className="font-heading text-[var(--primary)] font-semibold block">
+                        {sec.label}
                       </span>
                       <span className="text-sm text-[var(--muted-plum)]">
-                        {pkg.duration}
+                        {sec.description}
                       </span>
                     </span>
-                    <span className="text-lg font-semibold text-[var(--primary)] whitespace-nowrap">
-                      £{pkg.price}
-                    </span>
                     <span
-                      className={`flex-shrink-0 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                      className={`flex-shrink-0 transition-transform duration-200 ${sectionExpanded ? "rotate-180" : ""}`}
                       aria-hidden
                     >
                       <svg className="h-5 w-5 text-[var(--muted-plum)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </span>
-                    {isSelected && (
-                      <span className="flex-shrink-0 text-sm font-semibold text-[var(--primary)]">✓ Selected</span>
-                    )}
                   </button>
-                  {/* Expandable details */}
                   <div
-                    id={`package-details-${pkg.id}`}
+                    id={`booking-section-${sec.id}`}
                     role="region"
-                    aria-labelledby={`package-header-${pkg.id}`}
-                    className={`grid transition-all duration-300 ease-out ${
-                      isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                    }`}
+                    aria-labelledby={`booking-section-header-${sec.id}`}
+                    className={`grid transition-all duration-300 ease-out ${sectionExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
                   >
                     <div className="overflow-hidden">
-                      <div className="border-t border-[var(--accent)]/20 p-4 pt-4 bg-white/50">
-                        <ul className="space-y-2 mb-4 text-sm text-[var(--muted-plum)]">
-                          {pkg.includes.map((item, idx) => (
-                            <li key={idx} className="flex items-start gap-2">
-                              <svg
-                                className="h-4 w-4 text-[var(--primary)] mt-0.5 flex-shrink-0"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                      <div className="border-t border-[var(--accent)]/20 p-3 space-y-2">
+                        {sec.packages.map((pkg) => {
+                          const isExpanded = expandedPackageId === pkg.id;
+                          const isSelected = selectedPackage?.id === pkg.id;
+                          return (
+                            <div
+                              key={pkg.id}
+                              className={`relative border-2 transition-all duration-300 ${
+                                isSelected
+                                  ? "border-[var(--primary)] bg-[var(--primary)]/10 shadow-md ring-2 ring-[var(--primary)]"
+                                  : "border-[var(--accent)]/20 bg-white hover:border-[var(--primary)]/50"
+                              } ${pkg.limitedOffer && !isSelected ? "ring-2 ring-[var(--primary)]/20" : ""}`}
+                            >
+                              {pkg.limitedOffer && (
+                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                                  <span className="bg-[var(--primary)] text-white px-3 py-1 text-xs font-semibold uppercase tracking-wider">
+                                    Limited offer
+                                  </span>
+                                </div>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => setExpandedPackageId(isExpanded ? null : pkg.id)}
+                                aria-expanded={isExpanded}
+                                aria-controls={`package-details-${pkg.id}`}
+                                id={`package-header-${pkg.id}`}
+                                className="w-full flex items-center gap-4 p-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
                               >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        {pkg.bestFor && (
-                          <p className="text-sm text-[var(--muted-plum)] mb-2">
-                            <span className="font-medium text-[var(--primary)]">Best for:</span> {pkg.bestFor}
-                          </p>
-                        )}
-                        {pkg.availabilityNote && (
-                          <p className="text-xs text-[var(--muted-plum)] mb-4">{pkg.availabilityNote}</p>
-                        )}
-                        {pkg.depositAmount != null && pkg.balanceOnDay != null && (
-                          <p className="text-xs text-[var(--muted-plum)] mb-4">
-                            £{pkg.depositAmount} non-refundable deposit to book. Remaining £{pkg.balanceOnDay} paid on the day.
-                          </p>
-                        )}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedPackage(pkg);
-                            setExpandedPackageId(null);
-                          }}
-                          className={`w-full sm:w-auto px-4 py-2 font-medium transition-colors ${
-                            isSelected
-                              ? "bg-[var(--primary)]/20 text-[var(--primary)] cursor-default"
-                              : "bg-[var(--primary)] text-white hover:opacity-90"
-                          }`}
-                        >
-                          {isSelected ? "✓ Selected" : "Select this package"}
-                        </button>
+                                <span className="flex-1 min-w-0">
+                                  <span className="font-heading text-[var(--primary)] font-medium block truncate">
+                                    {pkg.title}
+                                  </span>
+                                  <span className="text-sm text-[var(--muted-plum)]">
+                                    {pkg.duration}
+                                  </span>
+                                </span>
+                                <span className="text-lg font-semibold text-[var(--primary)] whitespace-nowrap">
+                                  £{pkg.price}
+                                </span>
+                                <span
+                                  className={`flex-shrink-0 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                                  aria-hidden
+                                >
+                                  <svg className="h-5 w-5 text-[var(--muted-plum)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                  </svg>
+                                </span>
+                                {isSelected && (
+                                  <span className="flex-shrink-0 text-sm font-semibold text-[var(--primary)]">✓ Selected</span>
+                                )}
+                              </button>
+                              <div
+                                id={`package-details-${pkg.id}`}
+                                role="region"
+                                aria-labelledby={`package-header-${pkg.id}`}
+                                className={`grid transition-all duration-300 ease-out ${
+                                  isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                                }`}
+                              >
+                                <div className="overflow-hidden">
+                                  <div className="border-t border-[var(--accent)]/20 p-4 pt-4 bg-white/50">
+                                    <ul className="space-y-2 mb-4 text-sm text-[var(--muted-plum)]">
+                                      {pkg.includes.map((item, idx) => (
+                                        <li key={idx} className="flex items-start gap-2">
+                                          <svg
+                                            className="h-4 w-4 text-[var(--primary)] mt-0.5 flex-shrink-0"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                          </svg>
+                                          <span>{item}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                    {pkg.bestFor && (
+                                      <p className="text-sm text-[var(--muted-plum)] mb-2">
+                                        <span className="font-medium text-[var(--primary)]">Best for:</span> {pkg.bestFor}
+                                      </p>
+                                    )}
+                                    {pkg.availabilityNote && (
+                                      <p className="text-xs text-[var(--muted-plum)] mb-4">{pkg.availabilityNote}</p>
+                                    )}
+                                    {pkg.depositAmount != null && pkg.balanceOnDay != null && (
+                                      <p className="text-xs text-[var(--muted-plum)] mb-4">
+                                        £{pkg.depositAmount} non-refundable deposit to book. Remaining £{pkg.balanceOnDay} paid on the day.
+                                      </p>
+                                    )}
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedPackage(pkg);
+                                        setExpandedPackageId(null);
+                                      }}
+                                      className={`w-full sm:w-auto px-4 py-2 font-medium transition-colors ${
+                                        isSelected
+                                          ? "bg-[var(--primary)]/20 text-[var(--primary)] cursor-default"
+                                          : "bg-[var(--primary)] text-white hover:opacity-90"
+                                      }`}
+                                    >
+                                      {isSelected ? "✓ Selected" : "Select this package"}
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
@@ -760,7 +818,7 @@ export function BookingForm() {
               }
             </p>
           </div>
-          <div className="border-2 border-[var(--primary)]/40 bg-white rounded-sm overflow-hidden">
+          <div className="border-2 border-[var(--primary)]/40 bg-white overflow-hidden">
             <CalendlyWidget 
               url={calendlyUrl} 
               onEventScheduled={handleCalendlyEvent}
@@ -768,13 +826,13 @@ export function BookingForm() {
           </div>
           {calendlyTimeSelected && (
             <div className="space-y-3">
-              <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-sm">
+              <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4">
                 <p className="text-sm font-medium">
                   ✓ Time selected! {paymentMode === "request" ? "Please complete your details below." : "Please complete your details below to proceed with payment."}
                 </p>
               </div>
               {paymentMode === "pay" && timeRemaining !== null && timeRemaining > 0 && (
-                <div className={`border-2 p-4 rounded-sm ${
+                <div className={`border-2 p-4 ${
                   timeRemaining < 300 
                     ? "bg-red-50 border-red-300 text-red-800" 
                     : "bg-yellow-50 border-yellow-300 text-yellow-800"
@@ -816,7 +874,7 @@ export function BookingForm() {
 
       {/* Booking Details Summary */}
       {calendlyTimeSelected && calendlyData && (
-        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 rounded-lg space-y-3">
+        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 space-y-3">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)] mb-3">
             Booking Details
           </p>
@@ -867,7 +925,7 @@ export function BookingForm() {
 
       {/* Selected Package Display */}
       {paymentMode === "pay" && selectedPackage && (
-        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 rounded-lg space-y-3">
+        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 space-y-3">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)]">
             Selected Package
           </p>
@@ -885,7 +943,7 @@ export function BookingForm() {
 
       {/* Pricing Display */}
       {paymentMode === "pay" && bookingPrice != null && depositAmount != null && balanceAmount != null && selectedPackage && (
-        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 rounded-lg space-y-3">
+        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 space-y-3">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)]">
             Payment Summary
           </p>
@@ -957,7 +1015,7 @@ export function BookingForm() {
       </button>
 
       {message && (
-        <div className={`p-4 rounded-sm border ${
+        <div className={`p-4 border ${
           status === "success" 
             ? "bg-emerald-50 border-emerald-200 text-emerald-800" 
             : "bg-red-50 border-red-200 text-red-800"

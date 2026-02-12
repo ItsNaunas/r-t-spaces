@@ -18,7 +18,7 @@ const mothersDayPackages = BOOKING_PACKAGES.filter((p) => MOTHERS_DAY_IDS.includ
 function PackageCard({ pkg }: { pkg: BookingPackage }) {
   return (
     <article
-      className={`relative flex flex-col border-2 rounded-lg shadow-md transition-all duration-300 ${
+      className={`relative flex flex-col border-2 shadow-md transition-all duration-300 ${
         pkg.popular
           ? "border-[var(--primary)] shadow-lg scale-105 md:scale-110"
           : "border-[var(--accent)]/20 hover:border-[var(--primary)] hover:shadow-md"
@@ -254,7 +254,7 @@ export default function ServicesPage() {
               return (
                 <div
                   key={sec.id}
-                  className="border-2 border-[var(--accent)]/20 bg-white rounded-lg overflow-hidden transition-all duration-300 hover:border-[var(--primary)]/50"
+                  className="border-2 border-[var(--accent)]/20 bg-white overflow-hidden transition-all duration-300 hover:border-[var(--primary)]/50"
                 >
                   <button
                     type="button"
@@ -303,7 +303,7 @@ export default function ServicesPage() {
           </div>
 
           {/* Booking Terms */}
-          <div className="mt-12 p-6 bg-[var(--accent)]/5 border border-[var(--accent)]/20 border-l-4 border-l-[var(--primary)] rounded-lg">
+          <div className="mt-12 p-6 bg-[var(--accent)]/5 border border-[var(--accent)]/20 border-l-4 border-l-[var(--primary)]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-shrink-0">
                 <svg
