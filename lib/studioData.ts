@@ -45,7 +45,7 @@ export const studioGallery = [
   {
     artist: "Gear Prep",
     focus: "Lighting ready",
-    src: "/assets/gallery/IMG_7807.JPG",
+    src: "/assets/gallery/IMG_7809.JPG",
   },
   {
     artist: "Minimal Props",

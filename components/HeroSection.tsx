@@ -7,24 +7,24 @@ import { useState, useEffect, useRef } from "react";
 
 const carouselImages = [
   {
-    src: "/assets/gallery/5F978C66-0CA5-46F1-8156-3E610244CDD4.jpg",
-    alt: "Content Creation",
-    label: "Content Creation"
+    src: "/assets/studios/919177f2-e71e-4881-90d0-b0eef3b4ccfc.jpg",
+    alt: "Studio cyclorama",
+    label: "Studio Space"
   },
   {
-    src: "/assets/home/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg",
-    alt: "Photography",
-    label: "Photography Sessions"
+    src: "/assets/studios/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg",
+    alt: "Studio set",
+    label: "Studio Space"
   },
   {
-    src: "/assets/equipment/f8c6e9ae-3bde-4eb0-a641-4d937ede8ef1.jpg",
-    alt: "Video Production",
-    label: "Video Production"
+    src: "/assets/studios/IMG_7856.JPG",
+    alt: "Studio interior",
+    label: "Studio Space"
   },
   {
-    src: "/assets/home/IMG_7808.JPG",
-    alt: "Live Streaming",
-    label: "Live Streaming"
+    src: "/assets/studios/3f4d65d6-7a25-44cc-a4f4-a1ded7995f3a.jpg",
+    alt: "Studio backdrop",
+    label: "Studio Space"
   },
 ];
 

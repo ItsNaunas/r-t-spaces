@@ -306,7 +306,7 @@ const instagramImages = [
   "/assets/gallery/0597e892-11ea-4d66-858d-c956f9f6fc6e.jpg",
   "/assets/gallery/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg",
   "/assets/gallery/B152F374-AA91-4F11-B52F-FB6F0907342C.jpg",
-  "/assets/gallery/IMG_7807.JPG",
+  "/assets/gallery/IMG_7809.JPG",
   "/assets/gallery/AED2EF36-E44C-48A6-B44C-5E30E05B3815.jpg",
   "/assets/gallery/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg",
   "/assets/gallery/IMG_7854.JPG",
@@ -619,7 +619,7 @@ export function HowItWorksSection() {
       number: "02",
       title: "Arrive & Get Started",
       description: "Walk in and begin your session. Our team greets you with everything prepped—professional lighting configured, stands positioned, and refreshments ready. Everything is set up for you.",
-      image: "/assets/gallery/IMG_7807.JPG",
+      image: "/assets/gallery/IMG_7809.JPG",
       icon: (
         <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -630,7 +630,7 @@ export function HowItWorksSection() {
       number: "03",
       title: "Join the Community",
       description: "Become part of our growing community. Enjoy monthly studio access at member rates, plus weekly newsletters with exclusive discounts and updates.",
-      image: "/assets/gallery/5F978C66-0CA5-46F1-8156-3E610244CDD4.jpg",
+      image: "/assets/gallery/IMG_7810.JPG",
       icon: (
         <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
