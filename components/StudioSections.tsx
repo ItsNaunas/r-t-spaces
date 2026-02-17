@@ -1763,6 +1763,9 @@ export function SiteFooter() {
                 <Link href="/services" className="block text-white/80 hover:text-white transition">
                   Packages / Pricing
                 </Link>
+                <Link href="/members" className="block text-white/80 hover:text-white transition">
+                  Members
+                </Link>
                 <Link href="/#contact" className="block text-white/80 hover:text-white transition">
                   Book Online
                 </Link>
