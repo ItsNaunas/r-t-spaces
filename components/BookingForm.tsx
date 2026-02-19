@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CalendlyWidget } from "./CalendlyWidget";
-import { calculateHours, calculatePrice, calculateDeposit, calculateBalance, getDepositForPackage, getBalanceForPackage, BOOKING_PACKAGES, HIRE_RATE_IDS, ADDONS, computeAddonsTotal, type BookingPackage, type SelectedAddon } from "@/lib/pricing";
+import { calculateHours, calculatePrice, calculateDeposit, calculateBalance, getPackagePriceForHours, getDepositForPackage, getBalanceForPackage, BOOKING_PACKAGES, HIRE_RATE_IDS, ADDONS, computeAddonsTotal, type BookingPackage, type SelectedAddon } from "@/lib/pricing";
 
 const MAIN_PACKAGE_IDS = ["essential-studio", "signature-studio", "luxury-studio", "engagement-story"];
 const MOTHERS_DAY_IDS = ["mothers-day-mini", "mothers-day-premium"];
@@ -84,6 +84,7 @@ export function BookingForm() {
   const [expandedPricingSection, setExpandedPricingSection] = useState<"basic" | "package" | "offers" | null>("package");
   const [addonQuantities, setAddonQuantities] = useState<Record<string, number>>({});
   const [requestPrintsAlbums, setRequestPrintsAlbums] = useState(false);
+  const [agreedToPolicies, setAgreedToPolicies] = useState(false);
   const [pendingBookingExpiresAt, setPendingBookingExpiresAt] = useState<Date | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const searchParams = useSearchParams();
@@ -122,8 +123,15 @@ export function BookingForm() {
           setDepositAmount(null);
           setBalanceAmount(null);
         } else {
+          const hours = isTimeBased
+            ? calculateHours(
+                calendlyData!.startTime,
+                calendlyData!.endTime,
+                selectedPackage.minimumHours
+              )
+            : selectedPackage.hours;
           const packagePrice = isTimeBased
-            ? calculatePrice(calculateHours(calendlyData!.startTime, calendlyData!.endTime))
+            ? getPackagePriceForHours(selectedPackage, hours)
             : selectedPackage.price;
           const packageDeposit = getDepositForPackage(selectedPackage, packagePrice);
           const packageBalance = getBalanceForPackage(selectedPackage, packagePrice, packageDeposit);
@@ -984,9 +992,38 @@ export function BookingForm() {
         </div>
       )}
 
+      {/* Studio Policies – link to full page, checkbox required before payment / submit */}
+      {calendlyTimeSelected && (
+        <div className="border-2 border-[var(--accent)]/20 bg-white p-4 space-y-4">
+          <p className="text-sm text-[var(--muted-plum)]">
+            Before proceeding, please read our studio policies.
+          </p>
+          <Link
+            href="/policies"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[var(--primary)] font-semibold underline underline-offset-2 hover:opacity-80 transition-opacity"
+          >
+            View Studio Policies &amp; Important Information
+          </Link>
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={agreedToPolicies}
+              onChange={(e) => setAgreedToPolicies(e.target.checked)}
+              className="mt-1 border-[var(--accent)]/40 text-[var(--primary)]"
+              required
+            />
+            <span className="text-sm text-[var(--primary)] group-has-[:checked]:font-medium">
+              I have read and agree to the Studio Policies &amp; Important Information.
+            </span>
+          </label>
+        </div>
+      )}
+
       <button
         type="submit"
-        disabled={isSubmitting || !calendlyTimeSelected || (paymentMode === "pay" && (!selectedPackage || !bookingPrice))}
+        disabled={isSubmitting || !calendlyTimeSelected || !agreedToPolicies || (paymentMode === "pay" && (!selectedPackage || !bookingPrice))}
         className="btn-primary btn-full relative overflow-hidden group mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <span className="relative z-10 flex items-center justify-center gap-2">

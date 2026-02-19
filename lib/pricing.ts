@@ -24,6 +24,10 @@ export type BookingPackage = {
   limitedOffer?: boolean;
   /** When true, total price is computed from Calendly hours (hourly rate × hours) instead of using price */
   priceFromTime?: boolean;
+  /** When set with priceFromTime, use this rate per hour instead of PRICING_CONFIG.hourlyRate */
+  hourlyRate?: number;
+  /** When set, minimum booking hours for this package (e.g. 1 for student rate) */
+  minimumHours?: number;
 };
 
 export const BOOKING_PACKAGES: BookingPackage[] = [
@@ -111,6 +115,28 @@ export const BOOKING_PACKAGES: BookingPackage[] = [
     availabilityNote: "Price calculated from your selected time",
   },
   {
+    id: "student-studio-hire",
+    title: "Student Studio Hire",
+    price: 35,
+    duration: "£35/hr (student rate) · Minimum 1 hour",
+    hours: 1,
+    popular: false,
+    priceFromTime: true,
+    hourlyRate: 35,
+    minimumHours: 1,
+    depositAmount: 20,
+    includes: [
+      "Professional studio space",
+      "Basic studio lighting",
+      "Seamless backdrop",
+      "Clean, controlled environment",
+      "Studio hire only — no photographer included",
+      "Optional: photographer available £55/hr (must be pre-booked)",
+    ],
+    bestFor: "students, personal & educational use",
+    availabilityNote: "Student proof required: valid student ID, college/university email, or enrolment confirmation. Student rate for personal & educational use only; commercial shoots require standard pricing. Studio rules & late fees apply. £20 non-refundable deposit; remaining balance due on the day.",
+  },
+  {
     id: "half-day",
     title: "Half Day",
     price: 260,
@@ -182,8 +208,8 @@ export const BOOKING_PACKAGES: BookingPackage[] = [
   },
 ];
 
-/** IDs for studio hire / standard rate packages (Standard Rate, Half Day, Full Day) */
-export const HIRE_RATE_IDS = ["standard-rate", "half-day", "full-day"];
+/** IDs for studio hire / standard rate packages (Standard Rate, Student, Half Day, Full Day) */
+export const HIRE_RATE_IDS = ["standard-rate", "student-studio-hire", "half-day", "full-day"];
 
 export type PricingAddon = {
   id: string;
@@ -256,17 +282,41 @@ export function getBalanceForPackage(
 
 /**
  * Calculate hours between two times
+ * @param minimumHours - optional minimum (e.g. 1 for student package); defaults to PRICING_CONFIG.minimumHours
  */
-export function calculateHours(startTime: string, endTime: string): number {
+export function calculateHours(
+  startTime: string,
+  endTime: string,
+  minimumHours?: number
+): number {
   const start = new Date(startTime);
   const end = new Date(endTime);
   const diffMs = end.getTime() - start.getTime();
   const diffHours = diffMs / (1000 * 60 * 60);
-  return Math.max(Math.ceil(diffHours), PRICING_CONFIG.minimumHours);
+  const min = minimumHours ?? PRICING_CONFIG.minimumHours;
+  return Math.max(Math.ceil(diffHours), min);
 }
 
 /**
- * Calculate total price based on hours (for hourly-based bookings)
+ * Get hourly rate for a package (used when priceFromTime is true)
+ */
+export function getHourlyRateForPackage(pkg: BookingPackage): number {
+  return pkg.hourlyRate ?? PRICING_CONFIG.hourlyRate;
+}
+
+/**
+ * Get total price for a package when duration is known (hours).
+ * For priceFromTime packages uses the package's hourly rate; otherwise returns fixed price.
+ */
+export function getPackagePriceForHours(pkg: BookingPackage, hours: number): number {
+  if (pkg.priceFromTime) {
+    return hours * getHourlyRateForPackage(pkg);
+  }
+  return pkg.price;
+}
+
+/**
+ * Calculate total price based on hours (for hourly-based bookings, standard rate)
  */
 export function calculatePrice(hours: number): number {
   return hours * PRICING_CONFIG.hourlyRate;
