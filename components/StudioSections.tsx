@@ -1264,10 +1264,10 @@ export function ContactSection() {
                 On-site parking available after 6 PM · Stratford station 12 mins by bus
               </p>
               
-              {/* Google Maps Embed - pin at Fourth Avenue entrance (exact location from Street View) */}
+              {/* Google Maps Embed - exact location from Share > Embed a map */}
               <div className="relative w-full h-56 sm:h-64 overflow-hidden border-2 border-[var(--primary)]/30 mb-4">
                 <iframe
-                  src="https://www.google.com/maps?q=51.5509785,0.0549861&output=embed"
+                  src="https://www.google.com/maps/embed?pb=!3m2!1sen!2suk!4v1772292757644!5m2!1sen!2suk!6m8!1m7!1s1DIvLbkU8cPBvGYgfTa3Dw!2m2!1d51.55246883464158!2d0.05409363759610242!3f331.4546931235256!4f-2.861728092477705!5f0.7820865974627469"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -1279,7 +1279,7 @@ export function ContactSection() {
                 />
               </div>
               <a
-                href="https://www.google.com/maps/search/?api=1&query=Unit+3E,+Room+1,+736-740+Romford+Road,+London+E12+6BT"
+                href="https://maps.app.goo.gl/eWBKrpy5enGPKmEG7"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm font-medium text-[var(--primary)] hover:text-[var(--accent-gold)] transition-colors group"
