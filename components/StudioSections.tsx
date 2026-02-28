@@ -160,7 +160,7 @@ export function FeaturedWorkSection() {
         </p>
         <div className="space-y-3 text-sm">
           <p>
-            <span className="font-semibold text-[var(--primary)]">Location:</span> Unit 3E,
+            <span className="font-semibold text-[var(--primary)]">Location:</span> Unit 3E, Room 1,
             736-740 Romford Road, London
           </p>
           <p>
@@ -1255,7 +1255,7 @@ export function ContactSection() {
                 </p>
               </div>
               <p className="text-base sm:text-lg font-semibold text-[var(--primary)] mb-2">
-                Unit 3E, 736-740 Romford Road
+                Unit 3E, Room 1, 736-740 Romford Road
               </p>
               <p className="text-base sm:text-lg font-semibold text-[var(--primary)] mb-3">
                 London E12 6BT
@@ -1264,10 +1264,10 @@ export function ContactSection() {
                 On-site parking available after 6 PM · Stratford station 12 mins by bus
               </p>
               
-              {/* Google Maps Embed */}
+              {/* Google Maps Embed - pin at Fourth Avenue entrance (exact location from Street View) */}
               <div className="relative w-full h-56 sm:h-64 overflow-hidden border-2 border-[var(--primary)]/30 mb-4">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.1234567890!2d0.0436!3d51.5494!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDMyJzU3LjgiTiAwwrAwMiczNy4wIkU!5e0!3m2!1sen!2suk!4v1234567890123!5m2!1sen!2suk"
+                  src="https://www.google.com/maps?q=51.5509785,0.0549861&output=embed"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -1279,7 +1279,7 @@ export function ContactSection() {
                 />
               </div>
               <a
-                href="https://www.google.com/maps/search/?api=1&query=Unit+3E,+736-740+Romford+Road,+London+E12+6BT"
+                href="https://www.google.com/maps/search/?api=1&query=Unit+3E,+Room+1,+736-740+Romford+Road,+London+E12+6BT"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm font-medium text-[var(--primary)] hover:text-[var(--accent-gold)] transition-colors group"
@@ -1783,7 +1783,7 @@ export function SiteFooter() {
               <h3 className="text-lg font-semibold text-white">Contact</h3>
               <div className="space-y-3 text-white/80">
                 <p>
-                  Unit 3E, 736-740 Romford Road<br />
+                  Unit 3E, Room 1, 736-740 Romford Road<br />
                   London E12 6BT
                 </p>
                 <p>

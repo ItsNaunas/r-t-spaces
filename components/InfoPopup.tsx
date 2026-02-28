@@ -7,7 +7,7 @@ export function InfoPopup() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const location = "Unit 3E, 736-740 Romford Road, London E12 6BT";
+  const location = "Unit 3E, Room 1, 736-740 Romford Road, London E12 6BT";
   const phone = "07944667000";
   const email = "enquires@rtspaces.co.uk";
 
