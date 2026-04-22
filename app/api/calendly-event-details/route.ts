@@ -42,7 +42,7 @@ export async function POST(request: Request) {
         eventUri,
       });
       return NextResponse.json(
-        { error: `Failed to fetch event: ${eventResponse.status} ${eventResponse.statusText}`, details: errorText },
+        { error: 'Failed to fetch event details. Please try again.' },
         { status: eventResponse.status }
       );
     }
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
         inviteeUri,
       });
       return NextResponse.json(
-        { error: `Failed to fetch invitee: ${inviteeResponse.status} ${inviteeResponse.statusText}`, details: errorText },
+        { error: 'Failed to fetch invitee details. Please try again.' },
         { status: inviteeResponse.status }
       );
     }
@@ -97,7 +97,7 @@ export async function POST(request: Request) {
     console.error('Error fetching Calendly event details:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to fetch event details', details: errorMessage },
+      { error: 'Failed to fetch event details. Please try again.' },
       { status: 500 }
     );
   }

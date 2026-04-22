@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { SiteFooter } from "@/components/StudioSections";
+
+export const metadata: Metadata = {
+  title: "Blog — RT Spaces",
+  description: "Studio tips, creative insights, and behind-the-scenes content from RT Spaces photography studio in East London.",
+};
 
 export default function BlogPage() {
   return (

@@ -7,16 +7,13 @@ import { CalendlyWidget } from "./CalendlyWidget";
 import { calculateHours, calculatePrice, calculateDeposit, calculateBalance, getPackagePriceForHours, getDepositForPackage, getBalanceForPackage, BOOKING_PACKAGES, HIRE_RATE_IDS, ADDONS, computeAddonsTotal, type BookingPackage, type SelectedAddon } from "@/lib/pricing";
 
 const MAIN_PACKAGE_IDS = ["essential-studio", "signature-studio", "luxury-studio", "engagement-story"];
-const MOTHERS_DAY_IDS = ["mothers-day-mini", "mothers-day-premium"];
 
 const hirePackages = BOOKING_PACKAGES.filter((p) => HIRE_RATE_IDS.includes(p.id));
 const mainPackages = BOOKING_PACKAGES.filter((p) => MAIN_PACKAGE_IDS.includes(p.id));
-const mothersDayPackages = BOOKING_PACKAGES.filter((p) => MOTHERS_DAY_IDS.includes(p.id));
 
 const BOOKING_SECTIONS = [
   { id: "basic" as const, label: "Basic", description: "Studio hire by the hour or block", packages: hirePackages },
   { id: "package" as const, label: "Package", description: "Session packages with time & images", packages: mainPackages },
-  { id: "offers" as const, label: "Offers", description: "Limited-time seasonal packages", packages: mothersDayPackages },
 ];
 
 type BookingPayload = {
@@ -832,6 +829,11 @@ export function BookingForm() {
               onEventScheduled={handleCalendlyEvent}
             />
           </div>
+          <p className="text-xs text-[var(--muted-plum)]">
+            If the calendar shows as unavailable, the calendar owner can{" "}
+            <a href="https://calendly.com/login" target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--primary)]">log in to Calendly</a>{" "}
+            to turn availability back on and set open hours.
+          </p>
           {calendlyTimeSelected && (
             <div className="space-y-3">
               <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4">

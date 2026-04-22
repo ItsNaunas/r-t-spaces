@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       email: String(email).trim().toLowerCase(),
       date: date ? String(date) : undefined,
       hours: hours ? String(hours) : undefined,
-      notes: notes ? String(notes) : undefined,
+      notes: notes ? String(notes).replace(/<[^>]*>/g, '').trim() : undefined,
     };
 
     // Save booking

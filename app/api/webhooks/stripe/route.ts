@@ -114,9 +114,9 @@ export async function POST(request: Request) {
 
           console.log('Booking processed successfully. Calendly event:', pendingBooking?.calendlyEventUri ? 'already scheduled' : (calendlyLink ? 'link created' : 'not created'));
         } catch (error) {
-          console.error('Error processing booking:', error);
-          // Don't throw - webhook should still return success to Stripe
-          // Log the error for manual processing
+          console.error('Error processing booking after payment — requires manual review. Session:', session.id, error);
+          // Return 500 so Stripe retries this webhook rather than silently losing the booking
+          return NextResponse.json({ error: 'Booking processing failed' }, { status: 500 });
         }
         
         break;

@@ -52,13 +52,12 @@ export function SiteHeader() {
   }, [menuOpen]);
 
   useEffect(() => {
-    // Track scroll position to show/hide border
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      const scrolled = window.scrollY > 10;
+      setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
     };
 
-    window.addEventListener('scroll', handleScroll);
-    // Check initial scroll position
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);

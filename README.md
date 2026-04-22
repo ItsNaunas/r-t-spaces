@@ -44,6 +44,10 @@ NEXT_PUBLIC_CALENDLY_SCHEDULING_LINK=https://calendly.com/your-username/event-ty
      - Format: `https://calendly.com/your-username/event-type`
      - Add as `NEXT_PUBLIC_CALENDLY_SCHEDULING_LINK` in your `.env.local`
    - The Calendly widget will be embedded on the booking page, allowing customers to see availability and select times before payment
+   - **Keep the calendar always available:** If visitors see "This calendar is currently unavailable", the Calendly account owner must log in at [calendly.com](https://calendly.com) and:
+     - Ensure the event type is **active** (not paused)
+     - Set **Availability** so there are open hours (e.g. "When can you meet?" or sync with Google/Outlook so slots exist)
+     - Avoid leaving the event type in "Away" or with zero availability
 
 ### Running the Development Server
 

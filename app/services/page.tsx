@@ -8,11 +8,9 @@ import { GradientBars } from "@/components/ui/gradient-bars";
 import { BOOKING_PACKAGES, ADDONS, HIRE_RATE_IDS, type BookingPackage } from "@/lib/pricing";
 
 const MAIN_PACKAGE_IDS = ["essential-studio", "signature-studio", "luxury-studio", "engagement-story"];
-const MOTHERS_DAY_IDS = ["mothers-day-mini", "mothers-day-premium"];
 
 const mainPackages = BOOKING_PACKAGES.filter((p) => MAIN_PACKAGE_IDS.includes(p.id));
 const hirePackages = BOOKING_PACKAGES.filter((p) => HIRE_RATE_IDS.includes(p.id));
-const mothersDayPackages = BOOKING_PACKAGES.filter((p) => MOTHERS_DAY_IDS.includes(p.id));
 
 function PackageCard({ pkg }: { pkg: BookingPackage }) {
   return (
@@ -100,7 +98,6 @@ function PackageCard({ pkg }: { pkg: BookingPackage }) {
 const PRICING_SECTIONS: { id: string; label: string; description: string; packages: BookingPackage[] }[] = [
   { id: "basic", label: "Studio hire", description: "By the hour or block. Just the space, no session package.", packages: hirePackages },
   { id: "package", label: "Session packages", description: "Time, images, and guidance included.", packages: mainPackages },
-  { id: "offers", label: "Limited offers", description: "Seasonal packages for a limited time.", packages: mothersDayPackages },
 ];
 
 export default function ServicesPage() {

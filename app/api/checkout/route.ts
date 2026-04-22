@@ -5,7 +5,7 @@ import { getPendingBooking, updatePendingBookingStripeSession } from '@/lib/pend
 
 export async function POST(request: Request) {
   try {
-    if (!process.env.STRIPE_SECRET_KEY) {
+    if (!process.env.STRIPE_SECRET_KEY?.startsWith('sk_')) {
       return NextResponse.json(
         { error: 'Stripe is not configured' },
         { status: 500 }

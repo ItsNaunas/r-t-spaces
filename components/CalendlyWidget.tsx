@@ -30,22 +30,18 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Check if script already exists
-    const existingScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
-    
-    if (existingScript) {
-      // Script already in document, treat as loaded
+    // Script is loaded globally via next/script in layout.tsx.
+    let scriptCleanup: (() => void) | undefined;
+
+    if ((window as { Calendly?: unknown }).Calendly) {
       setIsLoaded(true);
     } else {
-      // Load Calendly embed script
-      const script = document.createElement("script");
-      script.src = "https://assets.calendly.com/assets/external/widget.js";
-      script.async = true;
-      script.onload = () => setIsLoaded(true);
-      document.body.appendChild(script);
+      const script = document.querySelector('script[src*="calendly.com"]');
+      const onLoad = () => setIsLoaded(true);
+      script?.addEventListener("load", onLoad);
+      scriptCleanup = () => script?.removeEventListener("load", onLoad);
     }
 
-    // Listen for Calendly events
     const handleCalendlyEvent = (e: MessageEvent) => {
       if (e.data.event && e.data.event.indexOf("calendly") === 0) {
         if (e.data.event === "calendly.event_scheduled" && onEventScheduled) {
@@ -57,6 +53,7 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
     window.addEventListener("message", handleCalendlyEvent);
 
     return () => {
+      scriptCleanup?.();
       window.removeEventListener("message", handleCalendlyEvent);
     };
   }, [onEventScheduled]);

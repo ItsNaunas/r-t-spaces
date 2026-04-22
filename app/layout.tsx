@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
+import Script from "next/script";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ScrollProgress } from "@/components/ScrollProgress";
@@ -101,6 +102,10 @@ export default function RootLayout({
         {children}
         <FloatingBookButton />
         <Analytics />
+        <Script
+          src="https://assets.calendly.com/assets/external/widget.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
