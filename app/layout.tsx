@@ -3,9 +3,7 @@ import { Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
-import { SiteHeader } from "@/components/SiteHeader";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { FloatingBookButton } from "@/components/FloatingBookButton";
+import { PublicChrome } from "@/app/_components/PublicChrome";
 import { Analytics } from "@vercel/analytics/next";
 
 // Playfair Display (Secondary/Heading Font)
@@ -97,10 +95,8 @@ export default function RootLayout({
       <body
         className={`${playfairDisplay.variable} ${newIconScript.variable} ${glacialIndifference.variable} antialiased`}
       >
-        <ScrollProgress />
-        <SiteHeader />
+        <PublicChrome />
         {children}
-        <FloatingBookButton />
         <Analytics />
         <Script
           src="https://assets.calendly.com/assets/external/widget.js"
