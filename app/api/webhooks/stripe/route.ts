@@ -118,7 +118,16 @@ export async function POST(request: Request) {
           // Return 500 so Stripe retries this webhook rather than silently losing the booking
           return NextResponse.json({ error: 'Booking processing failed' }, { status: 500 });
         }
-        
+
+        // Increment discount code usage if one was applied
+        const discountCode = session.metadata?.discountCode;
+        if (discountCode) {
+          const { incrementDiscountUsage } = await import('@/lib/admin/kv');
+          incrementDiscountUsage(discountCode).catch((err) => {
+            console.error('Failed to increment discount usage:', err);
+          });
+        }
+
         break;
       }
       case 'checkout.session.async_payment_failed':

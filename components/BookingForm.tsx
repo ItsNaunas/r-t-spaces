@@ -8,13 +8,14 @@ import { calculateHours, calculatePrice, calculateDeposit, calculateBalance, get
 
 const MAIN_PACKAGE_IDS = ["essential-studio", "signature-studio", "luxury-studio", "engagement-story"];
 
-const hirePackages = BOOKING_PACKAGES.filter((p) => HIRE_RATE_IDS.includes(p.id));
-const mainPackages = BOOKING_PACKAGES.filter((p) => MAIN_PACKAGE_IDS.includes(p.id));
-
-const BOOKING_SECTIONS = [
-  { id: "basic" as const, label: "Basic", description: "Studio hire by the hour or block", packages: hirePackages },
-  { id: "package" as const, label: "Package", description: "Session packages with time & images", packages: mainPackages },
-];
+function buildSections(packages: BookingPackage[]) {
+  const hirePackages = packages.filter((p) => HIRE_RATE_IDS.includes(p.id));
+  const mainPackages = packages.filter((p) => MAIN_PACKAGE_IDS.includes(p.id));
+  return [
+    { id: "basic" as const, label: "Basic", description: "Studio hire by the hour or block", packages: hirePackages },
+    { id: "package" as const, label: "Package", description: "Session packages with time & images", packages: mainPackages },
+  ];
+}
 
 type BookingPayload = {
   name: string;
@@ -84,6 +85,14 @@ export function BookingForm() {
   const [agreedToPolicies, setAgreedToPolicies] = useState(false);
   const [pendingBookingExpiresAt, setPendingBookingExpiresAt] = useState<Date | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+  const [livePackages, setLivePackages] = useState<BookingPackage[]>(BOOKING_PACKAGES);
+  const [discountInput, setDiscountInput] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState<{
+    code: string; type: 'percentage' | 'fixed'; value: number;
+    discountAmount: number; finalPrice: number; finalDeposit: number;
+  } | null>(null);
+  const [discountLoading, setDiscountLoading] = useState(false);
+  const [discountError, setDiscountError] = useState('');
   const searchParams = useSearchParams();
 
   const selectedAddons: SelectedAddon[] = ADDONS.filter((a) => a.price != null && a.id !== "prints-albums")
@@ -93,8 +102,19 @@ export function BookingForm() {
     }))
     .filter((s) => (s.quantity ?? 0) > 0);
   const { total: addonsTotal, summary: addonsSummary } = computeAddonsTotal(selectedAddons);
-  
+
+  const displayPrice = appliedDiscount ? appliedDiscount.finalPrice : bookingPrice;
+  const displayDeposit = appliedDiscount ? appliedDiscount.finalDeposit : depositAmount;
+  const displayBalance = displayPrice != null && displayDeposit != null ? displayPrice - displayDeposit : balanceAmount;
+
   const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_SCHEDULING_LINK || "";
+
+  useEffect(() => {
+    fetch('/api/packages')
+      .then((r) => r.json())
+      .then((data) => { if (data.packages?.length) setLivePackages(data.packages); })
+      .catch(() => {/* keep static fallback */});
+  }, []);
 
   useEffect(() => {
     const pkg = searchParams.get("package");
@@ -215,6 +235,40 @@ export function BookingForm() {
       }
     }
   }, [paymentMode, calendlyTimeSelected, calendlyData, selectedPackage, bookingPrice, depositAmount, addonsTotal, addonsSummary, formData.calendlyEventUri, formData.pendingBookingId]);
+
+  // Reset discount when package or add-ons change
+  useEffect(() => {
+    setAppliedDiscount(null);
+    setDiscountError('');
+  }, [selectedPackage, addonsTotal]);
+
+  const handleApplyDiscount = async () => {
+    if (!discountInput.trim() || !bookingPrice) return;
+    setDiscountLoading(true);
+    setDiscountError('');
+    setAppliedDiscount(null);
+    try {
+      const res = await fetch('/api/validate-discount', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: discountInput.trim(),
+          packageId: selectedPackage?.id ?? 'global',
+          basePrice: bookingPrice,
+        }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setAppliedDiscount(data);
+      } else {
+        setDiscountError(data.error ?? 'Invalid code');
+      }
+    } catch {
+      setDiscountError('Unable to validate. Please try again.');
+    } finally {
+      setDiscountLoading(false);
+    }
+  };
 
   // Countdown timer for pending booking
   useEffect(() => {
@@ -405,6 +459,7 @@ export function BookingForm() {
             pendingBookingId: formData.pendingBookingId,
             calendlyEventUri: formData.calendlyEventUri,
             calendlyInviteeUri: formData.calendlyInviteeUri,
+            discountCode: appliedDiscount?.code ?? '',
           }),
         });
 
@@ -577,7 +632,7 @@ export function BookingForm() {
           </div>
           
           <div className="space-y-2 pt-4" role="list">
-            {BOOKING_SECTIONS.map((sec) => {
+            {buildSections(livePackages).map((sec) => {
               const sectionExpanded = expandedPricingSection === sec.id;
               return (
                 <div
@@ -951,8 +1006,54 @@ export function BookingForm() {
         </div>
       )}
 
+      {/* Discount Code Input */}
+      {paymentMode === "pay" && bookingPrice != null && selectedPackage && (
+        <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 space-y-3">
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)]">Discount Code</p>
+          {appliedDiscount ? (
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-emerald-700 font-medium">
+                ✓ {appliedDiscount.code} — saving £{appliedDiscount.discountAmount.toFixed(2)}
+                {appliedDiscount.type === 'percentage' ? ` (${appliedDiscount.value}% off)` : ' off'}
+              </p>
+              <button
+                type="button"
+                onClick={() => { setAppliedDiscount(null); setDiscountInput(''); }}
+                className="text-xs text-[var(--muted-plum)] underline hover:text-[var(--primary)]"
+              >
+                Remove
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={discountInput}
+                  onChange={(e) => setDiscountInput(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleApplyDiscount())}
+                  placeholder="Enter code"
+                  className="flex-1 border border-[var(--primary)]/40 bg-white px-3 py-2 text-sm text-[var(--primary)] placeholder:text-[var(--muted-plum)]/50 outline-none focus:border-[var(--primary)]"
+                />
+                <button
+                  type="button"
+                  onClick={handleApplyDiscount}
+                  disabled={discountLoading || !discountInput.trim()}
+                  className="px-4 py-2 bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                >
+                  {discountLoading ? '…' : 'Apply'}
+                </button>
+              </div>
+              {discountError && (
+                <p className="text-xs text-red-600">{discountError}</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Pricing Display */}
-      {paymentMode === "pay" && bookingPrice != null && depositAmount != null && balanceAmount != null && selectedPackage && (
+      {paymentMode === "pay" && displayPrice != null && displayDeposit != null && displayBalance != null && selectedPackage && (
         <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 p-4 space-y-3">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)]">
             Payment Summary
@@ -960,7 +1061,7 @@ export function BookingForm() {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm text-[var(--muted-plum)]">{selectedPackage.title}:</span>
-              <span className="text-base font-semibold text-[var(--primary)]">£{selectedPackage.priceFromTime ? (bookingPrice - addonsTotal).toFixed(2) : selectedPackage.price}</span>
+              <span className="text-base font-semibold text-[var(--primary)]">£{selectedPackage.priceFromTime ? (bookingPrice! - addonsTotal).toFixed(2) : selectedPackage.price}</span>
             </div>
             {addonsTotal > 0 && (
               <div className="flex justify-between items-center">
@@ -968,21 +1069,27 @@ export function BookingForm() {
                 <span className="text-base font-semibold text-[var(--primary)]">£{addonsTotal}</span>
               </div>
             )}
+            {appliedDiscount && (
+              <div className="flex justify-between items-center text-emerald-700">
+                <span className="text-sm">Discount ({appliedDiscount.code}):</span>
+                <span className="text-base font-semibold">-£{appliedDiscount.discountAmount.toFixed(2)}</span>
+              </div>
+            )}
             <div className="flex justify-between items-center pt-1 border-t border-[var(--accent)]/20">
               <span className="text-sm font-medium text-[var(--muted-plum)]">Total:</span>
-              <span className="text-lg font-semibold text-[var(--primary)]">£{bookingPrice.toFixed(2)}</span>
+              <span className="text-lg font-semibold text-[var(--primary)]">£{displayPrice.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-[var(--muted-plum)]">
                 {selectedPackage.depositAmount != null ? "Deposit:" : "Deposit (50%):"}
               </span>
-              <span className="text-base font-semibold text-[var(--primary)]">£{depositAmount.toFixed(2)}</span>
+              <span className="text-base font-semibold text-[var(--primary)]">£{displayDeposit.toFixed(2)}</span>
             </div>
             <div className="pt-2 border-t border-[var(--accent)]/20">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-[var(--muted-plum)]">Balance due on the day:</span>
                 <span className="text-sm text-[var(--muted-plum)]">
-                  £{balanceAmount.toFixed(2)}
+                  £{displayBalance.toFixed(2)}
                   {addonsTotal > 0 ? " (includes add-ons)" : selectedPackage.balanceOnDay != null ? " (on the day of your session)" : " (48h before booking)"}
                 </span>
               </div>
@@ -1040,7 +1147,7 @@ export function BookingForm() {
           ) : (
             <>
               {paymentMode === "pay" 
-                ? (selectedPackage && bookingPrice ? `Proceed to Payment (£${depositAmount?.toFixed(2)})` : "Select Package & Time First")
+                ? (selectedPackage && displayPrice ? `Proceed to Payment (£${displayDeposit?.toFixed(2)})` : "Select Package & Time First")
                 : "Send enquiry"
               }
               {paymentMode === "pay" && bookingPrice && (

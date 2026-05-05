@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { calculateHours, calculatePrice, calculateDeposit } from '@/lib/pricing';
+import { calculateHours, calculatePrice, calculateDeposit, BOOKING_PACKAGES } from '@/lib/pricing';
 import { getPendingBooking, updatePendingBookingStripeSession } from '@/lib/pendingBookings';
+import { validateDiscountCode } from '@/lib/admin/validateDiscount';
 
 export async function POST(request: Request) {
   try {
@@ -16,15 +17,15 @@ export async function POST(request: Request) {
       apiVersion: '2025-11-17.clover',
     });
     const body = await request.json();
-    const { 
-      name, 
-      email, 
-      date, 
-      hours, 
-      notes, 
-      startTime, 
-      endTime, 
-      totalPrice, 
+    const {
+      name,
+      email,
+      date,
+      hours,
+      notes,
+      startTime,
+      endTime,
+      totalPrice,
       depositAmount,
       addonsTotal,
       addonsSummary,
@@ -32,7 +33,8 @@ export async function POST(request: Request) {
       packageTitle,
       pendingBookingId,
       calendlyEventUri,
-      calendlyInviteeUri
+      calendlyInviteeUri,
+      discountCode,
     } = body;
 
     if (!name || !email) {
@@ -63,6 +65,25 @@ export async function POST(request: Request) {
           { error: 'Missing pricing information. Please select a package or provide totalPrice and depositAmount.' },
           { status: 400 }
         );
+      }
+    }
+
+    // Apply discount code server-side (never trust client price)
+    let appliedDiscountCode = '';
+    let discountAmount = 0;
+    if (discountCode && typeof discountCode === 'string') {
+      const pkg = BOOKING_PACKAGES.find((p) => p.id === selectedPackage);
+      const validation = await validateDiscountCode(
+        discountCode,
+        selectedPackage ?? 'global',
+        bookingTotalPrice,
+        pkg
+      );
+      if (validation.valid) {
+        discountAmount = validation.discountAmount;
+        bookingTotalPrice = validation.finalPrice;
+        bookingDeposit = validation.finalDeposit;
+        appliedDiscountCode = validation.code;
       }
     }
 
@@ -112,6 +133,8 @@ export async function POST(request: Request) {
         pendingBookingId: pendingBookingId || '',
         calendlyEventUri: calendlyEventUri || '',
         calendlyInviteeUri: calendlyInviteeUri || '',
+        discountCode: appliedDiscountCode,
+        discountAmount: discountAmount.toString(),
       },
     });
 
