@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getMergedPackages } from "@/lib/admin/pricing-merged";
 import { PackagesClient } from "./PackagesClient";
 

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAllDiscountCodes } from "@/lib/admin/kv";
 import { DiscountsClient } from "./DiscountsClient";
 import { BOOKING_PACKAGES } from "@/lib/pricing";
