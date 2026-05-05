@@ -2,17 +2,17 @@ const COOKIE_NAME = "admin_session";
 const TOKEN_TTL_SECONDS = 86400; // 24 hours
 
 function base64urlEncode(buf: ArrayBuffer | Uint8Array): string {
-  return Buffer.from(buf instanceof Uint8Array ? buf.buffer as ArrayBuffer : buf)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=/g, "");
+  const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+  let binary = "";
+  for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
 }
 
 function base64urlDecode(str: string): ArrayBuffer {
-  const base64 = str.replace(/-/g, "+").replace(/_/g, "/");
-  const bytes = Buffer.from(base64, "base64");
-  return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+  const binary = atob(str.replace(/-/g, "+").replace(/_/g, "/"));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
 }
 
 async function getHmacKey(secret: string): Promise<CryptoKey> {
