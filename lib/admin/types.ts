@@ -4,7 +4,7 @@ export type DiscountCode = {
   code: string;
   type: DiscountType;
   value: number;
-  scope: "global" | string;
+  scope: "global" | string[]; // array of package IDs, or "global" for all
   expiresAt: string | null;
   maxUses: number | null;
   usedCount: number;

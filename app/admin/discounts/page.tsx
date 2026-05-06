@@ -2,11 +2,15 @@ export const dynamic = "force-dynamic";
 
 import { getAllDiscountCodes } from "@/lib/admin/kv";
 import { DiscountsClient } from "./DiscountsClient";
-import { BOOKING_PACKAGES } from "@/lib/pricing";
+import { BOOKING_PACKAGES, HIRE_RATE_IDS } from "@/lib/pricing";
 
 export default async function DiscountsPage() {
   const codes = await getAllDiscountCodes();
-  const packages = BOOKING_PACKAGES.map((p) => ({ id: p.id, title: p.title }));
+  const packages = BOOKING_PACKAGES.map((p) => ({
+    id: p.id,
+    title: p.title,
+    group: (HIRE_RATE_IDS.includes(p.id) ? "Studio Hire" : "Photo Sessions") as "Photo Sessions" | "Studio Hire",
+  }));
   return (
     <div className="p-6 max-w-5xl">
       <div className="mb-6">

@@ -20,8 +20,11 @@ export async function validateDiscountCode(
   if (record.maxUses !== null && record.usedCount >= record.maxUses) {
     return { valid: false, error: "Usage limit reached" };
   }
-  if (record.scope !== "global" && record.scope !== packageId) {
-    return { valid: false, error: "Code not applicable to this package" };
+  if (record.scope !== "global") {
+    const ids = Array.isArray(record.scope) ? record.scope : [record.scope as string];
+    if (!ids.includes(packageId)) {
+      return { valid: false, error: "Code not applicable to this package" };
+    }
   }
 
   const discountAmount =

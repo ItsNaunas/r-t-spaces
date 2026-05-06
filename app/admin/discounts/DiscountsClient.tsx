@@ -4,17 +4,42 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { DiscountCode } from "@/lib/admin/types";
 
-type PackageOption = { id: string; title: string };
+type PackageOption = {
+  id: string;
+  title: string;
+  group: "Photo Sessions" | "Studio Hire";
+};
+
+const PACKAGE_GROUPS: Array<{ label: "Photo Sessions" | "Studio Hire" }> = [
+  { label: "Photo Sessions" },
+  { label: "Studio Hire" },
+];
 
 const EMPTY_FORM = {
   code: "",
   type: "percentage" as "percentage" | "fixed",
   value: "",
-  scope: "global",
+  scopeType: "global" as "global" | "specific",
+  scopeIds: [] as string[],
   expiresAt: "",
   maxUses: "",
   active: true,
 };
+
+function normalizeScope(scope: DiscountCode["scope"]): string[] {
+  if (scope === "global") return [];
+  return Array.isArray(scope) ? scope : [scope as string];
+}
+
+function renderScope(scope: DiscountCode["scope"], packages: PackageOption[]): string {
+  if (scope === "global") return "All packages";
+  const ids = Array.isArray(scope) ? scope : [scope as string];
+  if (ids.length === 0 || ids.length === packages.length) return "All packages";
+  if (ids.length === 1) return packages.find((p) => p.id === ids[0])?.title ?? ids[0];
+  if (ids.length === 2)
+    return ids.map((id) => packages.find((p) => p.id === id)?.title?.split(" ")[0] ?? id).join(" & ");
+  return `${ids.length} packages`;
+}
 
 export function DiscountsClient({
   initialCodes,
@@ -40,11 +65,13 @@ export function DiscountsClient({
 
   const openEdit = (code: DiscountCode) => {
     setEditingCode(code.code);
+    const scopeIds = normalizeScope(code.scope);
     setForm({
       code: code.code,
       type: code.type,
       value: String(code.value),
-      scope: code.scope,
+      scopeType: code.scope === "global" ? "global" : "specific",
+      scopeIds,
       expiresAt: code.expiresAt ? code.expiresAt.slice(0, 10) : "",
       maxUses: code.maxUses != null ? String(code.maxUses) : "",
       active: code.active,
@@ -54,6 +81,10 @@ export function DiscountsClient({
   };
 
   const handleSave = async () => {
+    if (form.scopeType === "specific" && form.scopeIds.length === 0) {
+      setError("Select at least one package, or choose All packages.");
+      return;
+    }
     setSaving(true);
     setError("");
     try {
@@ -61,7 +92,7 @@ export function DiscountsClient({
         code: form.code,
         type: form.type,
         value: Number(form.value),
-        scope: form.scope,
+        scope: form.scopeType === "global" ? "global" : form.scopeIds,
         expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
         maxUses: form.maxUses ? Number(form.maxUses) : null,
         active: form.active,
@@ -116,10 +147,32 @@ export function DiscountsClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ active: !code.active }),
       });
-      setCodes((prev) => prev.map((c) => (c.code === code.code ? { ...c, active: !c.active } : c)));
+      setCodes((prev) =>
+        prev.map((c) => (c.code === code.code ? { ...c, active: !c.active } : c))
+      );
     } catch {
       alert("Failed to update. Please try again.");
     }
+  };
+
+  const togglePackage = (id: string) => {
+    setForm((f) => ({
+      ...f,
+      scopeIds: f.scopeIds.includes(id)
+        ? f.scopeIds.filter((x) => x !== id)
+        : [...f.scopeIds, id],
+    }));
+  };
+
+  const toggleGroup = (groupLabel: "Photo Sessions" | "Studio Hire") => {
+    const groupIds = packages.filter((p) => p.group === groupLabel).map((p) => p.id);
+    const allSelected = groupIds.every((id) => form.scopeIds.includes(id));
+    setForm((f) => ({
+      ...f,
+      scopeIds: allSelected
+        ? f.scopeIds.filter((id) => !groupIds.includes(id))
+        : [...new Set([...f.scopeIds, ...groupIds])],
+    }));
   };
 
   return (
@@ -143,7 +196,9 @@ export function DiscountsClient({
             <FormField label="Code">
               <input
                 value={form.code}
-                onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))
+                }
                 disabled={!!editingCode}
                 placeholder="SUMMER20"
                 className="admin-input disabled:bg-gray-50 disabled:text-gray-400"
@@ -153,7 +208,9 @@ export function DiscountsClient({
             <FormField label="Type">
               <select
                 value={form.type}
-                onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as "percentage" | "fixed" }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, type: e.target.value as "percentage" | "fixed" }))
+                }
                 className="admin-input"
               >
                 <option value="percentage">% off</option>
@@ -171,19 +228,6 @@ export function DiscountsClient({
                 placeholder={form.type === "percentage" ? "20" : "15"}
                 className="admin-input"
               />
-            </FormField>
-
-            <FormField label="Applies to">
-              <select
-                value={form.scope}
-                onChange={(e) => setForm((f) => ({ ...f, scope: e.target.value }))}
-                className="admin-input"
-              >
-                <option value="global">All packages</option>
-                {packages.map((p) => (
-                  <option key={p.id} value={p.id}>{p.title}</option>
-                ))}
-              </select>
             </FormField>
 
             <FormField label="Expires (optional)">
@@ -205,6 +249,80 @@ export function DiscountsClient({
                 className="admin-input"
               />
             </FormField>
+          </div>
+
+          {/* Applies to — full width */}
+          <div className="space-y-2">
+            <label className="block text-xs font-medium text-gray-600">Applies to</label>
+
+            <div className="flex rounded-md border border-gray-200 overflow-hidden w-fit text-sm">
+              <button
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, scopeType: "global", scopeIds: [] }))}
+                className={`px-4 py-1.5 transition-colors ${
+                  form.scopeType === "global"
+                    ? "bg-gray-900 text-white"
+                    : "bg-white text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                All packages
+              </button>
+              <button
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, scopeType: "specific" }))}
+                className={`px-4 py-1.5 border-l border-gray-200 transition-colors ${
+                  form.scopeType === "specific"
+                    ? "bg-gray-900 text-white"
+                    : "bg-white text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                Specific packages
+              </button>
+            </div>
+
+            {form.scopeType === "specific" && (
+              <div className="border border-gray-200 rounded-md overflow-hidden">
+                {PACKAGE_GROUPS.map((group, gi) => {
+                  const groupPkgs = packages.filter((p) => p.group === group.label);
+                  const allSelected = groupPkgs.every((p) => form.scopeIds.includes(p.id));
+                  return (
+                    <div key={group.label} className={gi > 0 ? "border-t border-gray-200" : ""}>
+                      <div className="flex items-center justify-between px-3 py-2 bg-gray-50">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                          {group.label}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => toggleGroup(group.label)}
+                          className="text-xs text-gray-400 hover:text-gray-700 transition-colors"
+                        >
+                          {allSelected ? "Deselect all" : "Select all"}
+                        </button>
+                      </div>
+                      {groupPkgs.map((pkg) => {
+                        const checked = form.scopeIds.includes(pkg.id);
+                        return (
+                          <label
+                            key={pkg.id}
+                            className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors hover:bg-gray-50 ${
+                              checked ? "bg-gray-50/80" : ""
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => togglePackage(pkg.id)}
+                              className="rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                            />
+                            <span className="text-sm text-gray-700">{pkg.title}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <label className="flex items-center gap-2 cursor-pointer">
@@ -246,8 +364,11 @@ export function DiscountsClient({
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                {["Code", "Type", "Scope", "Expires", "Uses", "Active", ""].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">
+                {["Code", "Discount", "Applies to", "Expires", "Uses", "Active", ""].map((h) => (
+                  <th
+                    key={h}
+                    className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide"
+                  >
                     {h}
                   </th>
                 ))}
@@ -260,21 +381,28 @@ export function DiscountsClient({
                   <td className="px-4 py-3 text-gray-700">
                     {code.type === "percentage" ? `${code.value}%` : `£${code.value}`} off
                   </td>
+                  <td className="px-4 py-3 text-gray-500">{renderScope(code.scope, packages)}</td>
                   <td className="px-4 py-3 text-gray-500">
-                    {code.scope === "global" ? "All packages" : packages.find((p) => p.id === code.scope)?.title ?? code.scope}
+                    {code.expiresAt
+                      ? new Date(code.expiresAt).toLocaleDateString("en-GB")
+                      : "Never"}
                   </td>
                   <td className="px-4 py-3 text-gray-500">
-                    {code.expiresAt ? new Date(code.expiresAt).toLocaleDateString("en-GB") : "Never"}
-                  </td>
-                  <td className="px-4 py-3 text-gray-500">
-                    {code.usedCount}{code.maxUses != null ? ` / ${code.maxUses}` : ""}
+                    {code.usedCount}
+                    {code.maxUses != null ? ` / ${code.maxUses}` : ""}
                   </td>
                   <td className="px-4 py-3">
                     <button
                       onClick={() => toggleActive(code)}
-                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${code.active ? "bg-gray-900" : "bg-gray-200"}`}
+                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                        code.active ? "bg-gray-900" : "bg-gray-200"
+                      }`}
                     >
-                      <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${code.active ? "translate-x-5" : "translate-x-1"}`} />
+                      <span
+                        className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                          code.active ? "translate-x-5" : "translate-x-1"
+                        }`}
+                      />
                     </button>
                   </td>
                   <td className="px-4 py-3">
