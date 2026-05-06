@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifySessionToken, COOKIE_NAME } from "@/lib/admin/auth";
 
 const LOGIN_PATH = "/admin/login";
+const LOGOUT_PATH = "/api/admin/logout";
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -9,8 +10,9 @@ export async function proxy(req: NextRequest) {
   const isAdminRoute =
     pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
   const isLoginPage = pathname === LOGIN_PATH;
+  const isLogoutRoute = pathname === LOGOUT_PATH;
 
-  if (!isAdminRoute || isLoginPage) return NextResponse.next();
+  if (!isAdminRoute || isLoginPage || isLogoutRoute) return NextResponse.next();
 
   const token = req.cookies.get(COOKIE_NAME)?.value;
   const valid = token ? await verifySessionToken(token) : false;
