@@ -192,7 +192,7 @@ export function DiscountsClient({
             {editingCode ? `Edit ${editingCode}` : "New discount code"}
           </h2>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField label="Code">
               <input
                 value={form.code}
@@ -360,72 +360,127 @@ export function DiscountsClient({
           No discount codes yet. Create one above.
         </div>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                {["Code", "Discount", "Applies to", "Expires", "Uses", "Active", ""].map((h) => (
-                  <th
-                    key={h}
-                    className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide"
+        <>
+          {/* Mobile cards */}
+          <div className="sm:hidden bg-white border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-100">
+            {codes.map((code) => (
+              <div key={code.code} className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-mono font-semibold text-gray-900">{code.code}</p>
+                    <p className="text-sm text-gray-500 mt-0.5">
+                      {code.type === "percentage" ? `${code.value}%` : `£${code.value}`} off
+                      {" · "}
+                      {renderScope(code.scope, packages)}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {code.expiresAt
+                        ? `Expires ${new Date(code.expiresAt).toLocaleDateString("en-GB")}`
+                        : "No expiry"}
+                      {" · "}
+                      {code.usedCount}
+                      {code.maxUses != null ? ` / ${code.maxUses}` : ""} uses
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => toggleActive(code)}
+                    className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
+                      code.active ? "bg-gray-900" : "bg-gray-200"
+                    }`}
                   >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {codes.map((code) => (
-                <tr key={code.code} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-mono font-semibold text-gray-900">{code.code}</td>
-                  <td className="px-4 py-3 text-gray-700">
-                    {code.type === "percentage" ? `${code.value}%` : `£${code.value}`} off
-                  </td>
-                  <td className="px-4 py-3 text-gray-500">{renderScope(code.scope, packages)}</td>
-                  <td className="px-4 py-3 text-gray-500">
-                    {code.expiresAt
-                      ? new Date(code.expiresAt).toLocaleDateString("en-GB")
-                      : "Never"}
-                  </td>
-                  <td className="px-4 py-3 text-gray-500">
-                    {code.usedCount}
-                    {code.maxUses != null ? ` / ${code.maxUses}` : ""}
-                  </td>
-                  <td className="px-4 py-3">
-                    <button
-                      onClick={() => toggleActive(code)}
-                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                        code.active ? "bg-gray-900" : "bg-gray-200"
+                    <span
+                      className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                        code.active ? "translate-x-5" : "translate-x-1"
                       }`}
+                    />
+                  </button>
+                </div>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => openEdit(code)}
+                    className="text-xs text-gray-500 hover:text-gray-900 underline"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(code.code)}
+                    className="text-xs text-red-500 hover:text-red-700 underline"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden sm:block bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  {["Code", "Discount", "Applies to", "Expires", "Uses", "Active", ""].map((h) => (
+                    <th
+                      key={h}
+                      className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide"
                     >
-                      <span
-                        className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                          code.active ? "translate-x-5" : "translate-x-1"
-                        }`}
-                      />
-                    </button>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-3 justify-end">
-                      <button
-                        onClick={() => openEdit(code)}
-                        className="text-xs text-gray-500 hover:text-gray-900 underline"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(code.code)}
-                        className="text-xs text-red-500 hover:text-red-700 underline"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {codes.map((code) => (
+                  <tr key={code.code} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 font-mono font-semibold text-gray-900">{code.code}</td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {code.type === "percentage" ? `${code.value}%` : `£${code.value}`} off
+                    </td>
+                    <td className="px-4 py-3 text-gray-500">{renderScope(code.scope, packages)}</td>
+                    <td className="px-4 py-3 text-gray-500">
+                      {code.expiresAt
+                        ? new Date(code.expiresAt).toLocaleDateString("en-GB")
+                        : "Never"}
+                    </td>
+                    <td className="px-4 py-3 text-gray-500">
+                      {code.usedCount}
+                      {code.maxUses != null ? ` / ${code.maxUses}` : ""}
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => toggleActive(code)}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                          code.active ? "bg-gray-900" : "bg-gray-200"
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                            code.active ? "translate-x-5" : "translate-x-1"
+                          }`}
+                        />
+                      </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-3 justify-end">
+                        <button
+                          onClick={() => openEdit(code)}
+                          className="text-xs text-gray-500 hover:text-gray-900 underline"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(code.code)}
+                          className="text-xs text-red-500 hover:text-red-700 underline"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       <style jsx>{`
