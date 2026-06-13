@@ -61,11 +61,15 @@ Goal: a Vercel preview URL worth sending. CSS/markup-heavy, low logic risk. (Bui
   bumped to `lg:text-6xl` so it's the largest (was inverted: sections were bigger than the title).
 - [x] **Cut the stock-photo testimonials** — removed `TestimonialSection` from the homepage (9 fake
   quotes w/ Unsplash faces); component kept for when real client reviews land.
-- [ ] Cascade the type scale to other pages (studio/faq/services/equipment/blog/gallery still `lg:text-7xl`).
+- [x] Cascade the type scale to other pages — all H1s now `text-4xl→lg:text-6xl`, section H2s
+  `text-3xl→md:text-5xl` (studio/faq/services/equipment/blog/gallery). Zero `text-7xl` left.
+- [x] Default style for `BookNowButton` (`btn-primary` fallback so it's never unstyled).
+- [x] Hero "Hire a Studio" now opens the wizard (offer=hire) instead of navigating to /book-online —
+  the only CTA that was inconsistent with the rest of the site + the floating button.
 - [ ] Stop using lavender/muted-plum as text on the hero-purple background (verify on preview).
 - [ ] Check for / cut the "duplicate second hero" the review flagged (identify visually on preview).
-- [ ] Component primitives: `.card`, `.input`, `.badge`, `.btn-on-dark`; default style for `BookNowButton`
-  (className/markup only — DO NOT touch its click handler or the BookingProvider/checkout fetch).
+- [ ] (Optional, lower-leverage) `.card`/`.input`/`.badge`/`.btn-on-dark` primitives — invisible
+  refactor; recommend doing opportunistically as pages get touched, not as a big sweep.
 
 **Acceptance:** preview URL renders homepage with new type scale + hero, no console errors; verified
 at 390px + 1280px; gold-text token measures ≥4.5:1; no contradictory pricing/policy copy remains;

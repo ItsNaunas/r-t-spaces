@@ -31,7 +31,7 @@ export default function FAQPage() {
           <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
             FAQ
           </p>
-          <h1 className="font-heading text-5xl text-[var(--primary)] sm:text-6xl lg:text-7xl">
+          <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-[var(--primary)]">
             Frequently Asked Questions
           </h1>
           <div className="mt-12 space-y-8">

@@ -27,7 +27,7 @@ export function BookNowButton({
     <button
       type="button"
       aria-label={ariaLabel}
-      className={className}
+      className={className ?? "btn-primary"}
       style={style}
       onClick={(e) => {
         onClick?.(e);

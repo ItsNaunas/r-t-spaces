@@ -134,7 +134,7 @@ export default function ServicesPage() {
               <p className="text-sm uppercase tracking-[0.4em] text-[var(--primary)]/80">
                 Packages / Pricing
               </p>
-              <h1 className="font-heading text-5xl text-[var(--primary)] sm:text-6xl lg:text-7xl leading-tight">
+              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-[var(--primary)] leading-tight">
                 Simple Pricing for
                 <br />
                 Every Creative Need

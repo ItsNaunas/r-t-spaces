@@ -53,7 +53,7 @@ export default function GalleryPage() {
             <p className="text-sm uppercase tracking-[0.4em] text-[var(--primary)]/80 mb-4 sm:mb-6">
               Gallery
             </p>
-            <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl text-[var(--primary)] leading-tight mb-6 sm:mb-8">
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-[var(--primary)] leading-tight mb-6 sm:mb-8">
               Scenes from recent bookings
             </h1>
             <p className="text-lg sm:text-xl text-[var(--primary)]/90 leading-relaxed max-w-3xl">
