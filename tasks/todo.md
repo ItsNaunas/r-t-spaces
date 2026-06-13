@@ -5,87 +5,116 @@ Claude memory (`rt-spaces-redesign.md`), and the full audit detail in chat. This
 source of truth for what's left.
 
 Direction: **"evolve it"** — keep the plum/lavender/gold soft-luxury brand, make it cleaner,
-accessible, editorial. Approach: audit-first (done) → foundation → pages. All build work lands
-on `feature/booking-wizard` (or a fresh branch); production is only touched on a deliberate launch.
+accessible, editorial. **Goal: win client (Teddy/Evie-Rose) buy-in with a visible redesign**,
+then harden for launch. Build proceeds without waiting on client feedback — they react to the
+real thing. All work lands on `feature/booking-wizard`; production is only touched on a
+deliberate launch.
+
+**Re-sequenced 2026-06-13 after a deep plan review (2 subagents):** the old Sprint 0/1/2 order
+front-loaded invisible SEO/perf/trust work before any visible change — backwards for a buy-in
+goal. Reordered to **visible-first → approval → harden → launch**. SEO/perf is launch-gated.
+
+**Locked decisions (2026-06-13):**
+- Deposit = **50%, non-refundable** (£20 fixed stays student-package-only). Cancellation copy
+  reconciled to match (no more "full refund" promise that contradicted it).
+- Membership = **3-month minimum** (hero "cancel anytime" was the wrong copy; fixed).
 
 ---
 
 ## ✅ Done
 
-**Shipped to production (master, commit fb424a5):**
-- [x] Booking persistence moved fs → Upstash Redis (fixed the serverless bug: no confirmation
-  emails + failing webhook). Live UI unchanged.
+**Shipped to production (master):**
+- [x] Booking persistence fs → Upstash Redis (fixed the serverless bug: no confirmation emails).
 
-**Built, on `feature/booking-wizard` (NOT launched yet):**
-- [x] Guided booking drawer-wizard (offer fork → option+extras → date/time → pay), opens from
-  every CTA via `BookNowButton`; old monolith `BookingForm` deleted; `/book-online` inline.
-- [x] Dead-code cleanup (StudioSections 1866→~1250); docs moved to `docs/` + secrets scrubbed.
-- [x] Newsletter wired to Resend; fake stats normalised (4.9 / 200+, dropped "24/7").
-- [x] Apple/Google Pay/Link enabled in checkout route (card-only removed).
+**On `feature/booking-wizard` (NOT launched yet):**
+- [x] Guided booking drawer-wizard (offer fork → option+extras → date/time → pay) via `BookNowButton`.
+- [x] Dead-code cleanup; docs moved to `docs/` + secrets scrubbed.
+- [x] Newsletter wired to Resend; fake stats normalised; Apple/Google Pay/Link in checkout.
+- [x] **Pricing/policy copy made consistent (2026-06-13):** 50% non-refundable deposit everywhere
+  (`book-online`); cancellation policy reconciled (was promising a "full refund" that contradicted
+  the non-refundable deposit); membership aligned to 3-month minimum (`members`).
 
 ---
 
 ## 🔲 Your manual to-dos (off-code)
-- [ ] Confirm the Vercel production deploy of `fb424a5` went green
-- [ ] Reveal the Stripe webhook `whsec_…` and confirm it matches `STRIPE_WEBHOOK_SECRET` in Vercel
-- [ ] **Rotate the Resend API key** (leaked in git history); rotate the test Stripe key too
-- [ ] Enable **Link** in Stripe payment methods
-- [ ] (Optional) one real booking + self-refund to prove the confirmation email now fires
-- [ ] Decide when to launch the redesign branch to production
+- [ ] **P0 — rotate the leaked Resend API key** (committed in git history; anyone with history can
+  send mail as you). Rotate the test Stripe key too. Rotate-only, NO history rewrite (decided 06-13).
+- [ ] Confirm the prod deploy went green; reveal the Stripe webhook `whsec_…` and confirm it matches
+  `STRIPE_WEBHOOK_SECRET` in Vercel; enable Link in Stripe.
+- [ ] Decide who provides **real studio photos** (the site is a *photography* studio but `next.config`
+  whitelists Unsplash/Pexels — shipping stock is an own-goal) + get real testimonials from the client.
+- [ ] (Optional) one real booking + self-refund to prove the confirmation email fires.
 
 ---
 
-## 🔲 Sprint 0 — trust + quick wins (low risk, do next)
-- [ ] Resolve **pricing/policy contradictions**: deposit described 3 ways (50% / non-refundable /
-  £20 fixed) across `lib/pricing.ts`, `app/book-online`, `app/services`; Members "cancel anytime"
-  vs "3-month minimum" (`app/members/page.tsx`). Pick one consistent story.
-- [ ] Scope the **Calendly script** to the booking flow only (currently global in `app/layout.tsx`,
-  render-blocking on every page)
-- [ ] Add `app/sitemap.ts` + `app/robots.ts` (allow all, disallow /admin /api, point to sitemap)
-- [ ] Add **LocalBusiness/PhotographyBusiness JSON-LD** (homepage/layout) + **FAQPage JSON-LD** (faq)
-- [ ] Add `metadataBase` for absolute canonical/OG URLs
-- [ ] Compress the referenced 10–22MB equipment images; delete the ~25–32MB **unreferenced** PNGs,
-  stray `.mp4`s and `(1)` duplicate assets in `public/assets/`
-- [ ] Replace `GradientBars` Framer-Motion animation with CSS keyframes (drops the `motion` lib)
-- [ ] Fix FAQ "how do I book?" answer (it says email/phone, contradicting the wizard); prune /
-  noindex the blog stub; dedupe the duplicated "Studio Support" section on `app/services`
+## 🔲 Sprint A — "Make it look evolved" (client-visible; ship a preview) ← NEXT
+Goal: a Vercel preview URL worth sending. CSS/markup-heavy, low logic risk.
+- [ ] **Token foundation** (`app/globals.css`): remove the dead `--accent` gold line (l.37/138 — it's
+  silently overridden to plum by l.103/167); **split gold into two tokens** — `--gold` (decorative,
+  current light gold, for dark backgrounds/fills/borders/stars) + `--gold-text` (darker, ≥4.5:1 on
+  white). Reassign gold-as-text-on-light to `--gold-text`: `BookingWizard:940` price, the
+  `BookingWizard:582` white-on-gold badge (failing ~2:1), `StudioSections:808/895` hover links.
+  Leave decorative gold-on-dark alone (hero "next", star ratings, stat numbers — those are fine).
+- [ ] Stop using lavender/muted-plum as text on the hero-purple background.
+- [ ] Real **type scale** — kill routine `text-7xl` (14 uses); H1 > H2 > item hierarchy.
+- [ ] **Lighter photo frames** — drop `border-8` (8 uses); limit heavy frames to hero + gallery.
+- [ ] **Homepage hero** rebuild to pass the 5-second test (what / where / price); cut the duplicate
+  second hero + the stock-photo testimonials.
+- [ ] Component primitives: `.card`, `.input`, `.badge`, `.btn-on-dark`; default style for `BookNowButton`
+  (className/markup only — DO NOT touch its click handler or the BookingProvider/checkout fetch).
+
+**Acceptance:** preview URL renders homepage with new type scale + hero, no console errors; verified
+at 390px + 1280px; gold-text token measures ≥4.5:1; no contradictory pricing/policy copy remains;
+**booking flow still works on the preview** (open wizard from a CTA, reach Stripe step) — no regression.
 
 ---
 
-## 🔲 Sprint 1 — design foundation ("evolve it") + accessibility criticals
-**Design system (`app/globals.css` + components):**
-- [ ] Fix colour contrast (WCAG 1.4.3): darker **gold** text token (gold is 2.9:1 on white — fails),
-  stop using **lavender/muted-plum** as text on the hero-purple background
-- [ ] Fix the `--accent` **double-definition** (silently resolves to plum, not gold)
-- [ ] Real **type scale** — kill routine `text-7xl`; H1 > H2 > item hierarchy
-- [ ] **Lighter photo frames** (replace `border-8`, limit to hero + gallery)
-- [ ] Component primitives: `.card`, `.input`, `.badge`, `.btn-on-dark`; give `BookNowButton` a
-  default style; standardise section padding + container width
-- [ ] Remove dead dark-mode + radius tokens; actually use the shadow scale
-
-**Accessibility criticals:**
-- [ ] Focus-trap + focus-return + close-on-unmount for the **booking drawer** and **mobile menu**
-- [ ] Make **gallery/studio image tiles** real keyboard-operable buttons (studio page is currently
-  fully keyboard-inaccessible)
-- [ ] Honour **prefers-reduced-motion** in JS (hero carousel, stats rotator, GradientBars) + pause control
-- [ ] Label newsletter / discount / add-on inputs; add `aria-live` to booking status; `id="main-content"`
-  on every page's `<main>`
+## 🔲 Sprint B — "Get the yes" (packaging + approval)
+- [ ] Build a **before/after**: prod vs preview, mobile screenshots, 3 captions ("same brand, cleaner
+  type, fixed the deposit wording, faster booking"). Doubles as the case-study asset.
+- [ ] Send the single preview link + a **binary ask** ("reply 👍 to launch, or tell me one change").
+- [ ] Add funnel `track()` events to wizard steps (offer-select → option → date → pay → success) so the
+  case study can show conversion (`@vercel/analytics` is already mounted, pageviews only today).
 
 ---
 
-## 🔲 Sprint 2 — page rebuilds
-- [ ] **Homepage**: rebuild around the two-offer fork; concrete hero (what/where/price, passes the
-  5-second test); surface price anchors; cut the duplicate second hero + the stock-photo testimonials
-- [ ] **Nav/IA**: restructure around the two offers; fix Pricing↔`/services` naming; one booking
-  label site-wide; make `/book-online` honour an `offer` prefill
-- [ ] Cascade the new system to studio / services / equipment / gallery / members
-- [ ] **Perf**: convert static pages from full `"use client"` to server components + client islands;
-  trim Playfair weights; convert local fonts to woff2
+## 🔲 Sprint C — "Harden for launch" (only AFTER approval, pre-merge)
+- [ ] **Image emergency (mis-scoped before — it's not 25-32MB, it's ~1.8GB):** `public/assets` is
+  triplicated across `gallery/`/`home/`/`studios/` (same files 3×, incl. `(1)` duplicates). Dedupe to
+  one canonical folder, downscale source PNGs (~2560px), delete orphaned PNGs/`.mp4`s, consider Git LFS
+  or moving originals out of the repo. Target `public/` under ~150MB.
+- [ ] `metadataBase` + **LocalBusiness JSON-LD** (15 min, once) + FAQPage JSON-LD; `sitemap.ts`+`robots.ts`.
+- [ ] Scope the **Calendly CSS `<link>`** out of the global `<head>` (the render-blocking part; the JS is
+  already `afterInteractive`).
+- [ ] Trim **Playfair** to used weights (currently loads 6, 400–900); convert local fonts to woff2.
+- [ ] **A11y criticals:** focus-trap + return + close-on-unmount for the booking drawer (only has Esc +
+  role today) AND the mobile menu; keyboard-operable gallery/studio tiles; JS-level
+  `prefers-reduced-motion` on the hero carousel/stats rotator; label newsletter/discount/add-on inputs;
+  `aria-live` on booking status; `id="main-content"` on every `<main>` (homepage already has it).
+
+**Acceptance:** Lighthouse a11y ≥ 95 (homepage + studio); `public/` under ~150MB; one real Stripe-test
+booking on preview → confirmation email + Redis record; webhook secret verified.
+
+---
+
+## 🔲 Sprint D — "Launch" (deliberate, reversible)
+- [ ] Rotate leaked keys FIRST (see manual to-dos — P0, before any public sharing).
+- [ ] Tag master pre-merge; merge branch; verify prod env vars; one post-launch test booking; keep
+  revert-to-tag ready.
+
+---
+
+## ✂️ Cut as gold-plating (deferred indefinitely — invisible, regression-risk, low value)
+- GradientBars Framer-Motion → CSS keyframes (won't even drop the `motion` dep; the carousel uses it).
+- Dead dark-mode + radius token cleanup.
+- `"use client"` → server-component + islands refactor (only 11 files; you'll rewrite those pages anyway;
+  revisit only if Lighthouse perf demands it post-launch).
 
 ---
 
 ## Notes / decisions
+- **Revenue no-go list (redesign must NOT touch):** `app/api/**`, `lib/redis.ts`, `lib/bookingStore.ts`,
+  `lib/pendingBookings.ts`, `lib/stripe.ts`, `lib/email.ts`. Restyle = className/markup only.
+- The Vercel preview URL **is the deliverable**, not a green build. Push to the branch → preview builds.
 - Security: rotate keys, **no git-history rewrite** (imperfect + force-push risk) — decided 2026-06-13.
-- Calendly free = 1 event type; hold the Calendly-vs-Cal.com decision until the redesign settles.
-- Testimonials: left as placeholders for now (need real Google/IG reviews from the client).
-</content>
+- Verify path before merge: `/code-review ultra` on the diff + `verify` skill (run app, smoke-test booking).

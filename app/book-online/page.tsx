@@ -11,7 +11,7 @@ const bookingPolicies = [
   {
     title: "Cancellation Policy",
     content:
-      "Cancellations made 48 hours or more before your booking receive a full refund. Cancellations within 48 hours are subject to a 50% cancellation fee.",
+      "The 50% deposit is non-refundable. If you cancel 48 hours or more before your session, any balance you've already paid is refunded in full. Cancellations within 48 hours are non-refundable.",
   },
   {
     title: "Rescheduling",
@@ -21,7 +21,7 @@ const bookingPolicies = [
   {
     title: "Payment",
     content:
-      "A 50% deposit is required to secure your booking. The remaining balance is due 48 hours before your session date.",
+      "A 50% non-refundable deposit is required to secure your booking. The remaining balance is due 48 hours before your session date.",
   },
   {
     title: "Studio Hours",

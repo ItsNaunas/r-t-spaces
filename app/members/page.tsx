@@ -232,7 +232,7 @@ export default function MembersPage() {
             <p className="mt-6 text-lg text-[var(--primary)]/90 sm:text-xl leading-relaxed max-w-2xl mx-auto">
               Membership gives you access to reduced rates on studio hire, session
               packages, and priority booking. Choose the tier that fits how you
-              work—monthly billing, cancel anytime.
+              work, with monthly billing and a three-month minimum.
             </p>
           </div>
         </div>
