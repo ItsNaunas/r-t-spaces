@@ -224,117 +224,52 @@ export function HowItWorksSection() {
   const steps = [
     {
       number: "01",
-      title: "Choose Your Studio Space",
-      description: "Browse our range of fully-equipped spaces. From seamless white cyclorama to cozy lounge corners—find the perfect space that matches your needs.",
-      image: "/assets/gallery/IMG_7854.JPG",
-      icon: (
-        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-      ),
+      title: "Choose your space & package",
+      description:
+        "Pick studio hire by the hour or a full session package. Browse the cyclorama, styled corners and the kit that's included.",
     },
     {
       number: "02",
-      title: "Arrive & Get Started",
-      description: "Walk in and begin your session. Our team greets you with everything prepped—professional lighting configured, stands positioned, and refreshments ready. Everything is set up for you.",
-      image: "/assets/gallery/IMG_7809.JPG",
-      icon: (
-        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
+      title: "Book & pay your deposit",
+      description:
+        "Reserve your slot online in minutes. A 50% deposit secures the date; the balance is due before your session.",
     },
     {
       number: "03",
-      title: "Join the Community",
-      description: "Become part of our growing community. Enjoy monthly studio access at member rates, plus weekly newsletters with exclusive discounts and updates.",
-      image: "/assets/gallery/IMG_7810.JPG",
-      icon: (
-        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-      ),
+      title: "Show up & shoot",
+      description:
+        "Walk in to lighting configured, backdrops hung and everything prepped. All you bring is the idea.",
     },
   ];
 
-  const { ref, isVisible } = useScrollAnimation();
-
   return (
-    <section className="pb-16 sm:pb-24 lg:pb-32">
-      {/* Full Width Banner */}
-      <div 
-        ref={ref}
-        className={`mb-16 sm:mb-20 lg:mb-24 text-center transition-all duration-700 bg-[var(--primary)] w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}
-      >
-        <div className="mx-auto max-w-7xl">
-          <p className="text-sm font-medium uppercase tracking-wider text-white/80 mb-6">
-            HOW IT WORKS
+    <section className="bg-[var(--secondary)] py-16 md:py-24 lg:py-28">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mb-12 md:mb-16">
+          <p className="text-xs sm:text-sm uppercase tracking-[0.4em] text-[var(--gold-text)] mb-4">
+            How it works
           </p>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-            Book your studio space in three simple steps
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-[var(--primary)]">
+            Booked in three steps
           </h2>
         </div>
-      </div>
-      
-      {/* Content Section */}
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="space-y-20 md:space-y-28 lg:space-y-36">
-          {steps.map((step, index) => {
-            const StepCard = ({ step, index }: { step: typeof steps[0], index: number }) => {
-              const { ref, isVisible } = useScrollAnimation({ threshold: 0.2 });
-              // Alternating layout: Step 1 (index 0) = text left, image right
-              //                    Step 2 (index 1) = image left, text right
-              //                    Step 3 (index 2) = text left, image right
-              const isEven = index % 2 === 0;
-              
-              return (
-                <div 
-                  ref={ref}
-                  className={`grid gap-8 md:gap-12 lg:gap-16 md:grid-cols-2 items-center transition-all duration-700 ${
-                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-                  }`}
-                  style={{ 
-                    transitionDelay: `${index * 200}ms`
-                  }}
-                >
-                  {/* Text Content - Left for even steps, Right for odd steps */}
-                  <div className={`space-y-6 ${isEven ? 'md:order-1' : 'md:order-2'}`}>
-                    <div className="space-y-4">
-                      <h3 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--primary)] leading-tight">
-                        {step.title}
-                      </h3>
-                      <p className="text-lg sm:text-xl text-[var(--muted-plum)] leading-relaxed max-w-xl">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* Image Content - Right for even steps, Left for odd steps */}
-                  <div className={`relative ${isEven ? 'md:order-2' : 'md:order-1'}`}>
-                    {/* Photo Frame Effect - White frame */}
-                    <div className="relative w-full bg-white shadow-2xl overflow-hidden border-2" style={{ borderColor: 'white' }}>
-                      <div className="relative aspect-[16/10] overflow-hidden group">
-                        <Image
-                          src={step.image}
-                          alt={step.title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
-                          loading="lazy"
-                          quality={85}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            };
-            return <StepCard key={step.number} step={step} index={index} />;
-          })}
-          </div>
+
+        <div className="grid gap-10 md:grid-cols-3 md:gap-8">
+          {steps.map((step) => (
+            <div key={step.number} className="border-t-2 border-[var(--primary)]/15 pt-6">
+              <p className="font-heading text-6xl sm:text-7xl font-bold leading-none text-[var(--primary)]/15 mb-5">
+                {step.number}
+              </p>
+              <h3 className="font-heading text-xl sm:text-2xl font-bold text-[var(--primary)] mb-3">
+                {step.title}
+              </h3>
+              <p className="leading-relaxed text-[var(--muted-plum)]">{step.description}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12">
+          <BookNowButton className="btn-primary">Start booking</BookNowButton>
         </div>
       </div>
     </section>
@@ -642,10 +577,12 @@ export function AboutUsSection() {
 
             {/* Key Highlights */}
             <div className="space-y-4 pt-4">
-              {highlights.map((highlight, index) => (
-                <div key={highlight.label} className="flex gap-5 border-t border-[var(--lavender)] pt-6">
-                  <div className="text-sm font-semibold text-[var(--muted-plum)] flex-shrink-0">
-                    {String(index + 1).padStart(2, "0")}
+              {highlights.map((highlight) => (
+                <div key={highlight.label} className="flex gap-4 border-t border-[var(--lavender)] pt-6">
+                  <div className="flex-shrink-0 mt-1 text-[var(--gold-text)]">
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
                   </div>
                   <div>
                     <p className="font-semibold text-[var(--primary)] mb-1">{highlight.label}</p>
