@@ -65,10 +65,14 @@ export function SiteHeader() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Navigation now uses purple background, so always use white text
+  // Always white text (works on the plum bar and over the dark hero)
   const navTextColor = 'text-white';
   const navHoverColor = 'hover:text-white/80';
   const navActiveColor = 'text-white';
+
+  // Transparent over the homepage hero, solid plum once scrolled or on other pages
+  const isHome = pathname === "/";
+  const transparent = isHome && !isScrolled;
 
   return (
     <>
@@ -78,12 +82,12 @@ export function SiteHeader() {
       >
         Skip to main content
       </a>
-      <header 
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled 
-          ? 'border-b border-[var(--accent)]/20' 
-          : 'border-b border-transparent'
-      } bg-[var(--plum)] backdrop-blur-md shadow-sm`}
+      <header
+      className={`sticky top-0 z-50 w-full transition-all duration-300 border-b ${
+        transparent
+          ? 'bg-gradient-to-b from-black/40 to-transparent border-transparent'
+          : `bg-[var(--plum)] backdrop-blur-md shadow-sm ${isScrolled ? 'border-[var(--accent)]/20' : 'border-transparent'}`
+      }`}
     >
       <div className={`mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8 relative transition-all duration-300`}>
         <Link
@@ -130,7 +134,7 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={() => openBooking()}
-            className="btn-small hidden lg:inline-flex whitespace-nowrap btn-hero-white"
+            className="hidden lg:inline-flex items-center justify-center whitespace-nowrap bg-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--primary)] transition hover:bg-white/90"
           >
             Book Online
           </button>
@@ -171,7 +175,7 @@ export function SiteHeader() {
           ))}
           <button
             type="button"
-            className="btn-small block w-full text-center btn-hero-white"
+            className="block w-full bg-white px-4 py-4 text-center text-sm font-semibold uppercase tracking-[0.2em] text-[var(--primary)] transition hover:bg-white/90"
             onClick={() => {
               closeMenu();
               openBooking();
