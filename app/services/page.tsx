@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/StudioSections";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 import { studioServices } from "@/lib/studioData";
 import { GradientBars } from "@/components/ui/gradient-bars";
 import { BOOKING_PACKAGES, ADDONS, HIRE_RATE_IDS, type BookingPackage } from "@/lib/pricing";
@@ -164,9 +165,9 @@ export default function ServicesPage() {
                     </svg>
                   </span>
                 </button>
-                <Link href="/#contact" className="inline-flex items-center justify-center border-2 border-white bg-white px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-medium text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:border-white hover:scale-[1.02] hover:shadow-lg">
+                <BookNowButton className="inline-flex items-center justify-center border-2 border-white bg-white px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-medium text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:border-white hover:scale-[1.02] hover:shadow-lg">
                   Book Now
-                </Link>
+                </BookNowButton>
               </div>
             </div>
           </div>
@@ -442,9 +443,9 @@ export default function ServicesPage() {
             <p className="text-base text-[var(--muted-plum)] mb-6">
               Interested in adding any of these to your booking?
             </p>
-            <Link href="/#contact" className="btn-primary">
+            <BookNowButton className="btn-primary">
               Request Add-ons When Booking
-            </Link>
+            </BookNowButton>
           </div>
         </section>
       </main>
@@ -475,9 +476,9 @@ export default function ServicesPage() {
               </p>
             </div>
             <div className="flex flex-col gap-4">
-              <Link href="/#contact" className="btn-primary w-full text-center">
+              <BookNowButton className="btn-primary w-full text-center">
                 Book Now
-              </Link>
+              </BookNowButton>
               <Link href="/#contact" className="btn-cta w-full text-center">
                 Message us
               </Link>

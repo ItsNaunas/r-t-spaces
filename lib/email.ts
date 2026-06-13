@@ -115,3 +115,33 @@ export async function sendBookingNotification(booking: BookingData) {
     throw error;
   }
 }
+
+export async function subscribeToNewsletter(email: string) {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('RESEND_API_KEY not configured - skipping newsletter subscription');
+    return;
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const audienceId = process.env.RESEND_AUDIENCE_ID;
+
+  // Add to the Resend audience when one is configured.
+  if (audienceId) {
+    try {
+      await resend.contacts.create({ email, audienceId, unsubscribed: false });
+    } catch (error) {
+      console.error('Failed to add contact to Resend audience:', error);
+    }
+  }
+
+  // Always notify the studio so a signup is never lost, even without an audience.
+  const studioEmail = process.env.STUDIO_EMAIL || 'studio@rtspaces.com';
+  const fromEmail = process.env.FROM_EMAIL || 'notifications@rtspaces.com';
+
+  await resend.emails.send({
+    from: fromEmail,
+    to: studioEmail,
+    subject: 'New Creator Circle signup',
+    html: `<h2>New newsletter signup</h2><p><strong>Email:</strong> ${email}</p>`,
+  });
+}

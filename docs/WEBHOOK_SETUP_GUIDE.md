@@ -46,13 +46,13 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 You'll see output like this:
 
 ```
-> Ready! Your webhook signing secret is whsec_xxxxxxxxxxxxxxxxxxxxx (^C to quit)
+> Ready! Your webhook signing secret is whsec_YOUR_WEBHOOK_SECRET_HERE (^C to quit)
 ```
 
 **Copy the `whsec_...` secret** and add it to your `.env.local`:
 
 ```env
-STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxx
+STRIPE_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET_HERE
 ```
 
 **Keep this terminal window open** while testing - it needs to stay running to forward webhooks!
@@ -93,7 +93,7 @@ If you're deploying to production or want to set up webhooks in the dashboard:
 Add it to your `.env.local`:
 
 ```env
-STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxx
+STRIPE_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET_HERE
 ```
 
 ---
@@ -174,7 +174,7 @@ https://dashboard.stripe.com/webhooks
 
 **Environment Variable:**
 ```env
-STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxx
+STRIPE_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET_HERE
 ```
 
 ---

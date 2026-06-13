@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { PublicChrome } from "@/app/_components/PublicChrome";
+import { BookingProvider } from "@/components/booking/BookingProvider";
 import { Analytics } from "@vercel/analytics/next";
 
 // Playfair Display (Secondary/Heading Font)
@@ -95,8 +96,10 @@ export default function RootLayout({
       <body
         className={`${playfairDisplay.variable} ${newIconScript.variable} ${glacialIndifference.variable} antialiased`}
       >
-        <PublicChrome />
-        {children}
+        <BookingProvider>
+          <PublicChrome />
+          {children}
+        </BookingProvider>
         <Analytics />
         <Script
           src="https://assets.calendly.com/assets/external/widget.js"

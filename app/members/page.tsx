@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/StudioSections";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 import { GradientBars } from "@/components/ui/gradient-bars";
 import { BOOKING_PACKAGES } from "@/lib/pricing";
 
@@ -301,9 +302,9 @@ export default function MembersPage() {
               <span className="text-[var(--muted-plum)] hidden sm:inline">
                 ·
               </span>
-              <Link href="/#contact" className="btn-primary">
+              <BookNowButton className="btn-primary">
                 Book online
-              </Link>
+              </BookNowButton>
             </div>
           </div>
         </div>

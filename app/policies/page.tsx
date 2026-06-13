@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { SiteFooter } from "@/components/StudioSections";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 import { GradientBars } from "@/components/ui/gradient-bars";
 import {
   STUDIO_POLICIES_INTRO,
@@ -25,8 +25,7 @@ export default function PoliciesPage() {
           <GradientBars colors={["var(--primary)", "transparent"]} />
         </div>
         <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <Link
-            href="/#contact"
+          <BookNowButton
             className="inline-flex items-center gap-2 text-sm font-medium text-[var(--primary)]/90 hover:text-[var(--primary)] mb-6"
           >
             <svg
@@ -43,7 +42,7 @@ export default function PoliciesPage() {
               />
             </svg>
             Back to booking
-          </Link>
+          </BookNowButton>
           <p className="text-sm uppercase tracking-[0.4em] text-[var(--primary)]/80">
             Policies
           </p>
@@ -93,10 +92,7 @@ export default function PoliciesPage() {
         </div>
 
         <div className="mt-14 pt-8 border-t border-[var(--accent)]/20">
-          <Link
-            href="/#contact"
-            className="btn-primary inline-flex items-center gap-2"
-          >
+          <BookNowButton className="btn-primary inline-flex items-center gap-2">
             <svg
               className="w-4 h-4"
               fill="none"
@@ -111,7 +107,7 @@ export default function PoliciesPage() {
               />
             </svg>
             Back to booking
-          </Link>
+          </BookNowButton>
         </div>
       </main>
 

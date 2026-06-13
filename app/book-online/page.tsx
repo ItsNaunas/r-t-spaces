@@ -1,6 +1,5 @@
-import { Suspense } from "react";
 import { SiteFooter } from "@/components/StudioSections";
-import { BookingForm } from "@/components/BookingForm";
+import { BookingWizard } from "@/components/booking/BookingWizard";
 import { BookingSuccessMessage } from "@/components/BookingSuccessMessage";
 
 const bookingPolicies = [
@@ -78,9 +77,8 @@ export default function BookOnlinePage({
             Reserve Your Studio Time
           </h1>
           <p className="max-w-3xl text-lg text-[var(--muted-plum)]">
-            Fill out the form below with your preferred date, time, and
-            requirements. We&apos;ll confirm availability and send you all the
-            details within 24 hours.
+            Choose your option, pick a time, and pay your deposit in a few taps.
+            We&apos;ll confirm everything by email.
           </p>
         </section>
 
@@ -129,24 +127,13 @@ export default function BookOnlinePage({
           </div>
         </section>
 
-        {/* Booking Form Section */}
-        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div>
-            <h2 className="font-heading text-2xl text-[var(--primary)] mb-6">
-              Booking Request
-            </h2>
-            <Suspense
-              fallback={
-                <div className="flex h-full items-center justify-center border border-[var(--accent)]/20 p-6 text-sm text-[var(--muted-plum)] rounded-lg">
-                  Loading form…
-                </div>
-              }
-            >
-              <BookingForm />
-            </Suspense>
+        {/* Booking Wizard */}
+        <section className="space-y-8">
+          <div className="h-[80vh] min-h-[640px] overflow-hidden border-2 border-[var(--primary)]/30 bg-white shadow-lg">
+            <BookingWizard />
           </div>
 
-          <div className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
             {/* Quick Contact */}
             <div className="border border-[var(--accent)]/20 p-6 space-y-4 rounded-lg">
               <h3 className="font-heading text-xl text-[var(--primary)]">

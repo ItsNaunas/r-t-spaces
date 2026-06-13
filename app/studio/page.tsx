@@ -7,6 +7,7 @@ import {
   FinalCtaSection,
   SiteFooter,
 } from "@/components/StudioSections";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 import { studioGallery, studioServices } from "@/lib/studioData";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import { Lightbox } from "@/components/Lightbox";
@@ -81,9 +82,9 @@ export default function StudioPage() {
                 pivot between clean commercial looks and warm lifestyle scenes.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <Link href="/#contact" className="btn-primary">
+                <BookNowButton className="btn-primary">
                   Book This Studio
-                </Link>
+                </BookNowButton>
                 <Link href="/equipment" className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center">
                   View Equipment
                 </Link>
@@ -434,9 +435,9 @@ export default function StudioPage() {
                 before your call time.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <Link href="/#contact" className="btn-primary">
+                <BookNowButton className="btn-primary">
                   Book This Studio
-                </Link>
+                </BookNowButton>
                 <Link href="/equipment" className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center">
                   View Equipment
                 </Link>

@@ -2,254 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense } from "react";
 import { useState, useEffect } from "react";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
-import { Lightbox } from "@/components/Lightbox";
 import { GradientBars } from "@/components/ui/gradient-bars";
-import { BookingForm } from "@/components/BookingForm";
-import { studioGallery, studioServices } from "@/lib/studioData";
-
-const valueList = [
-  {
-    label: "Daylight-ready studio",
-    detail: "White cyclorama plus styled corners for clean or cozy sets.",
-  },
-  {
-    label: "Plug-and-play kit",
-    detail: "Lighting, stands, and vanity zones prepped before call time.",
-  },
-  {
-    label: "Flexible booking windows",
-    detail: "Open daily 8 AM – 11 PM for short-form sprints or long productions.",
-  },
-  {
-    label: "Photobooth add-ons",
-    detail: "Brandable booth experiences for launches, pop-ups, and parties.",
-  },
-];
-
-export { studioGallery, studioServices };
-
-export function StorySection() {
-  return (
-    <section className="bg-white px-2 py-12 sm:px-4 lg:px-0">
-      <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
-        <div className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-            About RT Spaces
-          </p>
-          <h2 className="font-heading text-5xl sm:text-6xl leading-tight text-[var(--primary)] lg:text-7xl">
-            A home for creators, brand launches, and portrait sessions in East
-            London.
-          </h2>
-          <p className="text-lg text-[var(--muted-plum)]">
-            Founded by Rose &amp; Teddy, RT Spaces pairs a calming studio
-            with ready-to-roll equipment so you can focus on directing talent,
-            shooting content, or hosting clients.
-          </p>
-        </div>
-        <div className="grid gap-6">
-          {valueList.map((value, index) => (
-            <div
-              key={value.label}
-              className="flex gap-5 border-t border-[var(--lavender)] pt-6"
-            >
-              <div className="text-sm font-semibold text-[var(--muted-plum)]">
-                {String(index + 1).padStart(2, "0")}
-              </div>
-              <div>
-                <p className="font-semibold text-[var(--primary)]">{value.label}</p>
-                <p className="text-sm text-[var(--muted-plum)]">{value.detail}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function MissionSection() {
-  return (
-    <section className="grid gap-10 bg-white px-2 py-12 sm:px-4 lg:grid-cols-2 lg:px-0">
-      <div className="space-y-6">
-        <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-          Translate your vision
-        </p>
-        <h3 className="font-heading text-4xl text-[var(--primary)]">
-          Pick the service that fits your shoot day.
-        </h3>
-        <p className="text-lg text-[var(--muted-plum)]">
-          Whether you need four walls and great light or prefer our crew to jump
-          in, we tailor bookings to your run sheet and deliverables.
-        </p>
-          <Link
-            href="/#contact"
-            className="btn-cta btn-small"
-          >
-            Book Now
-          </Link>
-      </div>
-      <div className="space-y-6">
-        <div className="overflow-hidden bg-white  shadow-lg">
-          <Image
-            src="/assets/studios/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg"
-            alt="Creative direction"
-            width={800}
-            height={600}
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="h-[360px] w-full object-cover sm:h-[420px] "
-            loading="lazy"
-            quality={85}
-          />
-        </div>
-        <div className="border border-[var(--lavender)] p-6 bg-white  shadow-lg">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-            Our services
-          </p>
-          <div className="mt-6 space-y-5">
-            {studioServices.map((service) => (
-              <div key={service.title} className="border-t border-[var(--lavender)] pt-4">
-                <p className="font-semibold text-[var(--primary)]">{service.title}</p>
-                <p className="text-sm text-[var(--muted-plum)]">{service.meta}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function FeaturedWorkSection() {
-  return (
-    <section className="bg-white px-2 py-12 sm:px-4 lg:px-0">
-      <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-        See our work
-      </p>
-      <h3 className="mt-4 font-heading text-4xl text-[var(--primary)] lg:text-5xl">
-        Glimpses from the studio floor.
-      </h3>
-
-      <div className="mt-10 overflow-hidden bg-white  shadow-lg">
-        <Image
-          src="/assets/gallery/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg"
-          alt="Featured project"
-          width={1400}
-          height={800}
-          sizes="(max-width: 768px) 100vw, 100vw"
-          className="h-[320px] w-full object-cover sm:h-[420px] "
-          priority
-          quality={85}
-        />
-      </div>
-
-      <div className="mt-8 grid gap-6 border-t border-[var(--lavender)] pt-8 text-sm text-[var(--muted-plum)] lg:grid-cols-4">
-        <div>
-          <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-            Featured Session
-          </p>
-          <p className="mt-2 text-base font-semibold text-[var(--primary)]">
-            InTheSpotlight Content Day
-          </p>
-        </div>
-        <p className="lg:col-span-2">
-          Tethered capture, seamless wardrobe changes, and styled corners that
-          keep creators comfortable while delivering polished imagery.
-        </p>
-        <div className="space-y-3 text-sm">
-          <p>
-            <span className="font-semibold text-[var(--primary)]">Location:</span> Unit 3E, Room 1,
-            736-740 Romford Road, London
-          </p>
-          <p>
-            <span className="font-semibold text-[var(--primary)]">Hours:</span> Open daily
-            8 AM – 11 PM
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function GallerySection() {
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const { ref, isVisible } = useScrollAnimation();
-
-  return (
-    <>
-      <section className="bg-white px-2 py-12 sm:px-4 lg:px-0">
-        <div className="flex items-center justify-between">
-          <h3 className="font-heading text-3xl text-[var(--primary)]">Studio Archive</h3>
-          <Link
-            href="https://www.instagram.com/rtspaces/"
-            className="text-sm font-semibold uppercase tracking-[0.3em] text-[var(--primary)] hover:text-[var(--accent-gold)] transition-colors"
-            target="_blank"
-          >
-            Follow @rtspaces →
-          </Link>
-        </div>
-        <div 
-          ref={ref}
-          className={`mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3 transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          {studioGallery.map((item, index) => (
-            <div
-              key={item.artist}
-              className="group"
-            >
-              {/* Photo Frame Effect - Image inside frame */}
-              <div 
-                className="relative w-full cursor-pointer transition-transform duration-500 group-hover:scale-[1.02]"
-                onClick={() => {
-                  setCurrentImageIndex(index);
-                  setLightboxOpen(true);
-                }}
-              >
-                <div className="relative w-full h-full bg-white shadow-2xl overflow-hidden border-8" style={{ borderColor: 'white' }}>
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image
-                      src={item.src}
-                      alt={item.artist}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      loading="lazy"
-                      quality={85}
-                    />
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
-                      <svg 
-                        className="h-12 w-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-      <Lightbox
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-        images={studioGallery.map(item => ({ src: item.src, alt: item.artist, artist: item.artist, focus: item.focus }))}
-        currentIndex={currentImageIndex}
-        onNavigate={setCurrentImageIndex}
-      />
-    </>
-  );
-}
+import { BookNowButton } from "@/components/booking/BookNowButton";
 
 export function FinalCtaSection() {
   return (
@@ -274,55 +30,15 @@ export function FinalCtaSection() {
   );
 }
 
-// Studio preview videos for marquee (reserved for future use)
-// const studioPreviewVideos = [
-//   "/assets/20251028_131356.mp4",
-//   "/assets/20251028_131503.mp4",
-//   "/assets/20251028_131543.mp4",
-//   "/assets/20251028_131640.mp4",
-//   "/assets/20251028_131713.mp4",
-//   "/assets/20251028_131741.mp4",
-//   "/assets/20251028_131808.mp4",
-//   "/assets/20251028_132117.mp4",
-//   "/assets/20251028_132128.mp4",
-//   "/assets/20251028_132143.mp4",
-//   "/assets/20251028_132355.mp4",
-//   "/assets/20251028_132407.mp4",
-//   "/assets/20251028_132419.mp4",
-//   "/assets/20251028_143237.mp4",
-// ];
-
-// Video carousel images
-const videoCarouselImages = [
-  "/assets/1d5ab5d7-44b6-4a18-b709-56dffe7a2eab.mp4",
-  "/assets/23c0c110-d369-4ae8-bd28-c9e6b78e5fa1.mp4",
-  "/assets/3786f80c-4258-4e64-9e88-c92da28fe942.mp4",
-  "/assets/42239ee3-caac-4b9b-9702-825000004018.mp4",
-];
-
-// Instagram images for social proof
-const instagramImages = [
-  "/assets/gallery/5F978C66-0CA5-46F1-8156-3E610244CDD4.jpg",
-  "/assets/gallery/0597e892-11ea-4d66-858d-c956f9f6fc6e.jpg",
-  "/assets/gallery/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg",
-  "/assets/gallery/B152F374-AA91-4F11-B52F-FB6F0907342C.jpg",
-  "/assets/gallery/IMG_7809.JPG",
-  "/assets/gallery/AED2EF36-E44C-48A6-B44C-5E30E05B3815.jpg",
-  "/assets/gallery/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg",
-  "/assets/gallery/IMG_7854.JPG",
-  "/assets/gallery/IMG_7860.JPG",
-  "/assets/gallery/6504BBB4-A551-4117-9E3D-FA7E74837027.jpg",
-];
-
 export function StudioHeroStats() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const stats = [
     { value: "5m × 5m", label: "Studio", sublabel: "Floor space" },
-    { value: "500+", label: "Creators", sublabel: "Served" },
+    { value: "200+", label: "Creators", sublabel: "Served" },
     { value: "4.9/5", label: "Average", sublabel: "Rating" },
-    { value: "50+", label: "Bookings", sublabel: "This Month" },
-    { value: "24/7", label: "Support", sublabel: "Available" },
+    { value: "8–11", label: "Open Daily", sublabel: "8 AM – 11 PM" },
+    { value: "E12 6BT", label: "Location", sublabel: "East London" },
     { value: "100%", label: "Equipment", sublabel: "Included" },
   ];
 
@@ -422,24 +138,23 @@ export function StudioHeroStats() {
           {/* Overlay with CTAs - Visible on mobile, enhanced on hover */}
           <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/0 md:bg-black/0 md:group-hover:bg-black/40 transition-all duration-500">
             <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 px-4 sm:px-6 opacity-0 md:opacity-0 md:group-hover:opacity-100 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500">
-              <Link 
-                href="/#contact"
+              <BookNowButton
                 className="btn-primary group/btn whitespace-nowrap"
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="flex items-center gap-2">
                   Book Studio
-                  <svg 
-                    className="w-5 h-5 transition-transform group-hover/btn:translate-x-1" 
-                    fill="none" 
-                    stroke="currentColor" 
+                  <svg
+                    className="w-5 h-5 transition-transform group-hover/btn:translate-x-1"
+                    fill="none"
+                    stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </span>
-              </Link>
-              <Link 
+              </BookNowButton>
+              <Link
                 href="/studio"
                 className="group/btn whitespace-nowrap bg-[var(--accent-gold)] backdrop-blur-sm border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4  font-medium text-sm tracking-[0.05em]"
                 onClick={(e) => e.stopPropagation()}
@@ -463,23 +178,22 @@ export function StudioHeroStats() {
           {/* Mobile: Subtle bottom overlay with CTA - Always visible on mobile */}
           <div className="absolute bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-black/60 via-black/40 to-transparent p-4 sm:p-6 md:hidden">
             <div className="flex flex-col gap-3">
-              <Link 
-                href="/#contact"
+              <BookNowButton
                 className="btn-primary group/btn w-full text-center"
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="flex items-center justify-center gap-2">
                   Book Studio
-                  <svg 
-                    className="w-5 h-5 transition-transform group-hover/btn:translate-x-1" 
-                    fill="none" 
-                    stroke="currentColor" 
+                  <svg
+                    className="w-5 h-5 transition-transform group-hover/btn:translate-x-1"
+                    fill="none"
+                    stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </span>
-              </Link>
+              </BookNowButton>
               <Link 
                 href="/studio"
                 className="group/btn w-full text-center bg-[var(--accent-gold)] border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4  font-medium text-sm tracking-[0.05em]"
@@ -499,102 +213,6 @@ export function StudioHeroStats() {
                 </span>
               </Link>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function VideoCarouselSection() {
-  return (
-    <section className="px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {videoCarouselImages.map((src, index) => (
-            <div key={index} className="group relative aspect-video overflow-hidden">
-              <Image
-                src={src}
-                alt={`Video thumbnail ${index + 1}`}
-                fill
-                sizes="(max-width: 768px) 50vw, 25vw"
-                className="object-cover"
-                loading="lazy"
-                quality={80}
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent)]/40 opacity-0 transition-opacity group-hover:opacity-100">
-                <svg className="h-12 w-12 text-[var(--base)]" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function Bookings2025Section() {
-  const stats = [
-    { label: "Booked this month", value: "48+" },
-    { label: "Available slots", value: "Open" },
-    { label: "Studio hours", value: "8 AM - 11 PM" },
-  ];
-
-  const features = [
-    { icon: "✓", text: "Flexible hourly & daily rates" },
-    { icon: "✓", text: "All equipment included" },
-    { icon: "✓", text: "Professional lighting setup" },
-  ];
-
-  return (
-    <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-16">
-        <div className="space-y-6 bg-white border border-[var(--lavender)] p-8 lg:p-12 shadow-lg ">
-          <p className="font-heading text-3xl font-bold text-[var(--primary)] sm:text-4xl">
-            Ready to create? Book your 2025 studio time now.
-          </p>
-          <p className="text-lg text-[var(--muted-plum)]">
-            Our East London studio is ready for content days, lookbooks, and brand launches. Flexible hourly and daily rates available—book your slot today.
-          </p>
-          <div className="space-y-3">
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-center gap-3">
-                <span className="text-[var(--primary)] font-bold text-xl">{feature.icon}</span>
-                <span className="text-[var(--muted-plum)]">{feature.text}</span>
-              </div>
-            ))}
-          </div>
-          <Link
-            href="/#contact"
-            className="btn-cta inline-flex"
-          >
-            BOOK NOW
-            <svg className="h-4 w-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
-        </div>
-        <div className="hidden lg:flex flex-col justify-center gap-8">
-          <div className="grid grid-cols-3 gap-6">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center p-6 bg-white border-2 border-[var(--lavender)]  shadow-lg">
-                <p className="font-heading text-3xl font-bold text-[var(--primary)] mb-2">{stat.value}</p>
-                <p className="text-sm text-[var(--muted-plum)] uppercase tracking-wider">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-          <div className="relative aspect-video overflow-hidden ">
-            <Image
-              src="/assets/gallery/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg"
-              alt="Studio booking space"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-              loading="lazy"
-              quality={85}
-            />
           </div>
         </div>
       </div>
@@ -868,12 +486,11 @@ export function TestimonialSection() {
             <p className="text-lg text-white/80 leading-relaxed">
               From portrait sessions to brand launches, our community of photographers and creators share their experiences working in our East London studio.
             </p>
-            <Link
-              href="/#contact"
+            <BookNowButton
               className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center w-full shadow-lg hover:shadow-xl"
             >
               Reserve Your Studio Session
-            </Link>
+            </BookNowButton>
           </div>
 
           {/* Mobile Header - Shown only on mobile */}
@@ -968,12 +585,11 @@ export function TestimonialSection() {
 
           {/* Mobile CTA Button - Shown only on mobile */}
           <div className="lg:hidden mt-8 text-center">
-            <Link
-              href="/#contact"
+            <BookNowButton
               className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center shadow-lg hover:shadow-xl"
             >
               Reserve Your Studio Session
-            </Link>
+            </BookNowButton>
           </div>
         </div>
       </div>
@@ -1039,12 +655,9 @@ export function AboutUsSection() {
               ))}
             </div>
 
-            <Link
-              href="/#contact"
-              className="btn-primary inline-flex mt-6"
-            >
+            <BookNowButton offer="session" className="btn-primary inline-flex mt-6">
               Book a Session
-            </Link>
+            </BookNowButton>
           </div>
 
           {/* Right: Image with Photo Frame */}
@@ -1145,28 +758,25 @@ export function ContactSection() {
             }`}
           >
             <div className="bg-white p-6 sm:p-8 lg:p-10 shadow-lg border-2 border-[var(--primary)]/40">
-              <div className="mb-6 sm:mb-8">
-                <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)] mb-3">
-                  Send Us a Message
-                </p>
-                <h3 className="font-heading text-3xl sm:text-4xl text-[var(--primary)] leading-tight">
-                  Let&apos;s Start a Conversation
-                </h3>
-                <p className="text-base sm:text-lg text-[var(--muted-plum)] mt-4 leading-relaxed">
-                  Fill out the form below and we&apos;ll get back to you as soon as possible. 
-                  For urgent enquiries, give us a call.
-                </p>
+              <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)] mb-3">
+                Ready to book?
+              </p>
+              <h3 className="font-heading text-3xl sm:text-4xl text-[var(--primary)] leading-tight">
+                Book the studio in under a minute
+              </h3>
+              <p className="text-base sm:text-lg text-[var(--muted-plum)] mt-4 leading-relaxed">
+                Choose studio hire or a photo session, pick a time, and pay your
+                deposit. We confirm everything by email. Prefer to chat first? Call
+                or message us.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <BookNowButton className="btn-primary">
+                  Check availability &amp; book
+                </BookNowButton>
+                <a href="mailto:enquires@rtspaces.co.uk" className="btn-secondary text-center">
+                  Email us
+                </a>
               </div>
-              
-                <Suspense
-                fallback={
-                  <div className="flex h-64 items-center justify-center border-2 border-[var(--primary)]/30 p-6 text-sm text-[var(--muted-plum)]">
-                    Loading form…
-                  </div>
-                }
-              >
-                <BookingForm />
-              </Suspense>
             </div>
           </div>
 
@@ -1302,220 +912,6 @@ export function ContactSection() {
   );
 }
 
-export function LatestNewsSection() {
-  return (
-    <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <h2 className="font-heading text-center text-5xl font-bold text-[var(--primary)] sm:text-6xl md:text-7xl">
-          Latest News
-        </h2>
-        <div className="mt-12 grid gap-8 lg:grid-cols-2 lg:gap-12">
-          <div className="relative aspect-[4/3] overflow-hidden bg-white  shadow-lg">
-            <Image
-              src="/assets/gallery/919177f2-e71e-4881-90d0-b0eef3b4ccfc.jpg"
-              alt="New studio room"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover "
-              loading="lazy"
-              quality={85}
-            />
-          </div>
-          <div className="flex flex-col justify-center space-y-6">
-            <div className="flex items-center gap-4 flex-wrap">
-              <span className="px-3 py-1 bg-[var(--primary)] text-white text-xs font-semibold uppercase tracking-wider ">
-                NEW STUDIO
-              </span>
-              <time className="text-sm text-[var(--muted-plum)]" dateTime="2024-12-01">
-                December 2024
-              </time>
-            </div>
-            <h3 className="font-heading text-3xl font-bold text-[var(--primary)] sm:text-4xl">
-              We have officially launched Unit 3E Studio
-            </h3>
-            <p className="text-lg text-[var(--muted-plum)]">
-              Our newest studio space in East London features a seamless white cyclorama, textured concrete walls, and a cozy lounge corner. Equipped with professional lighting, continuous LEDs, and all the amenities you need for a successful shoot day.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/#contact"
-                className="btn-cta w-fit"
-              >
-                BOOK NOW
-                <svg className="h-4 w-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-              <Link
-                href="/studio"
-                className="text-[var(--primary)] font-semibold uppercase tracking-wider text-sm hover:underline flex items-center gap-2 w-fit"
-              >
-                Learn about Unit 3E
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function SocialProofSection() {
-  const stats = [
-    { value: 500, suffix: "+", label: "Creators" },
-    { value: 4.9, suffix: "/5", label: "Rating", isDecimal: true },
-    { value: 50, suffix: "+", label: "Bookings this month" },
-  ];
-
-  const { ref, isVisible } = useScrollAnimation();
-
-  return (
-    <section className="bg-white px-4 py-16 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="text-center mb-12">
-          <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)] mb-2">
-            Join the community
-          </p>
-          <h2 className="font-heading text-3xl font-bold text-[var(--primary)] sm:text-4xl">
-            Join 500+ creators who&apos;ve chosen RT Spaces
-          </h2>
-        </div>
-        <div 
-          ref={ref}
-          className={`grid grid-cols-1 md:grid-cols-3 gap-8 transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          {stats.map((stat, index) => (
-            <AnimatedStatCard key={index} stat={stat} isVisible={isVisible} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-type StatType = {
-  value: number;
-  suffix: string;
-  label: string;
-  isDecimal?: boolean;
-};
-
-function AnimatedStatCard({ stat, isVisible }: { stat: StatType, isVisible: boolean }) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!isVisible) return;
-
-    const duration = 2000;
-    const startTime = Date.now();
-    const startValue = 0;
-    const endValue = stat.value;
-
-    const animate = () => {
-      const now = Date.now();
-      const progress = Math.min((now - startTime) / duration, 1);
-      const easeOut = 1 - Math.pow(1 - progress, 3);
-      const currentValue = startValue + (endValue - startValue) * easeOut;
-      
-      setCount(stat.isDecimal ? parseFloat(currentValue.toFixed(1)) : Math.floor(currentValue));
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        setCount(endValue);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }, [isVisible, stat.value, stat.isDecimal]);
-
-  return (
-    <div className="text-center p-8 bg-white  border-2 border-[var(--lavender)] hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg">
-      <p className="font-heading text-5xl font-bold text-[var(--primary)] mb-2">
-        {count}{stat.suffix}
-      </p>
-      <p className="text-lg text-[var(--muted-plum)] uppercase tracking-wider">{stat.label}</p>
-    </div>
-  );
-}
-
-export function WhyChooseUsSection() {
-  const features = [
-    {
-      title: "Daylight-ready",
-      description: "Natural light meets professional lighting",
-      icon: (
-        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-      ),
-    },
-    {
-      title: "All-inclusive kit",
-      description: "Lighting, stands, and vanity zones ready",
-      icon: (
-        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-        </svg>
-      ),
-    },
-    {
-      title: "Flexible hours",
-      description: "Open daily 8 AM - 11 PM",
-      icon: (
-        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-    },
-    {
-      title: "Expert support",
-      description: "On-call team for shoot day questions",
-      icon: (
-        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-      ),
-    },
-  ];
-
-  return (
-    <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="text-center mb-12">
-          <p className="text-sm uppercase tracking-[0.3em] text-[var(--muted-plum)] mb-2">
-            Why Choose Us
-          </p>
-          <h2 className="font-heading text-4xl font-bold text-[var(--primary)] sm:text-5xl">
-            Everything you need, nothing you don&apos;t
-          </h2>
-          <p className="mt-4 text-lg text-[var(--muted-plum)] max-w-2xl mx-auto">
-            Professional spaces designed for seamless content creation
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => (
-            <div key={index} className="text-center space-y-4 p-6 bg-white border-2 border-[var(--lavender)]  hover:border-[var(--primary)] transition-colors shadow-lg">
-              <div className="flex justify-center">
-                <div className="p-4 bg-[var(--primary)]/10 text-[var(--primary)] ">
-                  {feature.icon}
-                </div>
-              </div>
-              <h3 className="font-heading text-xl font-bold text-[var(--primary)]">{feature.title}</h3>
-              <p className="text-[var(--muted-plum)] text-sm">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export function StudioFeaturesSection() {
   const features = [
     {
@@ -1590,8 +986,7 @@ export function StudioFeaturesSection() {
             </div>
             {/* CTAs */}
             <div className="flex flex-col gap-4 mt-4">
-              <Link 
-                href="/#contact" 
+              <BookNowButton
                 className="btn-primary w-full text-center"
                 style={{
                   boxShadow: '0 4px 16px rgba(61, 35, 80, 0.2), 0 2px 8px rgba(61, 35, 80, 0.1)',
@@ -1599,7 +994,7 @@ export function StudioFeaturesSection() {
                 }}
               >
                 Book Now
-              </Link>
+              </BookNowButton>
               <Link 
                 href="/#contact" 
                 className="btn-secondary w-full text-center"
@@ -1618,38 +1013,6 @@ export function StudioFeaturesSection() {
   );
 }
 
-export function GiveUsAFollowSection() {
-  return (
-    <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <h2 className="font-heading text-center text-3xl font-bold uppercase tracking-wider text-[var(--primary)] sm:text-4xl">
-          GIVE US A FOLLOW
-        </h2>
-        <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-5">
-          {instagramImages.map((src, index) => (
-            <Link
-              key={index}
-              href="https://www.instagram.com/rtspaces/"
-              target="_blank"
-              className="group relative aspect-square overflow-hidden"
-            >
-              <Image
-                src={src}
-                alt={`Instagram post ${index + 1}`}
-                fill
-                sizes="(max-width: 768px) 50vw, 20vw"
-                className="object-cover transition-transform duration-300 group-hover:scale-110"
-                loading="lazy"
-                quality={80}
-              />
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export function EmailSubscriptionSection() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
@@ -1660,10 +1023,13 @@ export function EmailSubscriptionSection() {
     setIsSubmitting(true);
     setStatus("idle");
 
-    // Simulate API call
     try {
-      // Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error("Subscription failed");
       setStatus("success");
       setEmail("");
     } catch {
@@ -1766,9 +1132,9 @@ export function SiteFooter() {
                 <Link href="/members" className="block text-white/80 hover:text-white transition">
                   Members
                 </Link>
-                <Link href="/#contact" className="block text-white/80 hover:text-white transition">
+                <BookNowButton className="block text-left text-white/80 hover:text-white transition">
                   Book Online
-                </Link>
+                </BookNowButton>
                 <Link href="/gallery" className="block text-white/80 hover:text-white transition">
                   Our Work / Gallery
                 </Link>
@@ -1862,4 +1228,3 @@ export function SiteFooter() {
     </footer>
   );
 }
-

@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { FinalCtaSection, SiteFooter } from "@/components/StudioSections";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 import { studioGallery } from "@/lib/studioData";
 import { Lightbox } from "@/components/Lightbox";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
@@ -185,12 +185,9 @@ export default function GalleryPage() {
                                   {item.artist}
                                 </p>
                               </div>
-                              <Link 
-                                href="/#contact" 
-                                className="inline-block btn-primary btn-small"
-                              >
+                              <BookNowButton className="inline-block btn-primary btn-small">
                                 Check Availability
-                              </Link>
+                              </BookNowButton>
                             </div>
                           </div>
                         );

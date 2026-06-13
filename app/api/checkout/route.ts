@@ -97,7 +97,9 @@ export async function POST(request: Request) {
 
     // Create a Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      // Omitting payment_method_types lets Stripe show every method enabled in the
+      // Dashboard (card + Apple Pay / Google Pay / Link), which appear automatically
+      // in hosted Checkout. Listing ['card'] explicitly would suppress the wallets.
       line_items: [
         {
           price_data: {

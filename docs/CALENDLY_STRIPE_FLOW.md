@@ -46,12 +46,12 @@ Add to your `.env.local`:
 NEXT_PUBLIC_CALENDLY_SCHEDULING_LINK=https://calendly.com/your-username/event-type
 
 # Stripe Configuration
-STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxxxxxxx
-STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxx
+STRIPE_SECRET_KEY=sk_test_YOUR_SECRET_KEY_HERE
+STRIPE_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET_HERE
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 # Email Configuration
-RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
+RESEND_API_KEY=re_YOUR_RESEND_KEY_HERE
 STUDIO_EMAIL=enquires@rtspaces.co.uk
 FROM_EMAIL=onboarding@resend.dev
 ```
