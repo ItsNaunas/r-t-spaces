@@ -65,14 +65,10 @@ export function SiteHeader() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Always white text (works on the plum bar and over the dark hero)
+  // Solid plum bar, white text
   const navTextColor = 'text-white';
   const navHoverColor = 'hover:text-white/80';
   const navActiveColor = 'text-white';
-
-  // Transparent over the homepage hero, solid plum once scrolled or on other pages
-  const isHome = pathname === "/";
-  const transparent = isHome && !isScrolled;
 
   return (
     <>
@@ -83,10 +79,8 @@ export function SiteHeader() {
         Skip to main content
       </a>
       <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 border-b ${
-        transparent
-          ? 'bg-gradient-to-b from-black/40 to-transparent border-transparent'
-          : `bg-[var(--plum)] backdrop-blur-md shadow-sm ${isScrolled ? 'border-[var(--accent)]/20' : 'border-transparent'}`
+      className={`sticky top-0 z-50 w-full transition-all duration-300 border-b bg-[var(--plum)] backdrop-blur-md shadow-sm ${
+        isScrolled ? 'border-[var(--accent)]/20' : 'border-transparent'
       }`}
     >
       <div className={`mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8 relative transition-all duration-300`}>
