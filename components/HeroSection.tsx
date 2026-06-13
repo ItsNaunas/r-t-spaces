@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { GradientBars } from "@/components/ui/gradient-bars";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 import { useState, useEffect, useRef } from "react";
 
 const carouselImages = [
@@ -131,22 +132,23 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-5">
-              <Link 
-                href="/book-online"
+              <BookNowButton
+                offer="hire"
+                ariaLabel="Hire a studio"
                 className="btn-primary group min-w-[180px]"
               >
                 <span className="flex items-center gap-2">
                   Hire a Studio
-                  <svg 
-                    className="w-5 h-5 transition-transform group-hover:translate-x-1" 
-                    fill="none" 
-                    stroke="currentColor" 
+                  <svg
+                    className="w-5 h-5 transition-transform group-hover:translate-x-1"
+                    fill="none"
+                    stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </span>
-              </Link>
+              </BookNowButton>
               <Link 
                 href="/studio"
                 className="group min-w-[180px] inline-flex items-center justify-center border border-white bg-white px-4 py-2 sm:px-8 sm:py-4 text-sm sm:text-base font-medium text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:scale-[1.02] hover:shadow-lg"
