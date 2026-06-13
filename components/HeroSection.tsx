@@ -3,72 +3,83 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BookNowButton } from "@/components/booking/BookNowButton";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
-const carouselImages = [
-  { src: "/assets/studios/919177f2-e71e-4881-90d0-b0eef3b4ccfc.jpg", alt: "Studio cyclorama" },
-  { src: "/assets/studios/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg", alt: "Studio set" },
-  { src: "/assets/studios/IMG_7856.JPG", alt: "Studio interior" },
-  { src: "/assets/studios/3f4d65d6-7a25-44cc-a4f4-a1ded7995f3a.jpg", alt: "Studio backdrop" },
+// Each framing card rotates through its own set of studio shots.
+const cardSets = [
+  ["/assets/studios/919177f2-e71e-4881-90d0-b0eef3b4ccfc.jpg", "/assets/studios/IMG_7856.JPG"],
+  ["/assets/studios/4a6224d3-5683-4361-bef8-5b3b1ab5be56.jpg", "/assets/studios/IMG_7858.JPG"],
+  ["/assets/studios/3f4d65d6-7a25-44cc-a4f4-a1ded7995f3a.jpg", "/assets/studios/IMG_7860.JPG"],
+  ["/assets/studios/09221174-0c46-4aa0-92c0-ee51b9af5ca4.jpg", "/assets/studios/IMG_7861.JPG"],
 ];
 
-export function HeroSection() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+function RotatingFrame({
+  images,
+  delay,
+  className,
+  priority = false,
+}: {
+  images: string[];
+  delay: number;
+  className?: string;
+  priority?: boolean;
+}) {
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % carouselImages.length);
-    }, 5000);
+    let interval: NodeJS.Timeout;
+    const start = setTimeout(() => {
+      interval = setInterval(() => {
+        setIndex((prev) => (prev + 1) % images.length);
+      }, 6000);
+    }, delay);
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      clearTimeout(start);
+      if (interval) clearInterval(interval);
     };
-  }, []);
+  }, [images.length, delay]);
 
   return (
-    <section className="relative min-h-[90vh] -mt-[73px] flex items-end overflow-hidden bg-[var(--charcoal)]">
-      {/* Full-bleed crossfade background */}
-      {carouselImages.map((image, index) => (
-        <div
-          key={image.src}
-          className="absolute inset-0 transition-opacity duration-[1500ms] ease-in-out"
-          style={{ opacity: index === currentIndex ? 1 : 0 }}
-          aria-hidden={index !== currentIndex}
-        >
-          <Image
-            src={image.src}
-            alt={image.alt}
-            fill
-            sizes="100vw"
-            priority={index === 0}
-            className="object-cover"
-          />
-        </div>
+    <div className={`relative aspect-[3/4] overflow-hidden rounded-2xl bg-white/5 shadow-2xl ${className ?? ""}`}>
+      {images.map((src, i) => (
+        <Image
+          key={src}
+          src={src}
+          alt="Scene from the RT Spaces studio"
+          fill
+          sizes="(max-width: 1024px) 45vw, 22vw"
+          priority={priority && i === 0}
+          className={`object-cover transition-opacity duration-1000 ease-in-out ${
+            i === index ? "opacity-100" : "opacity-0"
+          }`}
+        />
       ))}
+    </div>
+  );
+}
 
-      {/* Plum gradient overlay for legibility */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[var(--primary)] via-[var(--primary)]/70 to-[var(--primary)]/20" />
-
-      {/* Content */}
-      <div className="relative z-10 w-full">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-14 md:pb-20">
-          <p className="text-xs sm:text-sm uppercase tracking-[0.45em] text-[var(--cream)]/80 mb-5">
+export function HeroSection() {
+  return (
+    <section className="relative -mt-[73px] overflow-hidden bg-[var(--primary)] pt-[73px] text-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16 md:pt-24 md:pb-24">
+        {/* Centered copy */}
+        <div className="relative z-10 mx-auto max-w-3xl text-center">
+          <p className="text-xs sm:text-sm uppercase tracking-[0.45em] text-white/70 mb-5">
             RT Spaces · East London
           </p>
-          <h1 className="font-heading font-bold uppercase text-white tracking-tight leading-[0.92] text-5xl sm:text-7xl lg:text-8xl max-w-4xl">
+          <h1 className="font-heading font-bold uppercase tracking-tight leading-[0.95] text-5xl sm:text-6xl lg:text-7xl">
             Photography
             <br />
             studio hire
           </h1>
-          <p className="mt-6 max-w-xl text-base sm:text-lg text-white/85 leading-relaxed">
+          <p className="mx-auto mt-6 max-w-xl text-base sm:text-lg text-white/85 leading-relaxed">
             A 5m × 5m studio with professional lighting, backdrops and equipment
             included. Hire by the hour from{" "}
             <span className="font-semibold text-white">£55</span>, or book a full
-            session package. Open daily in Manor Park, E12.
+            session. Open daily in Manor Park, E12.
           </p>
 
-          {/* Social proof */}
-          <div className="mt-6 flex items-center gap-3">
+          <div className="mt-6 flex items-center justify-center gap-3">
             <div className="flex items-center gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <svg key={i} className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" style={{ color: "var(--accent-gold)" }}>
@@ -81,12 +92,11 @@ export function HeroSection() {
             </span>
           </div>
 
-          {/* CTAs */}
-          <div className="mt-9 flex flex-col sm:flex-row items-stretch sm:items-start gap-4">
+          <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <BookNowButton
               offer="hire"
               ariaLabel="Hire a studio"
-              className="group min-w-[200px] inline-flex items-center justify-center bg-white px-6 py-3.5 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:scale-[1.02] hover:shadow-xl"
+              className="group inline-flex min-w-[200px] items-center justify-center rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:scale-[1.02] hover:shadow-xl sm:px-8 sm:py-4 sm:text-base"
             >
               <span className="flex items-center gap-2">
                 Hire a Studio
@@ -97,11 +107,19 @@ export function HeroSection() {
             </BookNowButton>
             <Link
               href="/studio"
-              className="min-w-[200px] inline-flex items-center justify-center border border-white/80 bg-transparent px-6 py-3.5 sm:px-8 sm:py-4 text-sm sm:text-base font-medium text-white transition-all duration-300 hover:bg-white hover:text-[var(--primary)]"
+              className="inline-flex min-w-[200px] items-center justify-center rounded-xl border border-white/80 bg-transparent px-6 py-3.5 text-sm font-medium text-white transition-all duration-300 hover:bg-white hover:text-[var(--primary)] sm:px-8 sm:py-4 sm:text-base"
             >
               View Packages
             </Link>
           </div>
+        </div>
+
+        {/* Framing cards: 2x2 on mobile, arced around the copy on desktop */}
+        <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-6 lg:mt-0 lg:grid-cols-4 lg:gap-8 lg:-mt-44">
+          <RotatingFrame images={cardSets[0]} delay={0} priority className="lg:mt-0" />
+          <RotatingFrame images={cardSets[1]} delay={1500} className="lg:mt-32" />
+          <RotatingFrame images={cardSets[2]} delay={3000} className="lg:mt-32" />
+          <RotatingFrame images={cardSets[3]} delay={4500} className="lg:mt-0" />
         </div>
       </div>
     </section>
