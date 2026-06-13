@@ -47,7 +47,6 @@ export async function createCalendlyEvent(booking: BookingEntry): Promise<string
       ? `${baseLink}?${params.toString()}`
       : baseLink;
 
-    console.log("Generated Calendly scheduling link for booking:", booking.email);
     return schedulingLink;
   } catch (error) {
     console.error("Failed to generate Calendly scheduling link:", error);

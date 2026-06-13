@@ -1,5 +1,4 @@
-import { promises as fs } from "fs";
-import path from "path";
+import { getRedis } from "./redis";
 import { cancelCalendlyEvent } from "./calendlyApi";
 
 export type PendingBooking = {
@@ -24,127 +23,116 @@ export type PendingBooking = {
   };
 };
 
-const pendingBookingsFile = path.join(process.cwd(), "data", "pending-bookings.json");
+const key = (id: string) => `pending:${id}`;
+const IDS_KEY = "pending:ids";
+const stripeIdx = (sessionId: string) => `pending:stripe:${sessionId}`;
+const calendlyIdx = (eventUri: string) => `pending:calendly:${eventUri}`;
 
-async function ensureFile() {
-  await fs.mkdir(path.dirname(pendingBookingsFile), { recursive: true });
-  try {
-    await fs.access(pendingBookingsFile);
-  } catch {
-    await fs.writeFile(pendingBookingsFile, "[]", "utf-8");
-  }
+async function put(booking: PendingBooking): Promise<void> {
+  const redis = getRedis();
+  await redis.set(key(booking.id), JSON.stringify(booking));
 }
 
 export async function savePendingBooking(
   booking: Omit<PendingBooking, "createdAt" | "expiresAt" | "status">
 ): Promise<PendingBooking> {
-  await ensureFile();
-  const raw = await fs.readFile(pendingBookingsFile, "utf-8");
-  const bookings: PendingBooking[] = JSON.parse(raw);
-  
+  const redis = getRedis();
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes from now
-  
+
   const newBooking: PendingBooking = {
     ...booking,
     createdAt: now.toISOString(),
     expiresAt: expiresAt.toISOString(),
     status: "pending",
   };
-  
-  bookings.push(newBooking);
-  await fs.writeFile(pendingBookingsFile, JSON.stringify(bookings, null, 2), "utf-8");
+
+  const pipeline = redis.pipeline();
+  pipeline.set(key(newBooking.id), JSON.stringify(newBooking));
+  pipeline.sadd(IDS_KEY, newBooking.id);
+  if (newBooking.calendlyEventUri) {
+    pipeline.set(calendlyIdx(newBooking.calendlyEventUri), newBooking.id);
+  }
+  await pipeline.exec();
   return newBooking;
 }
 
 export async function getPendingBooking(id: string): Promise<PendingBooking | null> {
-  await ensureFile();
-  const raw = await fs.readFile(pendingBookingsFile, "utf-8");
-  const bookings: PendingBooking[] = JSON.parse(raw);
-  return bookings.find((b) => b.id === id) || null;
+  const redis = getRedis();
+  return redis.get<PendingBooking>(key(id));
 }
 
 export async function getPendingBookingByCalendlyEvent(
   calendlyEventUri: string
 ): Promise<PendingBooking | null> {
-  await ensureFile();
-  const raw = await fs.readFile(pendingBookingsFile, "utf-8");
-  const bookings: PendingBooking[] = JSON.parse(raw);
-  return bookings.find((b) => b.calendlyEventUri === calendlyEventUri && b.status === "pending") || null;
+  const redis = getRedis();
+  const id = await redis.get<string>(calendlyIdx(calendlyEventUri));
+  if (!id) return null;
+  const booking = await getPendingBooking(id);
+  return booking && booking.status === "pending" ? booking : null;
 }
 
 export async function getPendingBookingByStripeSession(
   stripeSessionId: string
 ): Promise<PendingBooking | null> {
-  await ensureFile();
-  const raw = await fs.readFile(pendingBookingsFile, "utf-8");
-  const bookings: PendingBooking[] = JSON.parse(raw);
-  return bookings.find((b) => b.stripeSessionId === stripeSessionId) || null;
+  const redis = getRedis();
+  const id = await redis.get<string>(stripeIdx(stripeSessionId));
+  if (!id) return null;
+  return getPendingBooking(id);
 }
 
 export async function updatePendingBookingStripeSession(
   id: string,
   stripeSessionId: string
 ): Promise<boolean> {
-  await ensureFile();
-  const raw = await fs.readFile(pendingBookingsFile, "utf-8");
-  const bookings: PendingBooking[] = JSON.parse(raw);
-  
-  const index = bookings.findIndex((b) => b.id === id);
-  if (index === -1) return false;
-  
-  bookings[index].stripeSessionId = stripeSessionId;
-  await fs.writeFile(pendingBookingsFile, JSON.stringify(bookings, null, 2), "utf-8");
+  const booking = await getPendingBooking(id);
+  if (!booking) return false;
+  booking.stripeSessionId = stripeSessionId;
+  const redis = getRedis();
+  const pipeline = redis.pipeline();
+  pipeline.set(key(id), JSON.stringify(booking));
+  pipeline.set(stripeIdx(stripeSessionId), id);
+  await pipeline.exec();
   return true;
 }
 
 export async function confirmPendingBooking(id: string, stripeSessionId?: string): Promise<boolean> {
-  await ensureFile();
-  const raw = await fs.readFile(pendingBookingsFile, "utf-8");
-  const bookings: PendingBooking[] = JSON.parse(raw);
-  
-  const index = bookings.findIndex((b) => b.id === id);
-  if (index === -1) return false;
-  
-  bookings[index].status = "confirmed";
+  const booking = await getPendingBooking(id);
+  if (!booking) return false;
+  booking.status = "confirmed";
   if (stripeSessionId) {
-    bookings[index].stripeSessionId = stripeSessionId;
+    booking.stripeSessionId = stripeSessionId;
+    const redis = getRedis();
+    const pipeline = redis.pipeline();
+    pipeline.set(key(id), JSON.stringify(booking));
+    pipeline.set(stripeIdx(stripeSessionId), id);
+    await pipeline.exec();
+    return true;
   }
-  await fs.writeFile(pendingBookingsFile, JSON.stringify(bookings, null, 2), "utf-8");
+  await put(booking);
   return true;
 }
 
 export async function cancelPendingBooking(id: string, reason?: string): Promise<boolean> {
-  await ensureFile();
-  const raw = await fs.readFile(pendingBookingsFile, "utf-8");
-  const bookings: PendingBooking[] = JSON.parse(raw);
-  
-  const index = bookings.findIndex((b) => b.id === id);
-  if (index === -1) return false;
-  
-  const booking = bookings[index];
-  
-  // Cancel the Calendly event
+  const booking = await getPendingBooking(id);
+  if (!booking) return false;
+
   if (booking.status === "pending" && booking.calendlyEventUri) {
     await cancelCalendlyEvent(booking.calendlyEventUri, reason || "Payment not completed within 15 minutes");
   }
-  
-  bookings[index].status = "cancelled";
-  await fs.writeFile(pendingBookingsFile, JSON.stringify(bookings, null, 2), "utf-8");
+
+  booking.status = "cancelled";
+  await put(booking);
   return true;
 }
 
 export async function cancelExpiredPendingBookings(): Promise<number> {
-  await ensureFile();
-  const raw = await fs.readFile(pendingBookingsFile, "utf-8");
-  const bookings: PendingBooking[] = JSON.parse(raw);
-  
+  const all = await loadAll();
   const now = new Date();
   let cancelledCount = 0;
-  
-  for (const booking of bookings) {
+
+  for (const booking of all) {
     if (booking.status === "pending" && new Date(booking.expiresAt) < now) {
-      // Cancel expired booking
       if (booking.calendlyEventUri) {
         await cancelCalendlyEvent(
           booking.calendlyEventUri,
@@ -152,21 +140,25 @@ export async function cancelExpiredPendingBookings(): Promise<number> {
         );
       }
       booking.status = "cancelled";
+      await put(booking);
       cancelledCount++;
     }
   }
-  
-  if (cancelledCount > 0) {
-    await fs.writeFile(pendingBookingsFile, JSON.stringify(bookings, null, 2), "utf-8");
-  }
-  
+
   return cancelledCount;
 }
 
 export async function getAllPendingBookings(): Promise<PendingBooking[]> {
-  await ensureFile();
-  const raw = await fs.readFile(pendingBookingsFile, "utf-8");
-  const bookings: PendingBooking[] = JSON.parse(raw);
-  return bookings.filter((b) => b.status === "pending");
+  const all = await loadAll();
+  return all.filter((b) => b.status === "pending");
 }
 
+async function loadAll(): Promise<PendingBooking[]> {
+  const redis = getRedis();
+  const ids = await redis.smembers(IDS_KEY);
+  if (!ids.length) return [];
+  const pipeline = redis.pipeline();
+  for (const id of ids) pipeline.get<PendingBooking>(key(id));
+  const results = await pipeline.exec<(PendingBooking | null)[]>();
+  return results.filter(Boolean) as PendingBooking[];
+}

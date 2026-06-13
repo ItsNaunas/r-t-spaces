@@ -1,5 +1,4 @@
-import { promises as fs } from "fs";
-import path from "path";
+import { getRedis } from "./redis";
 
 export type BookingEntry = {
   name: string;
@@ -10,24 +9,17 @@ export type BookingEntry = {
   createdAt: string;
 };
 
-const bookingsFile = path.join(process.cwd(), "data", "bookings.json");
-
-async function ensureFile() {
-  await fs.mkdir(path.dirname(bookingsFile), { recursive: true });
-  try {
-    await fs.access(bookingsFile);
-  } catch {
-    await fs.writeFile(bookingsFile, "[]", "utf-8");
-  }
-}
+const BOOKINGS_KEY = "bookings";
 
 export async function saveBooking(entry: Omit<BookingEntry, "createdAt">): Promise<BookingEntry> {
-  await ensureFile();
-  const raw = await fs.readFile(bookingsFile, "utf-8");
-  const bookings: BookingEntry[] = JSON.parse(raw);
+  const redis = getRedis();
   const newBooking: BookingEntry = { ...entry, createdAt: new Date().toISOString() };
-  bookings.push(newBooking);
-  await fs.writeFile(bookingsFile, JSON.stringify(bookings, null, 2), "utf-8");
+  await redis.rpush(BOOKINGS_KEY, JSON.stringify(newBooking));
   return newBooking;
 }
 
+export async function getAllBookings(): Promise<BookingEntry[]> {
+  const redis = getRedis();
+  const items = await redis.lrange<BookingEntry>(BOOKINGS_KEY, 0, -1);
+  return items ?? [];
+}
