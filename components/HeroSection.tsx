@@ -30,10 +30,9 @@ export function HeroSection() {
           style={{ background: "linear-gradient(160deg, #46264f 0%, #341a40 55%, #281334 100%)" }}
         >
           <div className="mx-auto w-full max-w-xl lg:mx-0">
-            <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-white/75">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-gold)]" />
+            <p className="mb-6 text-xs sm:text-sm uppercase tracking-[0.4em] text-white/70">
               Studio hire · East London
-            </span>
+            </p>
             <h1 className="font-heading font-bold uppercase tracking-tight leading-[0.95] text-5xl sm:text-6xl lg:text-7xl">
               Photography
               <br />

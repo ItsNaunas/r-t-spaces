@@ -74,16 +74,16 @@ export function StudioHeroStats() {
             {/* Left: Title */}
             <div>
               <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--primary)] leading-tight mb-4">
-                Professional Studio Spaces For Every Creative Vision
+                Everything&apos;s already set up
               </h2>
             </div>
             
             {/* Right: Description */}
             <div className="flex flex-col justify-center">
               <p className="text-base sm:text-lg text-[var(--muted-plum)] leading-relaxed">
-                Discover our East London studio spaces, designed for photographers, content creators, and brands. 
-                From seamless white cycloramas to styled lifestyle corners, every space comes fully equipped with 
-                professional lighting, backdrops, and amenities—ready for your next shoot.
+                A bright 5m × 5m space in East London with a white cyclorama, styled corners,
+                professional lighting and backdrops. Built for photographers, content creators
+                and brands. Turn up and shoot.
               </p>
             </div>
           </div>
@@ -852,16 +852,16 @@ export function ContactSection() {
 export function StudioFeaturesSection() {
   const features = [
     {
-      label: "Pro Lighting",
-      detail: "High-end softboxes, continuous LEDs, diffusers, reflectors, strobes and modifiers — all equipment prepped and ready before call time.",
+      label: "Pro lighting",
+      detail: "Softboxes, continuous LEDs, strobes, diffusers and reflectors, all prepped and ready before your call time.",
     },
     {
-      label: "Multiple Backdrops",
-      detail: "Seamless white cyclorama, textured grey walls, curated colour rolls, and lifestyle setups — professionally hung and ready to use.",
+      label: "Backdrops & sets",
+      detail: "A seamless white cyclorama, textured walls, colour paper rolls and styled lifestyle corners, hung and ready to shoot.",
     },
     {
-      label: "Performance Insights",
-      detail: "Visualize your shoot progress with real-time tethering, instant previews, and immediate client feedback loops for better creative decisions.",
+      label: "Shoot-ready extras",
+      detail: "A vanity and changing area, refreshments, and on-site parking after 6pm. Open daily, 8am to 11pm.",
     },
   ];
 
