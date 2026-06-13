@@ -4,8 +4,8 @@
   /* ========== BRAND COLOUR SYSTEM (LIGHT MODE) ========== */
 
   /* Backgrounds & Base */
-  --background: oklch(0.94 0.025 312);                    /* soft purple background */
-  --hero-background: oklch(0.87 0.035 312);                /* darker purple for hero */
+  --background: oklch(0.97 0.015 85);                     /* warm cream */
+  --hero-background: oklch(0.95 0.02 85);                  /* warm cream (deeper) */
   --foreground: oklch(0.32 0.08 309);           /* deep plum */
 
   /* Cards */
@@ -20,17 +20,22 @@
   --primary: oklch(0.32 0.08 309);              /* deep plum */
   --primary-foreground: oklch(1 0 0);           /* white */
 
-  /* Secondary Brand Colour */
-  --secondary: oklch(0.75 0.06 315);            /* lavender */
+  /* Secondary Brand Colour (warm neutrals replace lavender) */
+  --secondary: oklch(0.86 0.025 80);            /* sand */
   --secondary-foreground: oklch(0.32 0.08 309);
 
   /* Muted / Subtle UI */
-  --muted: oklch(0.77 0.04 315);
-  --muted-foreground: oklch(0.50 0.05 313);
-  
+  --muted: oklch(0.88 0.02 80);
+  --muted-foreground: oklch(0.45 0.02 70);
+
   /* Explicit color variables for hierarchy */
-  --muted-plum: oklch(0.50 0.05 313);           /* muted plum for paragraph text */
-  --lavender: oklch(0.75 0.06 315);             /* lavender for borders/separators only */
+  --muted-plum: oklch(0.42 0.02 70);            /* warm charcoal for paragraph text */
+  --lavender: oklch(0.86 0.025 80);             /* sand for borders/separators (was lavender) */
+
+  /* Warm neutrals */
+  --cream: oklch(0.97 0.015 85);
+  --sand: oklch(0.86 0.025 80);
+  --charcoal: oklch(0.26 0.015 60);
 
   /* Accent Gold (muted luxury) */
   --accent-gold: oklch(0.68 0.07 70);           /* decorative gold: fills, borders, stars, gold-on-dark */
@@ -42,9 +47,9 @@
   --destructive-foreground: oklch(1 0 0);
 
   /* Borders & Input */
-  --border: oklch(0.87 0.03 315);
-  --input: oklch(0.93 0.01 315);
-  --ring: oklch(0.75 0.06 315);                 /* lavender outline */
+  --border: oklch(0.88 0.02 80);
+  --input: oklch(0.95 0.012 80);
+  --ring: oklch(0.32 0.08 309);                 /* plum outline */
 
   /* Charts (muted + brand-consistent) */
   --chart-1: oklch(0.68 0.07 70);               /* very muted sophisticated gold */
@@ -64,10 +69,10 @@
   --sidebar-ring: oklch(0.75 0.06 315);
 
   /* Typography */
-  --font-sans: 'Glacial Indifference', ui-sans-serif, sans-serif;
-  --font-serif: 'Playfair Display', ui-serif, serif;
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-serif: ui-sans-serif, system-ui, sans-serif;
   --font-script: 'New Icon Script', cursive;
-  --font-mono: 'Glacial Indifference', ui-sans-serif, sans-serif;
+  --font-mono: ui-monospace, monospace;
 
   /* Radius */
   --radius: 0.625rem;
@@ -99,7 +104,7 @@
   /* ========== BACKWARD COMPATIBILITY MAPPINGS ========== */
   /* Map old variables to new system to prevent breaking existing components */
   /* Note: --accent is kept for headings (deep plum), use --muted-plum for paragraph text */
-  --base: oklch(0.94 0.025 312);                         /* soft purple background */
+  --base: var(--background);                             /* warm cream */
   --accent: var(--foreground);                  /* deep plum - for headings only */
   --plum: var(--primary);                       /* deep plum */
   --gold: var(--accent-gold);                   /* very muted sophisticated gold */
@@ -200,13 +205,7 @@ html {
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(
-    180deg,
-    var(--hero-background) 0%,
-    var(--hero-background) 20%,
-    var(--background) 100%
-  );
-  background-attachment: fixed;
+  background: var(--background);
   color: var(--ink);
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
@@ -523,7 +522,7 @@ button:active,
 }
 
 .font-heading {
-  font-family: var(--font-heading), "Playfair Display", serif;
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
 }
 
 .font-script {
