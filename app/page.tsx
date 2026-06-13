@@ -6,7 +6,6 @@ import {
   SiteFooter,
   StudioFeaturesSection,
   StudioHeroStats,
-  TestimonialSection,
 } from "@/components/StudioSections";
 import { HeroSection } from "@/components/HeroSection";
 
@@ -18,7 +17,7 @@ export default function Home() {
         <StudioHeroStats />
         <StudioFeaturesSection />
         <HowItWorksSection />
-        <TestimonialSection />
+        {/* TestimonialSection removed until real client reviews replace the placeholder/stock ones */}
         <AboutUsSection />
         <ContactSection />
         <EmailSubscriptionSection />

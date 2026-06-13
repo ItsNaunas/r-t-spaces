@@ -92,16 +92,15 @@ export function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-start">
           {/* Left Column - Main Heading */}
           <div className="text-left">
-            <h1 
-              className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 md:mb-8 text-[var(--primary)]"
+            <p className="text-xs sm:text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)] mb-4">
+              RT Spaces · East London
+            </p>
+            <h1
+              className="font-heading text-4xl sm:text-5xl lg:text-6xl leading-[1.05] mb-6 md:mb-8 text-[var(--primary)]"
             >
-              THE STUDIO SPACE
-              <br className="hidden sm:block" />
-              WHERE CREATIVITY MEETS
-              <br className="hidden sm:block" />
-              PROFESSIONAL EXCELLENCE
+              Photography studio hire, made simple
             </h1>
-            
+
             {/* Social Proof - Star Rating */}
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-0.5">
@@ -111,7 +110,7 @@ export function HeroSection() {
                   </svg>
                 ))}
               </div>
-              <span 
+              <span
                 className="text-sm md:text-base font-light text-[var(--primary)]"
               >
                 4.9/5 from 200+ creators
@@ -122,12 +121,12 @@ export function HeroSection() {
           {/* Right Column - Description and CTAs */}
           <div className="flex flex-col justify-start">
             {/* Description */}
-            <p 
+            <p
               className="text-base md:text-lg lg:text-xl mb-8 md:mb-10 lg:mb-12 leading-relaxed font-light text-left text-[var(--primary)]"
             >
-              Our 5m × 5m studio delivers world-class environments designed for creators who demand excellence. 
-              Our approach combines cutting-edge equipment, versatile spaces, and unparalleled service to transform 
-              your creative concepts into compelling visual stories.
+              A 5m × 5m studio with professional lighting, backdrops and equipment
+              included. Hire by the hour from <span className="font-medium text-[var(--gold-text)]">£55</span>,
+              or book a full session package. Open daily in Manor Park, E12.
             </p>
 
             {/* CTA Buttons */}
@@ -240,7 +239,7 @@ export function HeroSection() {
                       pointerEvents: isVisible ? 'auto' : 'none',
                     }}
                   >
-                    <div className="relative w-full h-full bg-white shadow-2xl overflow-hidden border-8 transition-opacity duration-1000 ease-in-out" style={{ borderColor: 'white' }}>
+                    <div className="relative w-full h-full bg-white shadow-2xl overflow-hidden border-2 transition-opacity duration-1000 ease-in-out" style={{ borderColor: 'white' }}>
                       <Image
                         src={image.src}
                         alt={image.alt}

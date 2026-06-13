@@ -579,7 +579,7 @@ export function BookingWizard({
                     }`}
                   >
                     {pkg.popular && (
-                      <span className="absolute -top-2.5 left-4 bg-[var(--accent-gold)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+                      <span className="absolute -top-2.5 left-4 bg-[var(--accent-gold)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--primary)]">
                         Most popular
                       </span>
                     )}
@@ -937,7 +937,7 @@ function OfferCard({
     >
       <div className="flex items-center justify-between gap-3">
         <p className="font-heading text-lg font-semibold text-[var(--primary)]">{title}</p>
-        <span className="shrink-0 text-sm font-semibold text-[var(--accent-gold)]">{price}</span>
+        <span className="shrink-0 text-sm font-semibold text-[var(--gold-text)]">{price}</span>
       </div>
       <p className="mt-1 text-sm text-[var(--muted-plum)]">{blurb}</p>
       <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">

@@ -95,7 +95,7 @@ export function StudioHeroStats() {
                 key={index} 
                 className="text-center border-t-2 border-[var(--lavender)] pt-4"
               >
-                <p className="font-heading text-3xl sm:text-4xl font-bold text-[var(--accent-gold)] mb-1">
+                <p className="font-heading text-3xl sm:text-4xl font-bold text-[var(--gold-text)] mb-1">
                   {stat.value}
                 </p>
                 <p className="text-xs sm:text-sm uppercase tracking-wider text-[var(--muted-plum)] font-medium">
@@ -113,7 +113,7 @@ export function StudioHeroStats() {
         <div className="group relative aspect-[16/9] lg:aspect-[21/9] cursor-pointer">
           <div className="relative w-full h-full">
             {/* Photo Frame Effect - Purple frame */}
-            <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-8" style={{ borderColor: 'var(--primary)' }}>
+            <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-2" style={{ borderColor: 'var(--primary)' }}>
               {rotatingImages.map((src, index) => (
                 <div
                   key={src}
@@ -272,7 +272,7 @@ export function HowItWorksSection() {
           <p className="text-sm font-medium uppercase tracking-wider text-white/80 mb-6">
             HOW IT WORKS
           </p>
-          <h2 className="font-heading text-5xl font-bold text-white sm:text-6xl md:text-7xl">
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-white">
             Book your studio space in three simple steps
           </h2>
         </div>
@@ -303,7 +303,7 @@ export function HowItWorksSection() {
                   {/* Text Content - Left for even steps, Right for odd steps */}
                   <div className={`space-y-6 ${isEven ? 'md:order-1' : 'md:order-2'}`}>
                     <div className="space-y-4">
-                      <h3 className="font-heading text-5xl sm:text-6xl lg:text-7xl text-[var(--primary)] leading-tight">
+                      <h3 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--primary)] leading-tight">
                         {step.title}
                       </h3>
                       <p className="text-lg sm:text-xl text-[var(--muted-plum)] leading-relaxed max-w-xl">
@@ -315,7 +315,7 @@ export function HowItWorksSection() {
                   {/* Image Content - Right for even steps, Left for odd steps */}
                   <div className={`relative ${isEven ? 'md:order-2' : 'md:order-1'}`}>
                     {/* Photo Frame Effect - White frame */}
-                    <div className="relative w-full bg-white shadow-2xl overflow-hidden border-8" style={{ borderColor: 'white' }}>
+                    <div className="relative w-full bg-white shadow-2xl overflow-hidden border-2" style={{ borderColor: 'white' }}>
                       <div className="relative aspect-[16/10] overflow-hidden group">
                         <Image
                           src={step.image}
@@ -664,7 +664,7 @@ export function AboutUsSection() {
           <div className="relative group">
             <div className="relative aspect-[4/3]">
               {/* Photo Frame Effect - Purple frame matching other sections */}
-              <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-8 transition-transform duration-500 group-hover:scale-[1.02]" style={{ borderColor: 'var(--primary)' }}>
+              <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-2 transition-transform duration-500 group-hover:scale-[1.02]" style={{ borderColor: 'var(--primary)' }}>
                 <Image
                   src="/assets/studios/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg"
                   alt="RT Spaces studio - creative workspace"
@@ -739,7 +739,7 @@ export function ContactSection() {
           <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)] mb-4">
             Contact
           </p>
-          <h2 className="font-heading text-5xl sm:text-6xl lg:text-7xl text-[var(--primary)] leading-tight mb-6">
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[var(--primary)] leading-tight mb-6">
             Get In Touch
           </h2>
           <p className="text-lg sm:text-xl text-[var(--muted-plum)] leading-relaxed max-w-3xl">
@@ -805,7 +805,7 @@ export function ContactSection() {
                       <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)] mb-1.5">
                         {detail.label}
                       </p>
-                      <p className="text-base sm:text-lg font-medium text-[var(--primary)] group-hover:text-[var(--accent-gold)] transition-colors normal-case break-words">
+                      <p className="text-base sm:text-lg font-medium text-[var(--primary)] group-hover:text-[var(--gold-text)] transition-colors normal-case break-words">
                         {detail.value}
                       </p>
                     </div>
@@ -892,7 +892,7 @@ export function ContactSection() {
                 href="https://maps.app.goo.gl/eWBKrpy5enGPKmEG7"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-medium text-[var(--primary)] hover:text-[var(--accent-gold)] transition-colors group"
+                className="inline-flex items-center gap-2 text-sm font-medium text-[var(--primary)] hover:text-[var(--gold-text)] transition-colors group"
               >
                 Open in Google Maps
                 <svg 
@@ -938,7 +938,7 @@ export function StudioFeaturesSection() {
           <p className="text-sm uppercase tracking-wider mb-3 text-[var(--muted-plum)]">
             • Everything You Need
           </p>
-          <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
             <span className="text-[var(--primary)]">What&apos;s Included in Your </span>
             <span className="font-heading text-[var(--primary)]">Session</span>
           </h2>
@@ -952,7 +952,7 @@ export function StudioFeaturesSection() {
               className="relative aspect-[4/3] "
             >
               {/* Photo Frame Effect - Purple frame */}
-              <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-8" style={{ borderColor: 'var(--primary)' }}>
+              <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-2" style={{ borderColor: 'var(--primary)' }}>
                 <Image
                   src="/assets/equipment/13bad677-2b14-47e9-9797-3bd7cd6b030a.jpg"
                   alt="Professional studio setup with lighting equipment"
@@ -1049,7 +1049,7 @@ export function EmailSubscriptionSection() {
       
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-4xl text-center">
-        <h2 className="text-5xl font-normal text-[var(--primary)] sm:text-6xl md:text-7xl mb-8">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-normal text-[var(--primary)] mb-8">
           Join the <span className="font-heading">R&amp;T</span> Creator Circle
         </h2>
         <p className="text-xl text-[var(--primary)] mb-16 leading-relaxed max-w-2xl mx-auto">

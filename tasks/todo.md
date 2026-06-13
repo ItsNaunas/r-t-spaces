@@ -47,19 +47,23 @@ goal. Reordered to **visible-first → approval → harden → launch**. SEO/per
 
 ---
 
-## 🔲 Sprint A — "Make it look evolved" (client-visible; ship a preview) ← NEXT
-Goal: a Vercel preview URL worth sending. CSS/markup-heavy, low logic risk.
-- [ ] **Token foundation** (`app/globals.css`): remove the dead `--accent` gold line (l.37/138 — it's
-  silently overridden to plum by l.103/167); **split gold into two tokens** — `--gold` (decorative,
-  current light gold, for dark backgrounds/fills/borders/stars) + `--gold-text` (darker, ≥4.5:1 on
-  white). Reassign gold-as-text-on-light to `--gold-text`: `BookingWizard:940` price, the
-  `BookingWizard:582` white-on-gold badge (failing ~2:1), `StudioSections:808/895` hover links.
-  Leave decorative gold-on-dark alone (hero "next", star ratings, stat numbers — those are fine).
-- [ ] Stop using lavender/muted-plum as text on the hero-purple background.
-- [ ] Real **type scale** — kill routine `text-7xl` (14 uses); H1 > H2 > item hierarchy.
-- [ ] **Lighter photo frames** — drop `border-8` (8 uses); limit heavy frames to hero + gallery.
-- [ ] **Homepage hero** rebuild to pass the 5-second test (what / where / price); cut the duplicate
-  second hero + the stock-photo testimonials.
+## 🔲 Sprint A — "Make it look evolved" (client-visible; ship a preview) ← IN PROGRESS
+Goal: a Vercel preview URL worth sending. CSS/markup-heavy, low logic risk. (Build verified clean.)
+- [x] **Token foundation** (`app/globals.css`): removed the dead `--accent` gold line (now resolves to
+  plum cleanly); **split gold into two tokens** — `--accent-gold` (decorative) + `--gold-text`
+  (oklch 0.50, passes WCAG AA on white). Reassigned gold-as-text-on-light to `--gold-text`:
+  `BookingWizard` price + the white-on-gold "Most popular" badge (now plum-on-gold ~5:1),
+  `StudioSections` stat numbers + the two hover links. Decorative gold-on-dark left alone.
+- [x] **Lighter photo frames** — `border-8` → `border-2` on homepage (HeroSection carousel + StudioSections).
+- [x] **Homepage hero** rebuilt to pass the 5-second test: eyebrow "RT Spaces · East London", concrete
+  H1 "Photography studio hire, made simple", subhead with what/price/place (5m×5m, from £55, Manor Park E12).
+- [x] **Type scale (homepage)** — homepage section H2/H3s brought to `text-3xl→md:text-5xl`; hero H1
+  bumped to `lg:text-6xl` so it's the largest (was inverted: sections were bigger than the title).
+- [x] **Cut the stock-photo testimonials** — removed `TestimonialSection` from the homepage (9 fake
+  quotes w/ Unsplash faces); component kept for when real client reviews land.
+- [ ] Cascade the type scale to other pages (studio/faq/services/equipment/blog/gallery still `lg:text-7xl`).
+- [ ] Stop using lavender/muted-plum as text on the hero-purple background (verify on preview).
+- [ ] Check for / cut the "duplicate second hero" the review flagged (identify visually on preview).
 - [ ] Component primitives: `.card`, `.input`, `.badge`, `.btn-on-dark`; default style for `BookNowButton`
   (className/markup only — DO NOT touch its click handler or the BookingProvider/checkout fetch).
 
