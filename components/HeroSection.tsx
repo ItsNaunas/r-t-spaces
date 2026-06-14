@@ -26,22 +26,22 @@ export function HeroSection() {
             {/* LEFT — eyebrow + dominant headline */}
             <div>
               <p className="mb-5 text-xs sm:text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-                Studio hire · East London
+                Photography studio hire · East London
               </p>
               <h1 className="font-heading font-bold uppercase tracking-tight leading-[0.92] text-4xl text-[var(--primary)] sm:text-6xl lg:text-7xl">
-                Photography
+                Your studio,
                 <br />
-                studio hire
+                ready to shoot
               </h1>
             </div>
 
             {/* RIGHT — copy, trust indicators, CTAs */}
             <div>
               <p className="max-w-md text-base sm:text-lg text-[var(--muted-plum)] leading-relaxed">
-                A fully-equipped 5m × 5m studio with lighting, backdrops and kit
-                included. Hire it by the hour from{" "}
-                <span className="font-semibold text-[var(--primary)]">£55</span>, or book a
-                session shot for you. Manor Park, E12.
+                A 5m × 5m studio with the lighting, backdrops and kit already set up.
+                Hire by the hour from{" "}
+                <span className="font-semibold text-[var(--primary)]">£55</span>, or have us
+                shoot it for you.
               </p>
 
               {/* Trust indicators: rating · customers · availability */}
