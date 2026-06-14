@@ -5,23 +5,23 @@ import { BookNowButton } from "@/components/booking/BookNowButton";
 
 export function HeroSection() {
   return (
-    <section className="bg-[var(--background)] px-4 pt-6 pb-6 sm:px-6 lg:px-8">
-      {/* Single card: image on top, content band attached below */}
-      <div className="mx-auto max-w-[1600px]">
-        {/* SECTION 1 — large image, top corners rounded only */}
-        <div className="relative h-[42vh] w-full overflow-hidden rounded-t-3xl sm:h-[52vh] lg:h-[62vh]">
-          <Image
-            src="/assets/hero/studio-hero.jpg"
-            alt="The RT Spaces photography studio"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-        </div>
+    <section className="-mt-[73px] w-full">
+      {/* SECTION 1 — full-bleed image, runs up behind the transparent nav */}
+      <div className="relative h-[64vh] min-h-[480px] w-full sm:h-[72vh]">
+        <Image
+          src="/assets/hero/studio-hero.jpg"
+          alt="The RT Spaces photography studio"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
 
-        {/* SECTION 2 — dark band, attached, bottom corners rounded only */}
-        <div className="rounded-b-3xl bg-[var(--primary)] px-6 py-12 text-white sm:px-10 lg:px-16 lg:py-16">
+      {/* SECTION 2 — plum band, rounded top rises into the image (soft seam),
+          straight bottom edge ends the hero */}
+      <div className="relative z-10 -mt-8 rounded-t-[2.5rem] bg-[var(--primary)] px-6 py-12 text-white sm:px-10 lg:-mt-12 lg:px-16 lg:py-16">
+        <div className="mx-auto max-w-[1600px]">
           <div className="grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-16">
             {/* LEFT — eyebrow + dominant headline */}
             <div>
