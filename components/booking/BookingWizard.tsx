@@ -572,14 +572,14 @@ export function BookingWizard({
                     key={pkg.id}
                     type="button"
                     onClick={() => setSelectedPackage(pkg)}
-                    className={`relative w-full border-2 p-4 text-left transition-all ${
+                    className={`relative w-full rounded-xl border-2 p-4 text-left transition-all ${
                       isSelected
                         ? "border-[var(--primary)] bg-[var(--primary)]/5 ring-2 ring-[var(--primary)]"
                         : "border-[var(--lavender)] bg-white hover:border-[var(--primary)]/60"
                     }`}
                   >
                     {pkg.popular && (
-                      <span className="absolute -top-2.5 left-4 bg-[var(--accent-gold)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--primary)]">
+                      <span className="absolute -top-2.5 left-4 text-[10px] font-semibold uppercase tracking-wider text-[var(--gold-text)]">
                         Most popular
                       </span>
                     )}
@@ -610,7 +610,7 @@ export function BookingWizard({
 
             {/* Optional extras */}
             {selectedPackage && (
-              <div className="border-2 border-[var(--lavender)] bg-white">
+              <div className="rounded-2xl border-2 border-[var(--lavender)] bg-white">
                 <button
                   type="button"
                   onClick={() => setShowAddons((v) => !v)}
@@ -698,11 +698,11 @@ export function BookingWizard({
               Choose an available slot. Open daily 8 AM – 11 PM.
             </p>
             {calendlyUrl ? (
-              <div className="border-2 border-[var(--lavender)] bg-white">
+              <div className="rounded-2xl border-2 border-[var(--lavender)] bg-white">
                 <CalendlyWidget url={calendlyUrl} onEventScheduled={handleCalendlyEvent} />
               </div>
             ) : (
-              <div className="border-2 border-[var(--lavender)] bg-white p-6 text-sm text-[var(--muted-plum)]">
+              <div className="rounded-2xl border-2 border-[var(--lavender)] bg-white p-6 text-sm text-[var(--muted-plum)]">
                 Online scheduling is being set up. Please email{" "}
                 <a className="underline" href="mailto:enquires@rtspaces.co.uk">
                   enquires@rtspaces.co.uk
@@ -796,13 +796,13 @@ export function BookingWizard({
                   value={discountInput}
                   onChange={(e) => setDiscountInput(e.target.value.toUpperCase())}
                   placeholder="Discount code"
-                  className="flex-1 border border-[var(--lavender)] bg-white px-3 py-2 text-sm text-[var(--primary)] outline-none focus:border-[var(--primary)]"
+                  className="flex-1 rounded-xl border border-[var(--lavender)] bg-white px-3 py-2 text-sm text-[var(--primary)] outline-none focus:border-[var(--primary)]"
                 />
                 <button
                   type="button"
                   onClick={handleApplyDiscount}
                   disabled={discountLoading || !discountInput.trim()}
-                  className="bg-[var(--primary)] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                  className="rounded-full bg-[var(--primary)] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
                 >
                   {discountLoading ? "…" : "Apply"}
                 </button>

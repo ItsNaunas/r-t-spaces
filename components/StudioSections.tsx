@@ -393,7 +393,7 @@ export function TestimonialSection() {
               From portrait sessions to brand launches, our community of photographers and creators share their experiences working in our East London studio.
             </p>
             <BookNowButton
-              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center w-full shadow-lg hover:shadow-xl"
+              className="rounded-full border border-white bg-transparent text-white hover:bg-white hover:text-[var(--primary)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm w-full"
             >
               Reserve Your Studio Session
             </BookNowButton>
@@ -492,7 +492,7 @@ export function TestimonialSection() {
           {/* Mobile CTA Button - Shown only on mobile */}
           <div className="lg:hidden mt-8 text-center">
             <BookNowButton
-              className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center shadow-lg hover:shadow-xl"
+              className="rounded-full border border-white bg-transparent text-white hover:bg-white hover:text-[var(--primary)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm"
             >
               Reserve Your Studio Session
             </BookNowButton>
@@ -973,7 +973,7 @@ export function EmailSubscriptionSection() {
               }}
               required
               disabled={isSubmitting}
-              className={`w-full border border-white/30 bg-white/95 backdrop-blur-sm px-6 py-5 text-lg text-[var(--primary)] placeholder:text-[var(--primary)]/70 transition-colors focus:outline-none focus:border-white focus:bg-white ${
+              className={`w-full rounded-xl border border-white/30 bg-white/95 backdrop-blur-sm px-6 py-5 text-lg text-[var(--primary)] placeholder:text-[var(--primary)]/70 transition-colors focus:outline-none focus:border-white focus:bg-white ${
                 status === "error"
                   ? "border-red-500 focus:border-red-500"
                   : status === "success"
@@ -998,7 +998,7 @@ export function EmailSubscriptionSection() {
           </button>
         </form>
         {status === "success" && (
-          <div className="mt-8 p-6 border border-white/30 bg-white/95 backdrop-blur-sm">
+          <div className="mt-8 rounded-xl p-6 border border-white/30 bg-white/95 backdrop-blur-sm">
             <p className="text-lg text-[var(--primary)]">Thank you for joining. Welcome to the circle.</p>
           </div>
         )}

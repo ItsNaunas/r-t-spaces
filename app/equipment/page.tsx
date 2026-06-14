@@ -123,7 +123,7 @@ function EquipmentTabs() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Tab Navigation */}
         <div className="mb-10 md:mb-14">
-          <div className="border-b-2 border-[var(--lavender)]">
+          <div className="border-b-2 border-[var(--border)]">
             <div className="flex flex-wrap justify-center gap-2 md:gap-4">
               {equipmentCategories.map((category, index) => (
                 <button
@@ -169,7 +169,7 @@ function EquipmentTabs() {
                 {category.items.map((item, itemIndex) => (
                   <article
                     key={item.name}
-                    className="group bg-white border border-[var(--lavender)] hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg overflow-hidden"
+                    className="group bg-white rounded-2xl border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg overflow-hidden"
                   >
                     {/* Image Container */}
                     <div className="relative aspect-[4/3] overflow-hidden bg-[var(--background)]">
@@ -275,7 +275,7 @@ export default function EquipmentPage() {
               </BookNowButton>
               <Link 
                 href="#main-content"
-                className="group inline-flex items-center justify-center border border-white bg-white px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-medium text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:text-[var(--primary)] hover:scale-[1.02] hover:shadow-lg"
+                className="group rounded-full border border-white bg-transparent text-white hover:bg-white hover:text-[var(--primary)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm"
               >
                 <span className="flex items-center gap-2">
                   View Equipment
@@ -362,8 +362,8 @@ export default function EquipmentPage() {
                     Book Now
                   </BookNowButton>
                   <Link 
-                    href="/#contact" 
-                    className="group inline-flex items-center justify-center border border-white bg-white px-6 py-3.5 sm:px-8 sm:py-4 text-sm sm:text-base font-medium text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:text-[var(--primary)] hover:scale-[1.02] hover:shadow-lg"
+                    href="/#contact"
+                    className="group rounded-full border border-white bg-transparent text-white hover:bg-white hover:text-[var(--primary)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm"
                   >
                     Ask About Equipment
                   </Link>

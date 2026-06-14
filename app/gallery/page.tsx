@@ -72,7 +72,7 @@ export default function GalleryPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           {/* Tab Navigation */}
           <div className="mb-10 md:mb-14">
-            <div className="border-b-2 border-[var(--lavender)]">
+            <div className="border-b-2 border-[var(--border)]">
               <div className="flex flex-wrap justify-center gap-2 md:gap-4">
                 {categoryFilters.map((filter) => (
                   <button
@@ -148,7 +148,7 @@ export default function GalleryPage() {
                               aria-label={`View ${item.focus} by ${item.artist}`}
                             >
                               {/* Purple frame */}
-                              <div className="relative w-full h-full bg-white shadow-2xl overflow-hidden border-8" style={{ borderColor: 'var(--primary)' }}>
+                              <div className="relative w-full h-full bg-white shadow-2xl overflow-hidden rounded-2xl border-2" style={{ borderColor: 'var(--primary)' }}>
                                 <div className="relative aspect-[4/3] overflow-hidden">
                                   <Image
                                     src={item.src}
