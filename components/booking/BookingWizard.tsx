@@ -857,16 +857,34 @@ export function BookingWizard({
         )}
       </div>
 
-      {/* Sticky footer */}
+      {/* Sticky footer — hidden on the offer step, where the cards auto-advance */}
+      {step !== "offer" && (
       <div className="shrink-0 border-t border-[var(--lavender)] bg-white px-5 py-4">
         {footerPrice && (
-          <div className="mb-3 flex items-baseline justify-between">
-            <span className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)]">
-              {displayDeposit != null ? "Deposit due now" : "Total"}
-            </span>
-            <span className="font-heading text-xl font-semibold text-[var(--primary)]">
-              {displayDeposit != null ? `£${displayDeposit.toFixed(2)}` : footerPrice}
-            </span>
+          <div className="mb-3 space-y-1">
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="truncate text-sm text-[var(--muted-plum)]">
+                {selectedPackage?.title ?? "Studio booking"}
+              </span>
+              {displayPrice != null && (
+                <span className="shrink-0 text-sm text-[var(--muted-plum)]">
+                  Total £{displayPrice.toFixed(2)}
+                </span>
+              )}
+            </div>
+            <div className="flex items-baseline justify-between">
+              <span className="text-xs uppercase tracking-[0.3em] text-[var(--muted-plum)]">
+                {displayDeposit != null ? "Deposit due now" : "From"}
+              </span>
+              <span className="font-heading text-xl font-semibold text-[var(--primary)]">
+                {displayDeposit != null ? `£${displayDeposit.toFixed(2)}` : footerPrice}
+              </span>
+            </div>
+            {paymentMode === "pay" && (
+              <p className="text-[11px] leading-snug text-[var(--muted-plum)]">
+                Pay just the deposit now. Balance before your session · deposit non-refundable.
+              </p>
+            )}
           </div>
         )}
         <div className="flex gap-3">
@@ -917,6 +935,7 @@ export function BookingWizard({
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }
