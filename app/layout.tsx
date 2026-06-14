@@ -34,6 +34,7 @@ const newIconScript = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.rtspaces.co.uk"),
   title: "RT Spaces — Photography Studio Hire East London",
   description:
     "RT Spaces offers daylight-ready studio hire, creative sessions, and photobooth packages in East London from 8 AM to 11 PM daily.",
