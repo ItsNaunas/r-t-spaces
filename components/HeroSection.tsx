@@ -57,7 +57,7 @@ export function HeroSection() {
               <BookNowButton
                 offer="hire"
                 ariaLabel="Hire the studio"
-                className="group inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:scale-[1.02] hover:shadow-xl sm:px-8 sm:py-4 sm:text-base"
+                className="group inline-flex items-center justify-center bg-white px-6 py-3.5 text-sm font-semibold text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:scale-[1.02] hover:shadow-xl sm:px-8 sm:py-4 sm:text-base"
               >
                 <span className="flex items-center gap-2">
                   Hire the studio
@@ -69,7 +69,7 @@ export function HeroSection() {
               <BookNowButton
                 offer="session"
                 ariaLabel="Book a session"
-                className="inline-flex items-center justify-center rounded-xl border border-white/80 bg-transparent px-6 py-3.5 text-sm font-medium text-white transition-all duration-300 hover:bg-white hover:text-[var(--primary)] sm:px-8 sm:py-4 sm:text-base"
+                className="inline-flex items-center justify-center border border-white/80 bg-transparent px-6 py-3.5 text-sm font-medium text-white transition-all duration-300 hover:bg-white hover:text-[var(--primary)] sm:px-8 sm:py-4 sm:text-base"
               >
                 Book a session
               </BookNowButton>
