@@ -1,6 +1,7 @@
 import { SiteFooter } from "@/components/StudioSections";
 import { BookingWizard } from "@/components/booking/BookingWizard";
 import { BookingSuccessMessage } from "@/components/BookingSuccessMessage";
+import { GradientBars } from "@/components/ui/gradient-bars";
 
 const bookingPolicies = [
   {
@@ -54,36 +55,46 @@ export default function BookOnlinePage({
 }) {
   return (
     <div className="bg-[var(--base)]">
+      {/* Hero band */}
+      <section
+        className="relative overflow-hidden pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20"
+        style={{ backgroundColor: "var(--hero-background)" }}
+      >
+        <GradientBars colors={["var(--primary)", "transparent"]} />
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="mb-4 text-sm uppercase tracking-[0.4em] text-[var(--primary)]/80">
+              Book Online
+            </p>
+            <h1 className="font-heading text-4xl leading-tight text-[var(--primary)] sm:text-5xl lg:text-6xl">
+              Reserve your studio time
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg text-[var(--primary)]/90">
+              Choose your option, pick a time, and pay your deposit in a few taps.
+              We&apos;ll confirm everything by email.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         {/* Success Message */}
         {searchParams?.success === "true" && (
           <BookingSuccessMessage />
         )}
-        
+
         {/* Cancel Message */}
         {searchParams?.cancelled === "true" && (
-          <div className="border border-yellow-500/20 bg-yellow-500/10 p-6 text-yellow-600 rounded-lg">
+          <div className="rounded-2xl border border-[var(--primary)]/20 bg-[var(--primary)]/5 p-6 text-[var(--primary)]">
             <p className="font-semibold">Booking Cancelled</p>
             <p className="text-sm mt-2">
               Your booking was not completed. You can try again or contact us directly.
             </p>
           </div>
         )}
-        <section className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-            Book Online
-          </p>
-          <h1 className="font-heading text-4xl text-[var(--primary)] sm:text-5xl lg:text-6xl">
-            Reserve Your Studio Time
-          </h1>
-          <p className="max-w-3xl text-lg text-[var(--muted-plum)]">
-            Choose your option, pick a time, and pay your deposit in a few taps.
-            We&apos;ll confirm everything by email.
-          </p>
-        </section>
 
         {/* Availability Section */}
-        <section className="border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-6 lg:p-8 rounded-lg">
+        <section className="border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-6 lg:p-8 rounded-2xl">
           <h2 className="font-heading text-2xl text-[var(--primary)] mb-4">
             {availabilityInfo.title}
           </h2>
@@ -129,13 +140,13 @@ export default function BookOnlinePage({
 
         {/* Booking Wizard */}
         <section className="space-y-8">
-          <div className="h-[80vh] min-h-[640px] overflow-hidden border-2 border-[var(--primary)]/30 bg-white shadow-lg">
+          <div className="h-[80vh] min-h-[640px] overflow-hidden rounded-2xl border-2 border-[var(--primary)]/30 bg-white shadow-lg">
             <BookingWizard />
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
             {/* Quick Contact */}
-            <div className="border border-[var(--accent)]/20 p-6 space-y-4 rounded-lg">
+            <div className="border border-[var(--accent)]/20 p-6 space-y-4 rounded-2xl">
               <h3 className="font-heading text-xl text-[var(--primary)]">
                 Need Immediate Assistance?
               </h3>
@@ -179,7 +190,7 @@ export default function BookOnlinePage({
             </div>
 
             {/* Studio Hours */}
-            <div className="border border-[var(--accent)]/20 p-6 rounded-lg">
+            <div className="border border-[var(--accent)]/20 p-6 rounded-2xl">
               <h3 className="font-heading text-xl text-[var(--primary)] mb-4">
                 Studio Hours
               </h3>
@@ -210,7 +221,7 @@ export default function BookOnlinePage({
             {bookingPolicies.map((policy) => (
               <article
                 key={policy.title}
-                className="border border-[var(--accent)]/20 p-6 space-y-3 rounded-lg"
+                className="border border-[var(--accent)]/20 p-6 space-y-3 rounded-2xl"
               >
                 <h3 className="font-heading text-xl text-[var(--primary)]">
                   {policy.title}
