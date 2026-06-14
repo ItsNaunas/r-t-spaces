@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { track } from "@vercel/analytics";
 import Link from "next/link";
 import { CalendlyWidget } from "@/components/CalendlyWidget";
 import {
@@ -387,6 +388,7 @@ export function BookingWizard({
           calendlyInviteeUri: inviteeUri,
         }));
         setCalendlyTimeSelected(true);
+        track("booking_time");
       } catch (error) {
         console.error("Error fetching Calendly event details:", error);
         setFormData((prev) => ({
@@ -397,6 +399,7 @@ export function BookingWizard({
         setMessage("Time selected, but some details could not be loaded. Please add your name and email.");
         setStatus("error");
         setCalendlyTimeSelected(true);
+        track("booking_time");
       }
     } catch (err) {
       console.error("Error handling Calendly event:", err);
@@ -420,6 +423,7 @@ export function BookingWizard({
 
     try {
       if (paymentMode === "pay") {
+        track("booking_checkout_started", { package: selectedPackage?.id ?? "" });
         const notesWithAddons = requestPrintsAlbums
           ? (formData.notes || "").trim() + (formData.notes ? "\n\n" : "") + "Prints & albums requested."
           : formData.notes;
@@ -551,6 +555,7 @@ export function BookingWizard({
                 price="From £55/hr"
                 active={offer === "hire"}
                 onClick={() => {
+                  track("booking_offer", { offer: "hire" });
                   setOffer("hire");
                   setSelectedPackage(null);
                   goNext();
@@ -562,6 +567,7 @@ export function BookingWizard({
                 price="From £110"
                 active={offer === "session"}
                 onClick={() => {
+                  track("booking_offer", { offer: "session" });
                   setOffer("session");
                   setSelectedPackage(null);
                   goNext();
@@ -590,7 +596,10 @@ export function BookingWizard({
                   <button
                     key={pkg.id}
                     type="button"
-                    onClick={() => setSelectedPackage(pkg)}
+                    onClick={() => {
+                      track("booking_option", { package: pkg.id });
+                      setSelectedPackage(pkg);
+                    }}
                     className={`relative w-full rounded-xl border-2 p-4 text-left transition-all ${
                       isSelected
                         ? "border-[var(--primary)] bg-[var(--primary)]/5 ring-2 ring-[var(--primary)]"
