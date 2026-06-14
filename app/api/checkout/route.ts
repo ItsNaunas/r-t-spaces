@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     let bookingTotalPrice = totalPrice;
     let bookingDeposit = depositAmount;
 
-    if (!bookingTotalPrice || !bookingDeposit) {
+    if (bookingTotalPrice == null || bookingDeposit == null) {
       if (startTime && endTime) {
         const calculatedHours = calculateHours(startTime, endTime);
         bookingTotalPrice = calculatePrice(calculatedHours);

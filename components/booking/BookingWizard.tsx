@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { CalendlyWidget } from "@/components/CalendlyWidget";
 import {
@@ -108,6 +108,7 @@ export function BookingWizard({
   const [agreedToPolicies, setAgreedToPolicies] = useState(false);
 
   const [pendingBookingExpiresAt, setPendingBookingExpiresAt] = useState<Date | null>(null);
+  const pendingCreationRef = useRef(false);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
 
   const [livePackages, setLivePackages] = useState<BookingPackage[]>(BOOKING_PACKAGES);
@@ -232,8 +233,13 @@ export function BookingWizard({
       calendlyData.inviteeName &&
       calendlyData.inviteeEmail &&
       !formData.pendingBookingId &&
-      formData.calendlyEventUri
+      formData.calendlyEventUri &&
+      !pendingCreationRef.current
     ) {
+      // Guard against a duplicate POST: the effect re-runs when deps like
+      // addonsTotal change before the first request resolves and pendingBookingId
+      // is set. The ref blocks a second in-flight creation.
+      pendingCreationRef.current = true;
       const create = async () => {
         try {
           const response = await fetch("/api/pending-bookings", {
@@ -258,8 +264,11 @@ export function BookingWizard({
             const data = await response.json();
             setFormData((prev) => ({ ...prev, pendingBookingId: data.id }));
             setPendingBookingExpiresAt(new Date(data.expiresAt));
+          } else {
+            pendingCreationRef.current = false; // allow retry
           }
         } catch (error) {
+          pendingCreationRef.current = false; // allow retry
           console.error("Failed to create pending booking:", error);
         }
       };
