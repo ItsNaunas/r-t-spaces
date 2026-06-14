@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
+type CalendlyGlobal = {
+  initInlineWidget: (opts: { url: string; parentElement: HTMLElement }) => void;
+};
+
 interface CalendlyWidgetProps {
   url: string;
   onEventScheduled?: (event: {
@@ -30,8 +34,13 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    const container = calendlyRef.current;
+    if (!url || !container) return;
+
+    let cancelled = false;
+
     const handleCalendlyEvent = (e: MessageEvent) => {
-      if (e.data.event && e.data.event.indexOf("calendly") === 0) {
+      if (e.data?.event && typeof e.data.event === "string" && e.data.event.indexOf("calendly") === 0) {
         if (e.data.event === "calendly.event_scheduled" && onEventScheduled) {
           onEventScheduled(e.data);
         }
@@ -39,38 +48,56 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
     };
     window.addEventListener("message", handleCalendlyEvent);
 
-    // Keep the spinner up until Calendly's iframe has actually rendered + loaded
-    // (the script is loaded globally on page-load, so tracking the script alone
-    // would hide the spinner before the widget is visible).
-    const container = calendlyRef.current;
+    // The widget is mounted dynamically (only on the date step), AFTER Calendly's
+    // script has already auto-scanned the page. So we must initialise it ourselves
+    // rather than rely on the auto-scan, or the container stays blank.
+    const init = (): boolean => {
+      const Calendly = (window as unknown as { Calendly?: CalendlyGlobal }).Calendly;
+      if (!Calendly || !container) return false;
+      container.innerHTML = "";
+      Calendly.initInlineWidget({ url, parentElement: container });
+      return true;
+    };
+
+    let pollId: ReturnType<typeof setInterval> | undefined;
+    if (!init()) {
+      // Script not ready yet — poll until it is (it's loaded afterInteractive in layout).
+      pollId = setInterval(() => {
+        if (cancelled) return;
+        if (init()) {
+          clearInterval(pollId);
+          pollId = undefined;
+        }
+      }, 200);
+    }
+
+    // Hide the spinner once the injected iframe actually loads.
     let iframeCleanup: (() => void) | undefined;
-    const attach = () => {
-      const iframe = container?.querySelector("iframe");
+    const attachIframe = () => {
+      const iframe = container.querySelector("iframe");
       if (!iframe) return false;
       const done = () => setIsLoaded(true);
       iframe.addEventListener("load", done);
       iframeCleanup = () => iframe.removeEventListener("load", done);
       return true;
     };
-
-    let observer: MutationObserver | undefined;
-    if (!attach() && container) {
-      observer = new MutationObserver(() => {
-        if (attach()) observer?.disconnect();
-      });
-      observer.observe(container, { childList: true, subtree: true });
-    }
+    const observer = new MutationObserver(() => {
+      if (attachIframe()) observer.disconnect();
+    });
+    observer.observe(container, { childList: true, subtree: true });
 
     // Safety net: never leave the spinner hanging if the load event is missed.
-    const fallback = setTimeout(() => setIsLoaded(true), 6000);
+    const fallback = setTimeout(() => setIsLoaded(true), 8000);
 
     return () => {
-      window.removeEventListener("message", handleCalendlyEvent);
-      observer?.disconnect();
+      cancelled = true;
+      if (pollId) clearInterval(pollId);
+      observer.disconnect();
       iframeCleanup?.();
       clearTimeout(fallback);
+      window.removeEventListener("message", handleCalendlyEvent);
     };
-  }, [onEventScheduled]);
+  }, [url, onEventScheduled]);
 
   if (!url) {
     return (
@@ -93,8 +120,7 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
       )}
       <div
         ref={calendlyRef}
-        className="calendly-inline-widget w-full"
-        data-url={url}
+        className="w-full"
         style={{
           minHeight: "700px",
           height: "700px",
@@ -103,4 +129,3 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
     </div>
   );
 }
-
