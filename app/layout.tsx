@@ -1,16 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display } from "next/font/google";
+import { Space_Grotesk, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { PublicChrome } from "@/app/_components/PublicChrome";
+import { BookingProvider } from "@/components/booking/BookingProvider";
 import { Analytics } from "@vercel/analytics/next";
 
-// Playfair Display (Secondary/Heading Font)
-const playfairDisplay = Playfair_Display({
+// Space Grotesk (Display / Heading Font — modern geometric sans)
+const spaceGrotesk = Space_Grotesk({
   variable: "--font-heading",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["500", "600", "700"],
+  display: 'swap',
+});
+
+// Inter (Body Font — clean geometric sans)
+const inter = Inter({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: 'swap',
 });
 
@@ -22,17 +31,6 @@ const newIconScript = localFont({
   variable: "--font-script",
   display: 'swap',
   fallback: ['cursive'],
-});
-
-// Glacial Indifference (Accent/Sans-serif Font)
-const glacialIndifference = localFont({
-  src: [
-    { path: "../fonts/GlacialIndifference-Regular.otf", weight: "400" },
-    { path: "../fonts/GlacialIndifference-Bold.otf", weight: "700" },
-  ],
-  variable: "--font-sans",
-  display: 'swap',
-  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
 });
 
 export const metadata: Metadata = {
@@ -93,10 +91,12 @@ export default function RootLayout({
         <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
       </head>
       <body
-        className={`${playfairDisplay.variable} ${newIconScript.variable} ${glacialIndifference.variable} antialiased`}
+        className={`${spaceGrotesk.variable} ${inter.variable} ${newIconScript.variable} antialiased`}
       >
-        <PublicChrome />
-        {children}
+        <BookingProvider>
+          <PublicChrome />
+          {children}
+        </BookingProvider>
         <Analytics />
         <Script
           src="https://assets.calendly.com/assets/external/widget.js"

@@ -28,9 +28,13 @@ const IDS_KEY = "pending:ids";
 const stripeIdx = (sessionId: string) => `pending:stripe:${sessionId}`;
 const calendlyIdx = (eventUri: string) => `pending:calendly:${eventUri}`;
 
+// All pending:* records self-expire after 24h (covers the Stripe checkout
+// session lifetime + webhook). Keeps Redis from accumulating dead records.
+const TTL_SECONDS = 24 * 60 * 60;
+
 async function put(booking: PendingBooking): Promise<void> {
   const redis = getRedis();
-  await redis.set(key(booking.id), JSON.stringify(booking));
+  await redis.set(key(booking.id), JSON.stringify(booking), { ex: TTL_SECONDS });
 }
 
 export async function savePendingBooking(
@@ -48,10 +52,10 @@ export async function savePendingBooking(
   };
 
   const pipeline = redis.pipeline();
-  pipeline.set(key(newBooking.id), JSON.stringify(newBooking));
+  pipeline.set(key(newBooking.id), JSON.stringify(newBooking), { ex: TTL_SECONDS });
   pipeline.sadd(IDS_KEY, newBooking.id);
   if (newBooking.calendlyEventUri) {
-    pipeline.set(calendlyIdx(newBooking.calendlyEventUri), newBooking.id);
+    pipeline.set(calendlyIdx(newBooking.calendlyEventUri), newBooking.id, { ex: TTL_SECONDS });
   }
   await pipeline.exec();
   return newBooking;
@@ -90,8 +94,8 @@ export async function updatePendingBookingStripeSession(
   booking.stripeSessionId = stripeSessionId;
   const redis = getRedis();
   const pipeline = redis.pipeline();
-  pipeline.set(key(id), JSON.stringify(booking));
-  pipeline.set(stripeIdx(stripeSessionId), id);
+  pipeline.set(key(id), JSON.stringify(booking), { ex: TTL_SECONDS });
+  pipeline.set(stripeIdx(stripeSessionId), id, { ex: TTL_SECONDS });
   await pipeline.exec();
   return true;
 }
@@ -100,16 +104,17 @@ export async function confirmPendingBooking(id: string, stripeSessionId?: string
   const booking = await getPendingBooking(id);
   if (!booking) return false;
   booking.status = "confirmed";
+  if (stripeSessionId) booking.stripeSessionId = stripeSessionId;
+
+  const redis = getRedis();
+  const pipeline = redis.pipeline();
+  pipeline.set(key(id), JSON.stringify(booking), { ex: TTL_SECONDS });
   if (stripeSessionId) {
-    booking.stripeSessionId = stripeSessionId;
-    const redis = getRedis();
-    const pipeline = redis.pipeline();
-    pipeline.set(key(id), JSON.stringify(booking));
-    pipeline.set(stripeIdx(stripeSessionId), id);
-    await pipeline.exec();
-    return true;
+    pipeline.set(stripeIdx(stripeSessionId), id, { ex: TTL_SECONDS });
   }
-  await put(booking);
+  // No longer an active pending hold — drop it from the scan set.
+  pipeline.srem(IDS_KEY, id);
+  await pipeline.exec();
   return true;
 }
 
@@ -122,7 +127,11 @@ export async function cancelPendingBooking(id: string, reason?: string): Promise
   }
 
   booking.status = "cancelled";
-  await put(booking);
+  const redis = getRedis();
+  const pipeline = redis.pipeline();
+  pipeline.set(key(id), JSON.stringify(booking), { ex: TTL_SECONDS });
+  pipeline.srem(IDS_KEY, id);
+  await pipeline.exec();
   return true;
 }
 
@@ -131,18 +140,27 @@ export async function cancelExpiredPendingBookings(): Promise<number> {
   const now = new Date();
   let cancelledCount = 0;
 
-  for (const booking of all) {
-    if (booking.status === "pending" && new Date(booking.expiresAt) < now) {
-      if (booking.calendlyEventUri) {
-        await cancelCalendlyEvent(
-          booking.calendlyEventUri,
-          "Payment not completed within 15 minutes"
-        );
-      }
-      booking.status = "cancelled";
-      await put(booking);
-      cancelledCount++;
+  for (const snapshot of all) {
+    if (snapshot.status !== "pending" || new Date(snapshot.expiresAt) >= now) continue;
+
+    // Re-read immediately before cancelling: the booking may have been
+    // confirmed/paid between the snapshot load and now. Don't cancel a paid one.
+    const current = await getPendingBooking(snapshot.id);
+    if (!current || current.status !== "pending") continue;
+
+    if (current.calendlyEventUri) {
+      await cancelCalendlyEvent(
+        current.calendlyEventUri,
+        "Payment not completed within 15 minutes"
+      );
     }
+    current.status = "cancelled";
+    const redis = getRedis();
+    const pipeline = redis.pipeline();
+    pipeline.set(key(current.id), JSON.stringify(current), { ex: TTL_SECONDS });
+    pipeline.srem(IDS_KEY, current.id);
+    await pipeline.exec();
+    cancelledCount++;
   }
 
   return cancelledCount;

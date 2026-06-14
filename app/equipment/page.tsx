@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { SiteFooter, FinalCtaSection } from "@/components/StudioSections";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 import { GradientBars } from "@/components/ui/gradient-bars";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
 
@@ -122,7 +123,7 @@ function EquipmentTabs() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Tab Navigation */}
         <div className="mb-10 md:mb-14">
-          <div className="border-b-2 border-[var(--lavender)]">
+          <div className="border-b-2 border-[var(--border)]">
             <div className="flex flex-wrap justify-center gap-2 md:gap-4">
               {equipmentCategories.map((category, index) => (
                 <button
@@ -168,7 +169,7 @@ function EquipmentTabs() {
                 {category.items.map((item, itemIndex) => (
                   <article
                     key={item.name}
-                    className="group bg-white border border-[var(--lavender)] hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg overflow-hidden"
+                    className="group bg-white rounded-2xl border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg overflow-hidden"
                   >
                     {/* Image Container */}
                     <div className="relative aspect-[4/3] overflow-hidden bg-[var(--background)]">
@@ -193,12 +194,9 @@ function EquipmentTabs() {
                       <p className="text-sm md:text-base text-[var(--muted-plum)] leading-relaxed mb-4 flex-grow">
                         {item.description}
                       </p>
-                      <Link 
-                        href="/#contact" 
-                        className="btn-primary text-center mt-auto"
-                      >
+                      <BookNowButton className="btn-primary text-center mt-auto">
                         Check Availability
-                      </Link>
+                      </BookNowButton>
                     </div>
                   </article>
                 ))}
@@ -235,7 +233,7 @@ export default function EquipmentPage() {
             <p className="text-sm uppercase tracking-[0.4em] text-[var(--primary)] mb-4">
               Equipment & Backdrops
             </p>
-            <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl leading-tight mb-6 text-[var(--primary)]">
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl leading-tight mb-6 text-[var(--primary)]">
               Complete Studio Equipment
             </h1>
             <p className="text-lg md:text-xl lg:text-2xl mb-4 text-[var(--primary)] font-light">
@@ -262,25 +260,22 @@ export default function EquipmentPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link 
-                href="/#contact"
-                className="btn-primary group"
-              >
+              <BookNowButton className="btn-primary group">
                 <span className="flex items-center gap-2">
                   Book Studio
-                  <svg 
-                    className="w-5 h-5 transition-transform group-hover:translate-x-1" 
-                    fill="none" 
-                    stroke="currentColor" 
+                  <svg
+                    className="w-5 h-5 transition-transform group-hover:translate-x-1"
+                    fill="none"
+                    stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </span>
-              </Link>
+              </BookNowButton>
               <Link 
                 href="#main-content"
-                className="group inline-flex items-center justify-center border border-white bg-white px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-medium text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:text-[var(--primary)] hover:scale-[1.02] hover:shadow-lg"
+                className="group rounded-full border border-white bg-transparent text-white hover:bg-white hover:text-[var(--primary)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm"
               >
                 <span className="flex items-center gap-2">
                   View Equipment
@@ -363,12 +358,12 @@ export default function EquipmentPage() {
                   your creative needs.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                  <Link href="/#contact" className="btn-primary">
+                  <BookNowButton className="btn-primary">
                     Book Now
-                  </Link>
+                  </BookNowButton>
                   <Link 
-                    href="/#contact" 
-                    className="group inline-flex items-center justify-center border border-white bg-white px-6 py-3.5 sm:px-8 sm:py-4 text-sm sm:text-base font-medium text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:text-[var(--primary)] hover:scale-[1.02] hover:shadow-lg"
+                    href="/#contact"
+                    className="group rounded-full border border-white bg-transparent text-white hover:bg-white hover:text-[var(--primary)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm"
                   >
                     Ask About Equipment
                   </Link>

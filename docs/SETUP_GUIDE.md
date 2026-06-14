@@ -103,7 +103,7 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 # Google Calendar
 GOOGLE_CLIENT_EMAIL=...@...iam.gserviceaccount.com
-GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+GOOGLE_PRIVATE_KEY="<service-account private key, PEM with literal \n line breaks>"
 GOOGLE_CALENDAR_ID=...@group.calendar.google.com
 ```
 

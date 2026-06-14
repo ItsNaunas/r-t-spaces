@@ -5,6 +5,7 @@ import { saveBooking } from '@/lib/bookingStore';
 import { sendBookingNotification } from '@/lib/email';
 import { createCalendlyEvent } from '@/lib/calendly';
 import { getPendingBookingByStripeSession, confirmPendingBooking } from '@/lib/pendingBookings';
+import { getRedis } from '@/lib/redis';
 
 export async function POST(request: Request) {
   try {
@@ -50,7 +51,18 @@ export async function POST(request: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         console.log('Payment successful:', session.id);
-        
+
+        // Idempotency: claim this event so a Stripe retry / duplicate delivery
+        // doesn't save the booking or send emails twice. Released on failure
+        // below so genuine retries can still reprocess.
+        const redis = getRedis();
+        const eventKey = `stripe:evt:${event.id}`;
+        const claimed = await redis.set(eventKey, '1', { nx: true, ex: 60 * 60 * 24 * 7 });
+        if (claimed === null) {
+          console.log('Duplicate Stripe event, already handled — skipping:', event.id);
+          break;
+        }
+
         // Check if this is a pending booking (Pay & Book Now flow)
         const pendingBookingId = session.metadata?.pendingBookingId;
         let pendingBooking = null;
@@ -115,6 +127,8 @@ export async function POST(request: Request) {
           console.log('Booking processed successfully. Calendly event:', pendingBooking?.calendlyEventUri ? 'already scheduled' : (calendlyLink ? 'link created' : 'not created'));
         } catch (error) {
           console.error('Error processing booking after payment — requires manual review. Session:', session.id, error);
+          // Release the idempotency claim so Stripe's retry can reprocess.
+          await redis.del(eventKey);
           // Return 500 so Stripe retries this webhook rather than silently losing the booking
           return NextResponse.json({ error: 'Booking processing failed' }, { status: 500 });
         }

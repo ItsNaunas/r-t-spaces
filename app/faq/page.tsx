@@ -1,53 +1,79 @@
-import { SiteFooter } from "@/components/StudioSections";
+import { FinalCtaSection, SiteFooter } from "@/components/StudioSections";
+import { GradientBars } from "@/components/ui/gradient-bars";
 
 const faqs = [
   {
     question: "What are your opening hours?",
-    answer: "We are open daily from 8 AM to 11 PM.",
+    answer: "We are open daily from 8 AM to 11 PM. Extended hours are available on request.",
   },
   {
     question: "Where is the studio located?",
-    answer: "Unit 3E, 736-740 Romford Road, London E12 6BT",
+    answer: "Unit 3E, 736-740 Romford Road, London E12 6BT. On-site parking is available after 6 PM, and Stratford station is about 12 minutes away by bus.",
   },
   {
     question: "What equipment is included?",
-    answer: "Our studio includes continuous LEDs, strobes, stands, modifiers, tethering table, and rolling wardrobe rack. We also have a dressing area, steamer, and Bluetooth audio.",
+    answer: "Continuous LEDs, strobes, stands, modifiers, a tethering table, and a rolling wardrobe rack, plus a white cyclorama and styled corners. There's also a dressing area, steamer and Bluetooth audio.",
   },
   {
     question: "Can I bring my own crew?",
-    answer: "Yes, absolutely! You can bring in your own crew, or we can provide our resident team for tethered shoots and photobooth add-ons.",
+    answer: "Yes. You can bring your own photographer and crew and run the shoot yourself, or book a session and we'll shoot it for you.",
   },
   {
     question: "How do I book?",
-    answer: "You can book by contacting us at enquires@rtspaces.co.uk or calling 07944667000. We offer both hourly and daily rates.",
+    answer: "Book right here on the site: choose studio hire or a session, pick a time, and pay your deposit online in a couple of minutes. Prefer to talk first? Email enquires@rtspaces.co.uk or call 07944667000.",
+  },
+  {
+    question: "What's the deposit and cancellation policy?",
+    answer: "A 50% non-refundable deposit secures your booking, with the balance due before your session. Cancel 48 hours or more before and any balance you've paid is refunded; within 48 hours is non-refundable.",
   },
 ];
 
 export default function FAQPage() {
   return (
     <div className="bg-[var(--base)]">
-      <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-12 px-4 pb-16 pt-12 sm:gap-16 sm:px-6 lg:px-8">
-        <section className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
-            FAQ
-          </p>
-          <h1 className="font-heading text-5xl text-[var(--primary)] sm:text-6xl lg:text-7xl">
-            Frequently Asked Questions
-          </h1>
-          <div className="mt-12 space-y-8">
+      {/* Hero band */}
+      <section
+        className="relative overflow-hidden pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20"
+        style={{ backgroundColor: "var(--hero-background)" }}
+      >
+        <GradientBars colors={["var(--primary)", "transparent"]} />
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="mb-4 text-sm uppercase tracking-[0.4em] text-[var(--primary)]/80">
+              FAQ
+            </p>
+            <h1 className="font-heading text-4xl leading-tight text-[var(--primary)] sm:text-5xl lg:text-6xl">
+              Frequently asked questions
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg text-[var(--primary)]/90">
+              Everything you need to know about hiring the studio, what&apos;s included,
+              and how booking works.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ list */}
+      <section className="bg-white py-16 md:py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl space-y-4">
             {faqs.map((faq, index) => (
-              <div key={index} className="space-y-3 border-b border-[var(--accent)]/20 pb-8">
-                <h2 className="font-heading text-2xl font-semibold text-[var(--primary)]">
+              <div
+                key={index}
+                className="rounded-2xl border border-[var(--border)] bg-white p-6 sm:p-8"
+              >
+                <h2 className="font-heading text-xl font-semibold text-[var(--primary)] sm:text-2xl">
                   {faq.question}
                 </h2>
-                <p className="text-lg text-[var(--muted-plum)]">{faq.answer}</p>
+                <p className="mt-3 leading-relaxed text-[var(--muted-plum)]">{faq.answer}</p>
               </div>
             ))}
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      <FinalCtaSection />
       <SiteFooter />
     </div>
   );
 }
-

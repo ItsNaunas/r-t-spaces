@@ -7,6 +7,7 @@ import {
   FinalCtaSection,
   SiteFooter,
 } from "@/components/StudioSections";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 import { studioGallery, studioServices } from "@/lib/studioData";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import { Lightbox } from "@/components/Lightbox";
@@ -72,7 +73,7 @@ export default function StudioPage() {
               <p className="text-sm uppercase tracking-[0.4em] text-[var(--primary)]/80">
                 Studio
               </p>
-              <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl text-[var(--primary)] leading-tight">
+              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-[var(--primary)] leading-tight">
                 Take a tour of RT Spaces
               </h1>
               <p className="text-lg sm:text-xl text-[var(--primary)]/90 max-w-3xl mx-auto leading-relaxed">
@@ -81,10 +82,10 @@ export default function StudioPage() {
                 pivot between clean commercial looks and warm lifestyle scenes.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <Link href="/#contact" className="btn-primary">
+                <BookNowButton className="btn-primary">
                   Book This Studio
-                </Link>
-                <Link href="/equipment" className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center">
+                </BookNowButton>
+                <Link href="/equipment" className="rounded-full border border-white bg-transparent text-white hover:bg-white hover:text-[var(--primary)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm">
                   View Equipment
                 </Link>
               </div>
@@ -98,10 +99,10 @@ export default function StudioPage() {
         <section className="py-16 md:py-24 lg:py-32 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-12 md:mb-16">
-              <p className="text-sm uppercase tracking-wider mb-3 text-[var(--muted-plum)]">
-                • Studio Gallery
+              <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-plum)] mb-3">
+                Studio Gallery
               </p>
-              <h2 className="font-heading text-5xl sm:text-6xl md:text-7xl font-bold leading-tight text-[var(--primary)]">
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-[var(--primary)]">
                 Corners ready for your lens
               </h2>
             </div>
@@ -117,7 +118,7 @@ export default function StudioPage() {
                   }}
                 >
                   {/* Photo Frame Effect - Purple frame */}
-                  <div className="relative w-full bg-white shadow-2xl overflow-hidden border-8" style={{ borderColor: 'var(--primary)' }}>
+                  <div className="relative w-full bg-white shadow-2xl overflow-hidden rounded-2xl border-2" style={{ borderColor: 'var(--primary)' }}>
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <Image
                         src={item.src}
@@ -157,7 +158,7 @@ export default function StudioPage() {
               <div className="relative">
                 <div className="relative aspect-[4/3]">
                   {/* Photo Frame Effect - Purple frame */}
-                  <div className="relative w-full h-full bg-white shadow-2xl overflow-hidden border-8" style={{ borderColor: 'var(--primary)' }}>
+                  <div className="relative w-full h-full bg-white shadow-2xl overflow-hidden rounded-2xl border-2" style={{ borderColor: 'var(--primary)' }}>
                     <Image
                       src="/assets/44919513-a2a5-4595-af6d-e23e0acb2a87.jpg"
                       alt="RT Spaces studio overview"
@@ -185,7 +186,7 @@ export default function StudioPage() {
                   {studioHighlights.map((item, index) => (
                     <div
                       key={item.title}
-                      className="border-t border-[var(--lavender)] pt-6"
+                      className="border-t border-[var(--primary)] pt-6"
                     >
                       <div className="flex gap-6">
                         <div className="text-base font-semibold text-[var(--muted-plum)]">
@@ -236,10 +237,10 @@ export default function StudioPage() {
         >
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-12 md:mb-16">
-              <p className="text-sm uppercase tracking-wider mb-3 text-white/80">
-                • Our Services
+              <p className="text-xs uppercase tracking-[0.4em] text-white/80 mb-3">
+                Our Services
               </p>
-              <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
                 <span className="text-white">What We </span>
                 <span className="font-heading text-white/80">Offer</span>
               </h2>
@@ -249,7 +250,7 @@ export default function StudioPage() {
               {studioServices.map((service, index) => (
                 <div
                   key={service.title}
-                  className="bg-white p-8 border-t-4 border-[var(--lavender)] shadow-lg hover:shadow-xl transition-shadow duration-300"
+                  className="bg-white p-8 rounded-2xl border-t-4 border-[var(--primary)] shadow-lg hover:shadow-xl transition-shadow duration-300"
                 >
                   <div className="flex gap-4 mb-4">
                     <div className="text-lg font-semibold text-[var(--muted-plum)]">
@@ -272,10 +273,10 @@ export default function StudioPage() {
         <section className="py-16 md:py-24 lg:py-32 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-12 md:mb-16">
-              <p className="text-sm uppercase tracking-wider mb-3 text-[var(--muted-plum)]">
-                • Everything Included
+              <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-plum)] mb-3">
+                Everything Included
               </p>
-              <h2 className="font-heading text-5xl sm:text-6xl md:text-7xl font-bold leading-tight text-[var(--primary)]">
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-[var(--primary)]">
                 Equipment & Backdrops
               </h2>
             </div>
@@ -434,10 +435,10 @@ export default function StudioPage() {
                 before your call time.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <Link href="/#contact" className="btn-primary">
+                <BookNowButton className="btn-primary">
                   Book This Studio
-                </Link>
-                <Link href="/equipment" className="bg-white text-[var(--primary)] hover:bg-white/90 border-2 border-white px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em] transition-all duration-300 inline-flex items-center justify-center">
+                </BookNowButton>
+                <Link href="/equipment" className="rounded-full border border-white bg-transparent text-white hover:bg-white hover:text-[var(--primary)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm">
                   View Equipment
                 </Link>
               </div>

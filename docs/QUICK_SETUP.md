@@ -24,7 +24,7 @@ STRIPE_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET_HERE
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 # Email Configuration (optional - add if you have Resend)
-# RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
+# RESEND_API_KEY=re_YOUR_RESEND_KEY_HERE
 # STUDIO_EMAIL=enquires@rtspaces.co.uk
 # FROM_EMAIL=onboarding@resend.dev
 

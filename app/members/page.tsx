@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/StudioSections";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 import { GradientBars } from "@/components/ui/gradient-bars";
 import { BOOKING_PACKAGES } from "@/lib/pricing";
 
@@ -70,7 +71,7 @@ function MembershipTierCard({
       </div>
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-center">
-          <div className="relative aspect-[4/3] min-h-[240px] overflow-hidden rounded-sm border border-[var(--accent)]/20">
+          <div className="relative aspect-[4/3] min-h-[240px] overflow-hidden rounded-2xl border border-[var(--accent)]/20">
             <Image
               src={tier.image}
               alt={tier.imageAlt}
@@ -83,7 +84,7 @@ function MembershipTierCard({
 
           <div className="space-y-8">
             {tier.popular && (
-              <span className="inline-block bg-[var(--primary)] px-4 py-1 text-xs font-semibold uppercase tracking-wider text-white">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--gold-text)]">
                 Most popular
               </span>
             )}
@@ -231,7 +232,7 @@ export default function MembersPage() {
             <p className="mt-6 text-lg text-[var(--primary)]/90 sm:text-xl leading-relaxed max-w-2xl mx-auto">
               Membership gives you access to reduced rates on studio hire, session
               packages, and priority booking. Choose the tier that fits how you
-              work—monthly billing, cancel anytime.
+              work, with monthly billing and a three-month minimum.
             </p>
           </div>
         </div>
@@ -269,7 +270,7 @@ export default function MembersPage() {
             {mainPackages.slice(0, 3).map((pkg) => (
               <article
                 key={pkg.id}
-                className="flex flex-col border-2 border-[var(--accent)]/20 bg-[var(--base)] p-6 transition-all duration-300 hover:border-[var(--primary)] hover:shadow-md"
+                className="flex flex-col rounded-2xl border-2 border-[var(--accent)]/20 bg-[var(--base)] p-6 transition-all duration-300 hover:border-[var(--primary)] hover:shadow-md"
               >
                 <h3 className="font-heading text-xl text-[var(--primary)] mb-2">
                   {pkg.title}
@@ -301,9 +302,9 @@ export default function MembersPage() {
               <span className="text-[var(--muted-plum)] hidden sm:inline">
                 ·
               </span>
-              <Link href="/#contact" className="btn-primary">
+              <BookNowButton className="btn-primary">
                 Book online
-              </Link>
+              </BookNowButton>
             </div>
           </div>
         </div>

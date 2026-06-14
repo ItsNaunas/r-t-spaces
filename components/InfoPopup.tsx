@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 
 export function InfoPopup() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -185,12 +186,9 @@ export function InfoPopup() {
 
           {/* Quick Action Buttons */}
           <div className="flex flex-wrap gap-3 pt-4 border-t border-[var(--accent)]/10">
-            <Link
-              href="/#contact"
-              className="btn-primary btn-small"
-            >
+            <BookNowButton className="btn-primary btn-small">
               Book Online
-            </Link>
+            </BookNowButton>
             <Link
               href="/#contact"
               className="btn-secondary btn-small"
