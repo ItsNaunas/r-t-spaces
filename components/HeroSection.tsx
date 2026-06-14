@@ -19,17 +19,16 @@ export function HeroSection() {
         />
       </div>
 
-      {/* SECTION 2 — plum band tucked under the image's rounded bottom;
-          straight bottom edge ends the hero */}
-      <div className="relative -mt-10 bg-[var(--primary)] px-6 pb-12 pt-16 text-white sm:px-10 lg:-mt-12 lg:px-16 lg:pb-16 lg:pt-20">
+      {/* SECTION 2 — white band tucked under the image's rounded bottom */}
+      <div className="relative -mt-10 bg-white px-6 pb-12 pt-16 text-[var(--primary)] sm:px-10 lg:-mt-12 lg:px-16 lg:pb-16 lg:pt-20">
         <div className="mx-auto max-w-[1600px]">
           <div className="grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-16">
             {/* LEFT — eyebrow + dominant headline */}
             <div>
-              <p className="mb-5 text-xs sm:text-sm uppercase tracking-[0.4em] text-white/70">
+              <p className="mb-5 text-xs sm:text-sm uppercase tracking-[0.4em] text-[var(--muted-plum)]">
                 Studio hire · East London
               </p>
-              <h1 className="font-heading font-bold uppercase tracking-tight leading-[0.92] text-4xl sm:text-6xl lg:text-7xl">
+              <h1 className="font-heading font-bold uppercase tracking-tight leading-[0.92] text-4xl text-[var(--primary)] sm:text-6xl lg:text-7xl">
                 Photography
                 <br />
                 studio hire
@@ -38,16 +37,16 @@ export function HeroSection() {
 
             {/* RIGHT — copy, trust indicators, CTAs */}
             <div>
-              <p className="max-w-md text-base sm:text-lg text-white/90 leading-relaxed">
+              <p className="max-w-md text-base sm:text-lg text-[var(--muted-plum)] leading-relaxed">
                 A fully-equipped 5m × 5m studio with lighting, backdrops and kit
                 included. Hire it by the hour from{" "}
-                <span className="font-semibold text-white">£55</span>, or book a session
-                shot for you. Manor Park, E12.
+                <span className="font-semibold text-[var(--primary)]">£55</span>, or book a
+                session shot for you. Manor Park, E12.
               </p>
 
               {/* Trust indicators: rating · customers · availability */}
               <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-                <span className="flex items-center gap-1.5 font-medium text-white">
+                <span className="flex items-center gap-1.5 font-medium text-[var(--primary)]">
                   <span className="flex items-center gap-0.5">
                     {[...Array(5)].map((_, i) => (
                       <svg key={i} className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" style={{ color: "var(--accent-gold)" }}>
@@ -57,10 +56,10 @@ export function HeroSection() {
                   </span>
                   4.9/5
                 </span>
-                <span className="text-white/40">·</span>
-                <span className="text-white/85">200+ creators served</span>
-                <span className="text-white/40">·</span>
-                <span className="text-white/85">Open daily, 8am to 11pm</span>
+                <span className="text-[var(--muted-plum)]/40">·</span>
+                <span className="text-[var(--muted-plum)]">200+ creators served</span>
+                <span className="text-[var(--muted-plum)]/40">·</span>
+                <span className="text-[var(--muted-plum)]">Open daily, 8am to 11pm</span>
               </div>
 
               {/* CTAs */}
@@ -68,7 +67,7 @@ export function HeroSection() {
                 <BookNowButton
                   offer="hire"
                   ariaLabel="Hire the studio"
-                  className="group inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-[var(--primary)] transition-all duration-300 hover:bg-white/90 hover:scale-[1.02] hover:shadow-xl sm:px-8 sm:py-4 sm:text-base"
+                  className="group inline-flex items-center justify-center rounded-full bg-[var(--primary)] px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-[var(--primary)]/90 hover:scale-[1.02] hover:shadow-xl sm:px-8 sm:py-4 sm:text-base"
                 >
                   <span className="flex items-center gap-2">
                     Hire the studio
@@ -80,7 +79,7 @@ export function HeroSection() {
                 <BookNowButton
                   offer="session"
                   ariaLabel="Book a session"
-                  className="inline-flex items-center justify-center rounded-xl border border-white/80 bg-transparent px-6 py-3.5 text-sm font-medium text-white transition-all duration-300 hover:bg-white hover:text-[var(--primary)] sm:px-8 sm:py-4 sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full border border-[var(--primary)] bg-transparent px-6 py-3.5 text-sm font-medium text-[var(--primary)] transition-all duration-300 hover:bg-[var(--primary)] hover:text-white sm:px-8 sm:py-4 sm:text-base"
                 >
                   Book a session
                 </BookNowButton>

@@ -69,16 +69,12 @@ export function SiteHeader() {
   const isHome = pathname === "/";
   const transparent = isHome && !isScrolled;
 
-  // White text over the image; plum text once the nav fills white
-  const navTextColor = transparent ? 'text-white' : 'text-[var(--primary)]';
-  const navHoverColor = transparent ? 'hover:text-white/80' : 'hover:text-[var(--primary)]/70';
-  const navActiveColor = navTextColor;
-  const iconColor = transparent
-    ? 'text-white/80 hover:text-white'
-    : 'text-[var(--primary)]/70 hover:text-[var(--primary)]';
-  const bookBtnClass = transparent
-    ? 'bg-white text-[var(--primary)] hover:bg-white/90'
-    : 'bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90';
+  // Plum text throughout (over the hero image and on the white fill)
+  const navTextColor = 'text-[var(--primary)]';
+  const navHoverColor = 'hover:text-[var(--primary)]/70';
+  const navActiveColor = 'text-[var(--primary)]';
+  const iconColor = 'text-[var(--primary)]/70 hover:text-[var(--primary)]';
+  const bookBtnClass = 'bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90';
 
   return (
     <>
@@ -138,7 +134,7 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={() => openBooking()}
-            className={`hidden lg:inline-flex items-center justify-center whitespace-nowrap rounded-xl px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] transition ${bookBtnClass}`}
+            className={`hidden lg:inline-flex items-center justify-center whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] transition ${bookBtnClass}`}
           >
             Book Online
           </button>
@@ -179,7 +175,7 @@ export function SiteHeader() {
           ))}
           <button
             type="button"
-            className="block w-full bg-white px-4 py-4 text-center text-sm font-semibold uppercase tracking-[0.2em] text-[var(--primary)] transition hover:bg-white/90"
+            className="block w-full rounded-full bg-white px-4 py-4 text-center text-sm font-semibold uppercase tracking-[0.2em] text-[var(--primary)] transition hover:bg-white/90"
             onClick={() => {
               closeMenu();
               openBooking();
