@@ -43,12 +43,16 @@ export function StudioHeroStats() {
     "/assets/gallery/5F978C66-0CA5-46F1-8156-3E610244CDD4.jpg",
   ];
 
-  // Auto-rotate images every 4 seconds
+  // Auto-rotate images every 4 seconds (paused for reduced-motion users)
   useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
     const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => 
-        (prevIndex + 1) % rotatingImages.length
-      );
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % rotatingImages.length);
     }, 4000);
 
     return () => clearInterval(interval);

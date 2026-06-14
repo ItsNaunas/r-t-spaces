@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { BookingWizard } from "./BookingWizard";
 
 type Offer = "hire" | "session";
 type BookingPrefill = { offer?: Offer; packageId?: string } | null;
+
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function BookingDrawer({
   isOpen,
@@ -15,17 +18,53 @@ export function BookingDrawer({
   onClose: () => void;
   prefill: BookingPrefill;
 }) {
+  const panelRef = useRef<HTMLElement>(null);
+  const lastFocusedRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     if (!isOpen) return;
+    const panel = panelRef.current;
+    // Remember what was focused so we can return focus on close.
+    lastFocusedRef.current = (document.activeElement as HTMLElement | null) ?? null;
+    // Move focus into the dialog.
+    panel?.focus();
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab" || !panel) return;
+      const items = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+        (el) => el.offsetParent !== null
+      );
+      if (!items.length) {
+        e.preventDefault();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      } else if (!panel.contains(active as Node)) {
+        e.preventDefault();
+        first.focus();
+      }
     };
+
     document.addEventListener("keydown", onKey);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
+      // Return focus to the trigger.
+      lastFocusedRef.current?.focus?.();
     };
   }, [isOpen, onClose]);
 
@@ -41,10 +80,12 @@ export function BookingDrawer({
       />
       {/* Panel */}
       <aside
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label="Book the studio"
-        className={`fixed inset-y-0 right-0 z-[101] flex w-full max-w-full flex-col bg-[var(--base)] shadow-2xl transition-transform duration-300 sm:max-w-md ${
+        tabIndex={-1}
+        className={`fixed inset-y-0 right-0 z-[101] flex w-full max-w-full flex-col bg-[var(--base)] shadow-2xl outline-none transition-transform duration-300 sm:max-w-md ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

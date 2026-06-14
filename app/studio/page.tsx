@@ -111,10 +111,20 @@ export default function StudioPage() {
               {studioGallery.map((item, index) => (
                 <div
                   key={item.artist}
-                  className="group cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`View ${item.focus}`}
+                  className="group cursor-pointer rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
                   onClick={() => {
                     setCurrentImageIndex(index);
                     setLightboxOpen(true);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setCurrentImageIndex(index);
+                      setLightboxOpen(true);
+                    }
                   }}
                 >
                   {/* Photo Frame Effect - Purple frame */}
