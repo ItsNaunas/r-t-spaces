@@ -294,6 +294,16 @@ export function BookingWizard({
     setDiscountError("");
   }, [selectedPackage, addonsTotal]);
 
+  // Changing the package/offer invalidates any pending hold we created — clear it
+  // so checkout never sends a stale pendingBookingId (which would book/charge the
+  // wrong package), and a fresh hold gets created for the new selection.
+  useEffect(() => {
+    setFormData((prev) => (prev.pendingBookingId ? { ...prev, pendingBookingId: "" } : prev));
+    setPendingBookingExpiresAt(null);
+    pendingCreationRef.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPackage?.id, offer]);
+
   // Countdown for the payment hold.
   useEffect(() => {
     if (!pendingBookingExpiresAt) {

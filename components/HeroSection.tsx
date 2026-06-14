@@ -35,7 +35,7 @@ export function HeroSection() {
               </h1>
             </div>
 
-            {/* RIGHT — copy, trust indicators, CTAs */}
+            {/* RIGHT — copy, CTAs, star rating */}
             <div>
               <p className="max-w-md text-base sm:text-lg text-[var(--muted-plum)] leading-relaxed">
                 A 5m × 5m studio with the lighting, backdrops and kit already set up.
