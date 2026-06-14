@@ -33,15 +33,6 @@ export function FinalCtaSection() {
 export function StudioHeroStats() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const stats = [
-    { value: "5m × 5m", label: "Studio", sublabel: "Floor space" },
-    { value: "200+", label: "Creators", sublabel: "Served" },
-    { value: "4.9/5", label: "Average", sublabel: "Rating" },
-    { value: "8–11", label: "Open Daily", sublabel: "8 AM – 11 PM" },
-    { value: "E12 6BT", label: "Location", sublabel: "East London" },
-    { value: "100%", label: "Equipment", sublabel: "Included" },
-  ];
-
   // Studio images for rotation
   const rotatingImages = [
     "/assets/studios/IMG_7854.JPG",
@@ -86,26 +77,6 @@ export function StudioHeroStats() {
                 and brands. Turn up and shoot.
               </p>
             </div>
-          </div>
-
-          {/* Stats Grid */}
-          <div className="mt-8 lg:mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6">
-            {stats.map((stat, index) => (
-              <div 
-                key={index} 
-                className="text-center border-t-2 border-[var(--lavender)] pt-4"
-              >
-                <p className="font-heading text-3xl sm:text-4xl font-bold text-[var(--gold-text)] mb-1">
-                  {stat.value}
-                </p>
-                <p className="text-xs sm:text-sm uppercase tracking-wider text-[var(--muted-plum)] font-medium">
-                  {stat.label}
-                </p>
-                <p className="text-xs sm:text-sm text-[var(--muted-plum)]">
-                  {stat.sublabel}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
 

@@ -8,12 +8,13 @@ import {
   StudioHeroStats,
 } from "@/components/StudioSections";
 import { HeroSection } from "@/components/HeroSection";
-import { OfferForkSection, GalleryTeaserSection } from "@/components/HomeSections";
+import { StatsStrip, OfferForkSection, GalleryTeaserSection } from "@/components/HomeSections";
 
 export default function Home() {
   return (
     <>
       <HeroSection />
+      <StatsStrip />
       <main id="main-content" className="w-full">
         <StudioHeroStats />
         <OfferForkSection />

@@ -4,6 +4,36 @@ import Image from "next/image";
 import Link from "next/link";
 import { BookNowButton } from "@/components/booking/BookNowButton";
 
+const studioStats = [
+  { value: "5m × 5m", label: "Floor space" },
+  { value: "200+", label: "Creators served" },
+  { value: "4.9/5", label: "Average rating" },
+  { value: "8am–11pm", label: "Open daily" },
+  { value: "E12 6BT", label: "East London" },
+  { value: "100%", label: "Equipment included" },
+];
+
+/**
+ * Plum trust/stats strip — sits directly below the hero for an immediate
+ * brand-colour break and quick credibility.
+ */
+export function StatsStrip() {
+  return (
+    <section className="bg-[var(--primary)] py-10 text-white sm:py-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
+          {studioStats.map((s) => (
+            <div key={s.label} className="text-center">
+              <p className="font-heading text-3xl font-bold sm:text-4xl">{s.value}</p>
+              <p className="mt-1.5 text-xs uppercase tracking-[0.2em] text-white/70">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /**
  * The two-offer fork — mirrors how the booking wizard splits Hire vs Session,
  * so a visitor immediately sees which path is theirs.
