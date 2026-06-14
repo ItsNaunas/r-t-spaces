@@ -22,15 +22,12 @@ function PackageCard({ pkg }: { pkg: BookingPackage }) {
           : "border-[var(--accent)]/20 hover:border-[var(--primary)] hover:shadow-md"
       } bg-white`}
     >
-      {pkg.limitedOffer && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--gold-text)]">
+      <div className="p-8 flex flex-col flex-grow">
+        {pkg.limitedOffer && (
+          <span className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--gold-text)]">
             Limited offer
           </span>
-        </div>
-      )}
-
-      <div className="p-8 flex flex-col flex-grow">
+        )}
         <div className="mb-6 pb-4 border-b border-[var(--accent)]/20">
           <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted-plum)] mb-2">
             {pkg.duration}
