@@ -6,32 +6,32 @@ type CalendlyGlobal = {
   initInlineWidget: (opts: { url: string; parentElement: HTMLElement }) => void;
 };
 
+type CalendlyScheduledEvent = {
+  event: string;
+  payload: {
+    event_type: string;
+    invitee: { email: string; name: string; uri: string };
+    scheduled_event: { start_time: string; end_time: string; location: string };
+    event: { uri: string };
+  };
+};
+
 interface CalendlyWidgetProps {
   url: string;
-  onEventScheduled?: (event: {
-    event: string;
-    payload: {
-      event_type: string;
-      invitee: {
-        email: string;
-        name: string;
-        uri: string;
-      };
-      scheduled_event: {
-        start_time: string;
-        end_time: string;
-        location: string;
-      };
-      event: {
-        uri: string;
-      };
-    };
-  }) => void;
+  onEventScheduled?: (event: CalendlyScheduledEvent) => void;
 }
 
 export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
   const calendlyRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Keep the latest callback in a ref so the init effect can depend only on
+  // `url` — otherwise a parent re-render (the callback is recreated each render)
+  // would tear down and rebuild the widget, wiping an in-progress selection.
+  const onEventRef = useRef(onEventScheduled);
+  useEffect(() => {
+    onEventRef.current = onEventScheduled;
+  }, [onEventScheduled]);
 
   useEffect(() => {
     const container = calendlyRef.current;
@@ -40,17 +40,17 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
     let cancelled = false;
 
     const handleCalendlyEvent = (e: MessageEvent) => {
-      if (e.data?.event && typeof e.data.event === "string" && e.data.event.indexOf("calendly") === 0) {
-        if (e.data.event === "calendly.event_scheduled" && onEventScheduled) {
-          onEventScheduled(e.data);
-        }
+      // Only trust messages from Calendly.
+      if (typeof e.origin !== "string" || !e.origin.includes("calendly.com")) return;
+      const data = e.data as CalendlyScheduledEvent | undefined;
+      if (data?.event === "calendly.event_scheduled") {
+        onEventRef.current?.(data);
       }
     };
     window.addEventListener("message", handleCalendlyEvent);
 
-    // The widget is mounted dynamically (only on the date step), AFTER Calendly's
-    // script has already auto-scanned the page. So we must initialise it ourselves
-    // rather than rely on the auto-scan, or the container stays blank.
+    // The widget mounts dynamically (only on the date step), after Calendly's
+    // script already auto-scanned the page, so we must initialise it ourselves.
     const init = (): boolean => {
       const Calendly = (window as unknown as { Calendly?: CalendlyGlobal }).Calendly;
       if (!Calendly || !container) return false;
@@ -60,14 +60,16 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
     };
 
     let pollId: ReturnType<typeof setInterval> | undefined;
+    const stopPolling = () => {
+      if (pollId) {
+        clearInterval(pollId);
+        pollId = undefined;
+      }
+    };
     if (!init()) {
-      // Script not ready yet — poll until it is (it's loaded afterInteractive in layout).
       pollId = setInterval(() => {
         if (cancelled) return;
-        if (init()) {
-          clearInterval(pollId);
-          pollId = undefined;
-        }
+        if (init()) stopPolling();
       }, 200);
     }
 
@@ -86,18 +88,21 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
     });
     observer.observe(container, { childList: true, subtree: true });
 
-    // Safety net: never leave the spinner hanging if the load event is missed.
-    const fallback = setTimeout(() => setIsLoaded(true), 8000);
+    // Safety net: stop polling and reveal the widget if the load event is missed.
+    const fallback = setTimeout(() => {
+      stopPolling();
+      setIsLoaded(true);
+    }, 8000);
 
     return () => {
       cancelled = true;
-      if (pollId) clearInterval(pollId);
+      stopPolling();
       observer.disconnect();
       iframeCleanup?.();
       clearTimeout(fallback);
       window.removeEventListener("message", handleCalendlyEvent);
     };
-  }, [url, onEventScheduled]);
+  }, [url]);
 
   if (!url) {
     return (
@@ -118,13 +123,11 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
           <p className="text-sm">Loading available times…</p>
         </div>
       )}
+      {/* keeps the .calendly-inline-widget iframe CSS rules applying */}
       <div
         ref={calendlyRef}
-        className="w-full"
-        style={{
-          minHeight: "700px",
-          height: "700px",
-        }}
+        className="calendly-inline-widget w-full"
+        style={{ minHeight: "700px", height: "700px" }}
       />
     </div>
   );
