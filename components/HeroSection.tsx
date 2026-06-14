@@ -6,8 +6,9 @@ import { BookNowButton } from "@/components/booking/BookNowButton";
 export function HeroSection() {
   return (
     <section className="-mt-[73px] w-full">
-      {/* SECTION 1 — full-bleed image, runs up behind the transparent nav */}
-      <div className="relative h-[64vh] min-h-[480px] w-full sm:h-[72vh]">
+      {/* SECTION 1 — full-bleed image, runs up behind the transparent nav.
+          Rounded bottom dips into the band (soft seam). */}
+      <div className="relative z-10 h-[64vh] min-h-[480px] w-full overflow-hidden rounded-b-[2.5rem] sm:h-[72vh]">
         <Image
           src="/assets/hero/studio-hero.jpg"
           alt="The RT Spaces photography studio"
@@ -18,9 +19,9 @@ export function HeroSection() {
         />
       </div>
 
-      {/* SECTION 2 — plum band, rounded top rises into the image (soft seam),
+      {/* SECTION 2 — plum band tucked under the image's rounded bottom;
           straight bottom edge ends the hero */}
-      <div className="relative z-10 -mt-8 rounded-t-[2.5rem] bg-[var(--primary)] px-6 py-12 text-white sm:px-10 lg:-mt-12 lg:px-16 lg:py-16">
+      <div className="relative -mt-10 bg-[var(--primary)] px-6 pb-12 pt-16 text-white sm:px-10 lg:-mt-12 lg:px-16 lg:pb-16 lg:pt-20">
         <div className="mx-auto max-w-[1600px]">
           <div className="grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-16">
             {/* LEFT — eyebrow + dominant headline */}
