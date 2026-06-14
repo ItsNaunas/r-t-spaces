@@ -127,7 +127,7 @@ export function StudioHeroStats() {
               </BookNowButton>
               <Link
                 href="/studio"
-                className="group/btn whitespace-nowrap bg-[var(--accent-gold)] backdrop-blur-sm border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4  font-medium text-sm tracking-[0.05em]"
+                className="group/btn whitespace-nowrap rounded-full border border-white bg-transparent text-white hover:bg-white hover:text-[var(--primary)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="flex items-center gap-2">
@@ -167,7 +167,7 @@ export function StudioHeroStats() {
               </BookNowButton>
               <Link 
                 href="/studio"
-                className="group/btn w-full text-center bg-[var(--accent-gold)] border-2 border-[var(--accent-gold)] text-[var(--primary)] hover:bg-[var(--gold-hover)] hover:border-[var(--gold-hover)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4  font-medium text-sm tracking-[0.05em]"
+                className="group/btn w-full text-center rounded-full border border-white bg-transparent text-white hover:bg-white hover:text-[var(--primary)] transition-all duration-300 inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-medium text-sm tracking-[0.05em]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="flex items-center justify-center gap-2">
