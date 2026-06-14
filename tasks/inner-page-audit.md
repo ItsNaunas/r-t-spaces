@@ -1,5 +1,16 @@
 # RT Spaces — Inner-page design audit (vs the new homepage system)
 
+> **STATUS: RESOLVED (2026-06-14).** All six themes fixed across /studio, /equipment, /services,
+> /members, /gallery, /faq, /book-online + shared components (StudioSections, BookingWizard).
+> Commits: 3d0b6fd (consistency passes 1-5), e40d704 (/faq + /book-online hero band + rhythm).
+> - [x] /services duplicate "Studio Support" section deleted
+> - [x] ghost buttons -> pill (all sites, tracking-[0.05em] cleared)
+> - [x] cards / image frames / wizard frame rounded (border-8 -> rounded-2xl, etc.)
+> - [x] inputs rounded (newsletter + booking wizard)
+> - [x] dot-prefix eyebrows fixed; chip-labels -> plain text (members/services/wizard)
+> - [x] /faq + /book-online given hero band + surface rhythm; FAQ "how do I book" copy fixed
+> Build verified after every batch. Original audit retained below for reference.
+
 Standard = homepage: rounded/pill theme, plum + cream/sand (no lavender), Space Grotesk + Inter,
 surface rhythm, image-led, no old gold/sharp ghost buttons. Audit done from screenshots + code.
 
