@@ -30,18 +30,6 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Script is loaded globally via next/script in layout.tsx.
-    let scriptCleanup: (() => void) | undefined;
-
-    if ((window as { Calendly?: unknown }).Calendly) {
-      setIsLoaded(true);
-    } else {
-      const script = document.querySelector('script[src*="calendly.com"]');
-      const onLoad = () => setIsLoaded(true);
-      script?.addEventListener("load", onLoad);
-      scriptCleanup = () => script?.removeEventListener("load", onLoad);
-    }
-
     const handleCalendlyEvent = (e: MessageEvent) => {
       if (e.data.event && e.data.event.indexOf("calendly") === 0) {
         if (e.data.event === "calendly.event_scheduled" && onEventScheduled) {
@@ -49,12 +37,38 @@ export function CalendlyWidget({ url, onEventScheduled }: CalendlyWidgetProps) {
         }
       }
     };
-
     window.addEventListener("message", handleCalendlyEvent);
 
+    // Keep the spinner up until Calendly's iframe has actually rendered + loaded
+    // (the script is loaded globally on page-load, so tracking the script alone
+    // would hide the spinner before the widget is visible).
+    const container = calendlyRef.current;
+    let iframeCleanup: (() => void) | undefined;
+    const attach = () => {
+      const iframe = container?.querySelector("iframe");
+      if (!iframe) return false;
+      const done = () => setIsLoaded(true);
+      iframe.addEventListener("load", done);
+      iframeCleanup = () => iframe.removeEventListener("load", done);
+      return true;
+    };
+
+    let observer: MutationObserver | undefined;
+    if (!attach() && container) {
+      observer = new MutationObserver(() => {
+        if (attach()) observer?.disconnect();
+      });
+      observer.observe(container, { childList: true, subtree: true });
+    }
+
+    // Safety net: never leave the spinner hanging if the load event is missed.
+    const fallback = setTimeout(() => setIsLoaded(true), 6000);
+
     return () => {
-      scriptCleanup?.();
       window.removeEventListener("message", handleCalendlyEvent);
+      observer?.disconnect();
+      iframeCleanup?.();
+      clearTimeout(fallback);
     };
   }, [onEventScheduled]);
 
