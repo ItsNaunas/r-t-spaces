@@ -113,7 +113,7 @@ export function StudioHeroStats() {
         <div className="group relative aspect-[16/9] lg:aspect-[21/9] cursor-pointer">
           <div className="relative w-full h-full">
             {/* Photo Frame Effect - Purple frame */}
-            <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-2" style={{ borderColor: 'var(--primary)' }}>
+            <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden rounded-2xl border-2" style={{ borderColor: 'var(--primary)' }}>
               {rotatingImages.map((src, index) => (
                 <div
                   key={src}
@@ -601,7 +601,7 @@ export function AboutUsSection() {
           <div className="relative group">
             <div className="relative aspect-[4/3]">
               {/* Photo Frame Effect - Purple frame matching other sections */}
-              <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-2 transition-transform duration-500 group-hover:scale-[1.02]" style={{ borderColor: 'var(--primary)' }}>
+              <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden rounded-2xl border-2 transition-transform duration-500 group-hover:scale-[1.02]" style={{ borderColor: 'var(--primary)' }}>
                 <Image
                   src="/assets/studios/c66dafbf-5a57-4d92-bce9-67dd277a70b9.jpg"
                   alt="RT Spaces studio - creative workspace"
@@ -889,7 +889,7 @@ export function StudioFeaturesSection() {
               className="relative aspect-[4/3] "
             >
               {/* Photo Frame Effect - Purple frame */}
-              <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden border-2" style={{ borderColor: 'var(--primary)' }}>
+              <div className="relative w-full h-full bg-[var(--primary)] shadow-2xl overflow-hidden rounded-2xl border-2" style={{ borderColor: 'var(--primary)' }}>
                 <Image
                   src="/assets/equipment/13bad677-2b14-47e9-9797-3bd7cd6b030a.jpg"
                   alt="Professional studio setup with lighting equipment"
@@ -927,17 +927,15 @@ export function StudioFeaturesSection() {
                 className="btn-primary w-full text-center"
                 style={{
                   boxShadow: '0 4px 16px rgba(61, 35, 80, 0.2), 0 2px 8px rgba(61, 35, 80, 0.1)',
-                  borderRadius: '0'
                 }}
               >
                 Book Now
               </BookNowButton>
-              <Link 
-                href="/#contact" 
+              <Link
+                href="/#contact"
                 className="btn-secondary w-full text-center"
                 style={{
                   boxShadow: '0 2px 12px rgba(61, 35, 80, 0.12), 0 1px 4px rgba(61, 35, 80, 0.08)',
-                  borderRadius: '0'
                 }}
               >
                 Contact Us

@@ -27,7 +27,7 @@ export function OfferForkSection() {
 
         <div className="grid gap-6 md:gap-8 md:grid-cols-2">
           {/* Hire the studio */}
-          <article className="group flex flex-col overflow-hidden bg-white shadow-sm transition-shadow duration-300 hover:shadow-xl">
+          <article className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow duration-300 hover:shadow-xl">
             <div className="relative aspect-[16/10] overflow-hidden">
               <Image
                 src="/assets/studios/4a6224d3-5683-4361-bef8-5b3b1ab5be56.jpg"
@@ -55,7 +55,7 @@ export function OfferForkSection() {
           </article>
 
           {/* Book a session */}
-          <article className="group flex flex-col overflow-hidden bg-white shadow-sm transition-shadow duration-300 hover:shadow-xl">
+          <article className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow duration-300 hover:shadow-xl">
             <div className="relative aspect-[16/10] overflow-hidden">
               <Image
                 src="/assets/studios/IMG_7857.JPG"
@@ -125,7 +125,7 @@ export function GalleryTeaserSection() {
 
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {galleryShots.map((src) => (
-            <div key={src} className="relative aspect-square overflow-hidden">
+            <div key={src} className="relative aspect-square overflow-hidden rounded-xl">
               <Image
                 src={src}
                 alt="Scene from the RT Spaces studio"
