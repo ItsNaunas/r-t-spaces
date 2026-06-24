@@ -817,8 +817,8 @@ export function BookingWizard({
               />
               <span>
                 I agree to the{" "}
-                <Link href="/policies" target="_blank" className="underline underline-offset-2">
-                  studio policies
+                <Link href="/terms" target="_blank" className="underline underline-offset-2">
+                  terms &amp; conditions
                 </Link>
                 .
               </span>
