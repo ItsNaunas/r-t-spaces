@@ -1129,6 +1129,14 @@ export function SiteFooter() {
       <div className="px-4 py-8 text-sm text-[var(--muted-plum)] sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="pt-8 border-t border-[var(--lavender)] text-center">
+            <div className="mb-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
+              <Link
+                href="/terms"
+                className="text-[var(--muted-plum)] hover:text-[var(--primary)] transition"
+              >
+                Terms &amp; Conditions
+              </Link>
+            </div>
             <p className="text-sm text-[var(--muted-plum)]">
               © 2025 RT Spaces. All Rights Reserved.
             </p>

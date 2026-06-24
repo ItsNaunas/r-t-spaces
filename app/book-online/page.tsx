@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SiteFooter } from "@/components/StudioSections";
 import { BookingWizard } from "@/components/booking/BookingWizard";
 import { BookingSuccessMessage } from "@/components/BookingSuccessMessage";
@@ -214,7 +215,14 @@ export default function BookOnlinePage({
               Booking Policies
             </h2>
             <p className="text-[var(--muted-plum)]">
-              Please review our booking policies before submitting your request.
+              A summary of the essentials is below. Please review our full{" "}
+              <Link
+                href="/terms"
+                className="text-[var(--primary)] underline underline-offset-2 hover:opacity-80"
+              >
+                terms &amp; conditions
+              </Link>{" "}
+              before submitting your request.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
