@@ -1,3 +1,6 @@
+> **Superseded.** This describes the Calendly-era booking flow, which was replaced in
+> `docs/CALCOM-MIGRATION.md`. Kept for history; do not follow these steps.
+
 # How to Find Your Stripe Webhook Secret
 
 There are two ways to get your webhook secret, depending on whether you're testing locally or deploying to production.

@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Standalone ops scripts, run directly by node and excluded from tsconfig
+    // too. Not part of the app build.
+    "scripts/**",
   ]),
 ]);
 

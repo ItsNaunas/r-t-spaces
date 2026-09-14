@@ -1,3 +1,6 @@
+> **Superseded.** This describes the Calendly-era booking flow, which was replaced in
+> `docs/CALCOM-MIGRATION.md`. Kept for history; do not follow these steps.
+
 # Automated Booking System Setup Guide
 
 This guide will help you set up the automated booking system with payments and calendar integration.

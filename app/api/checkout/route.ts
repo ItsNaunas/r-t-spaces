@@ -1,114 +1,164 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { calculateHours, calculatePrice, calculateDeposit, BOOKING_PACKAGES } from '@/lib/pricing';
-import { getPendingBooking, updatePendingBookingStripeSession } from '@/lib/pendingBookings';
+import {
+  calculateHours,
+  computeAddonsTotal,
+  getBalanceForPackage,
+  getDepositForPackage,
+  getPackagePriceForHours,
+  type SelectedAddon,
+} from '@/lib/pricing';
+import { getMergedPackages } from '@/lib/admin/pricing-merged';
+import { getCalBooking } from '@/lib/calcom';
+import { updatePendingBookingStripeSession } from '@/lib/pendingBookings';
 import { validateDiscountCode } from '@/lib/admin/validateDiscount';
 
+/**
+ * Creates the Stripe Checkout session for a booking deposit.
+ *
+ * Every number charged here is computed on the server. The browser supplies
+ * only *identifiers* — which package, which add-ons, which Cal.com booking —
+ * and the authoritative start/end times come from Cal.com, not the client.
+ * Nothing in the request body can influence the amount charged.
+ */
 export async function POST(request: Request) {
   try {
     if (!process.env.STRIPE_SECRET_KEY?.startsWith('sk_')) {
-      return NextResponse.json(
-        { error: 'Stripe is not configured' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Stripe is not configured' }, { status: 500 });
     }
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: '2025-11-17.clover',
     });
+
     const body = await request.json();
     const {
-      name,
-      email,
-      date,
-      hours,
       notes,
-      startTime,
-      endTime,
-      totalPrice,
-      depositAmount,
-      addonsTotal,
-      addonsSummary,
-      selectedPackage,
-      packageTitle,
+      selectedPackage: selectedPackageId,
+      selectedAddons,
       pendingBookingId,
-      calendlyEventUri,
-      calendlyInviteeUri,
+      calBookingUid,
       discountCode,
-    } = body;
+    } = body ?? {};
 
+    if (typeof calBookingUid !== 'string' || !calBookingUid) {
+      return NextResponse.json({ error: 'Missing booking reference.' }, { status: 400 });
+    }
+    if (typeof selectedPackageId !== 'string' || !selectedPackageId) {
+      return NextResponse.json({ error: 'Please choose an option first.' }, { status: 400 });
+    }
+
+    // ── Authoritative booking, straight from Cal.com ──────────────────────────
+    const booking = await getCalBooking(calBookingUid);
+    if (!booking) {
+      return NextResponse.json(
+        { error: 'We could not find that time slot. Please pick a time again.' },
+        { status: 400 }
+      );
+    }
+    if (booking.status !== 'pending') {
+      // Already confirmed (so already paid) or cancelled/rejected. Either way
+      // this is not something we should be taking money for.
+      return NextResponse.json(
+        { error: 'That time slot is no longer being held. Please pick a time again.' },
+        { status: 409 }
+      );
+    }
+
+    const attendee = booking.attendees?.[0];
+    const name = attendee?.name?.trim();
+    const email = attendee?.email?.trim().toLowerCase();
     if (!name || !email) {
       return NextResponse.json(
-        { error: 'Missing required fields: name, email' },
+        { error: 'The booking is missing a name or email. Please pick a time again.' },
         { status: 400 }
       );
     }
 
-    if (!date || !hours) {
+    // ── Authoritative package, including any admin price override ────────────
+    const packages = await getMergedPackages();
+    const pkg = packages.find((p) => p.id === selectedPackageId);
+    if (!pkg) {
+      return NextResponse.json({ error: 'Unknown package.' }, { status: 400 });
+    }
+    if (!pkg.enabled) {
       return NextResponse.json(
-        { error: 'Missing required fields: date, hours' },
+        { error: 'That option is not currently available.' },
         { status: 400 }
       );
     }
 
-    // Use provided pricing when present (includes time-based for standard-rate); otherwise calculate from startTime/endTime
-    let bookingTotalPrice = totalPrice;
-    let bookingDeposit = depositAmount;
+    // ── Price, computed here and nowhere else ────────────────────────────────
+    const hours = pkg.priceFromTime
+      ? calculateHours(booking.start, booking.end, pkg.minimumHours)
+      : pkg.hours;
 
-    if (bookingTotalPrice == null || bookingDeposit == null) {
-      if (startTime && endTime) {
-        const calculatedHours = calculateHours(startTime, endTime);
-        bookingTotalPrice = calculatePrice(calculatedHours);
-        bookingDeposit = calculateDeposit(bookingTotalPrice);
-      } else {
-        return NextResponse.json(
-          { error: 'Missing pricing information. Please select a package or provide totalPrice and depositAmount.' },
-          { status: 400 }
-        );
-      }
-    }
+    const packagePrice = getPackagePriceForHours(pkg, hours);
 
-    // Apply discount code server-side (never trust client price)
+    // Re-derive add-on money from the submitted *selection*, never a submitted total.
+    const requestedAddons: SelectedAddon[] = Array.isArray(selectedAddons)
+      ? selectedAddons
+          .filter((a: unknown): a is SelectedAddon =>
+            typeof a === 'object' && a !== null && typeof (a as SelectedAddon).id === 'string'
+          )
+          .map((a) => ({
+            id: a.id,
+            quantity: Number.isFinite(Number(a.quantity)) ? Math.max(0, Math.floor(Number(a.quantity))) : 1,
+          }))
+      : [];
+    const { total: addonsTotal, summary: addonsSummary } = computeAddonsTotal(requestedAddons);
+
+    let totalPrice = packagePrice + addonsTotal;
+    let deposit = getDepositForPackage(pkg, packagePrice);
+
+    // ── Discount, applied to the server-computed price ───────────────────────
     let appliedDiscountCode = '';
     let discountAmount = 0;
-    if (discountCode && typeof discountCode === 'string') {
-      const pkg = BOOKING_PACKAGES.find((p) => p.id === selectedPackage);
-      const validation = await validateDiscountCode(
-        discountCode,
-        selectedPackage ?? 'global',
-        bookingTotalPrice,
-        pkg
-      );
+    if (typeof discountCode === 'string' && discountCode) {
+      const validation = await validateDiscountCode(discountCode, pkg.id, packagePrice, pkg);
       if (validation.valid) {
         discountAmount = validation.discountAmount;
-        bookingTotalPrice = validation.finalPrice;
-        bookingDeposit = validation.finalDeposit;
+        totalPrice = validation.finalPrice + addonsTotal;
+        deposit = validation.finalDeposit;
         appliedDiscountCode = validation.code;
       }
     }
 
-    const usedProvidedPricing = totalPrice != null && depositAmount != null;
-    const addonsNote = addonsSummary ? ` Add-ons (£${Number(addonsTotal) || 0}) due on the day.` : '';
-    const depositDescription = (usedProvidedPricing
-      ? `Deposit for ${packageTitle || 'studio booking'}${date ? ` on ${date}` : ''}${hours ? ` (${hours})` : ''}`
-      : `50% deposit for ${packageTitle || 'studio booking'}${date ? ` on ${date}` : ''}${hours ? ` (${hours})` : ''}`) + addonsNote;
+    const balanceDue = getBalanceForPackage(pkg, totalPrice, deposit);
 
-    const balanceDue = bookingTotalPrice - bookingDeposit;
+    if (!Number.isFinite(deposit) || deposit <= 0) {
+      console.error('Computed a non-chargeable deposit', { pkg: pkg.id, hours, totalPrice, deposit });
+      return NextResponse.json({ error: 'Unable to price that booking.' }, { status: 400 });
+    }
 
-    // Create a Stripe Checkout Session
+    // ── Human-readable date/time, derived from the booking ───────────────────
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London',
+      dateStyle: 'full',
+    });
+    const timeFmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London',
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+    const bookingDate = fmt.format(new Date(booking.start));
+    const bookingHours = `${timeFmt.format(new Date(booking.start))} – ${timeFmt.format(
+      new Date(booking.end)
+    )}`;
+
+    const addonsNote = addonsSummary ? ` Add-ons (£${addonsTotal}) due on the day.` : '';
+    const depositDescription =
+      `Deposit for ${pkg.title} on ${bookingDate} (${bookingHours})` + addonsNote;
+
     const session = await stripe.checkout.sessions.create({
-      // Omitting payment_method_types lets Stripe show every method enabled in the
-      // Dashboard (card + Apple Pay / Google Pay / Link), which appear automatically
-      // in hosted Checkout. Listing ['card'] explicitly would suppress the wallets.
+      // Omitting payment_method_types lets Stripe show every method enabled in
+      // the Dashboard (card + Apple Pay / Google Pay / Link).
       line_items: [
         {
           price_data: {
             currency: 'gbp',
-            product_data: {
-              name: packageTitle || 'Studio Booking Deposit',
-              description: depositDescription,
-            },
-            unit_amount: Math.round(bookingDeposit * 100),
+            product_data: { name: pkg.title, description: depositDescription },
+            unit_amount: Math.round(deposit * 100),
           },
           quantity: 1,
         },
@@ -120,42 +170,35 @@ export async function POST(request: Request) {
       metadata: {
         customerName: name,
         customerEmail: email,
-        bookingDate: date || '',
-        bookingHours: hours || '',
-        bookingNotes: notes || '',
-        totalPrice: bookingTotalPrice.toString(),
-        depositAmount: bookingDeposit.toString(),
-        balanceDue: balanceDue.toString(),
-        addonsTotal: (addonsTotal != null ? String(addonsTotal) : '') || '',
-        addonsSummary: addonsSummary || '',
-        startTime: startTime || '',
-        endTime: endTime || '',
-        selectedPackage: selectedPackage || '',
-        packageTitle: packageTitle || '',
-        pendingBookingId: pendingBookingId || '',
-        calendlyEventUri: calendlyEventUri || '',
-        calendlyInviteeUri: calendlyInviteeUri || '',
+        bookingDate,
+        bookingHours,
+        bookingNotes: typeof notes === 'string' ? notes.slice(0, 500) : '',
+        totalPrice: totalPrice.toFixed(2),
+        depositAmount: deposit.toFixed(2),
+        balanceDue: balanceDue.toFixed(2),
+        addonsTotal: String(addonsTotal),
+        addonsSummary,
+        selectedPackage: pkg.id,
+        packageTitle: pkg.title,
+        pendingBookingId: typeof pendingBookingId === 'string' ? pendingBookingId : '',
+        calBookingUid,
         discountCode: appliedDiscountCode,
-        discountAmount: discountAmount.toString(),
+        discountAmount: discountAmount.toFixed(2),
       },
     });
 
-    // If we have a pending booking, update it with the Stripe session ID
     if (pendingBookingId) {
       try {
         await updatePendingBookingStripeSession(pendingBookingId, session.id);
       } catch (error) {
-        console.error("Error updating pending booking with Stripe session:", error);
-        // Don't fail the checkout if this fails
+        console.error('Error updating pending booking with Stripe session:', error);
+        // Don't fail the checkout: the webhook can still find the booking by uid.
       }
     }
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error) {
     console.error('Checkout error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create checkout session' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 });
   }
 }

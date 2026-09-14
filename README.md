@@ -4,50 +4,42 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ### Environment Setup
 
-1. Create a `.env.local` file in the project root with the following variables:
+1. Copy `.env.example` to `.env.local` and fill it in. Every variable is
+   documented there, and the real values live in Bitwarden.
 
-```env
-# Email Configuration (Resend)
-RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
-STUDIO_EMAIL=enquires@rtspaces.co.uk
-FROM_EMAIL=onboarding@resend.dev
-
-# Stripe Payment Configuration
-STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxxxxxxx
-STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxx
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-
-# Calendly Integration (for scheduling)
-NEXT_PUBLIC_CALENDLY_SCHEDULING_LINK=https://calendly.com/your-username/event-type
+```bash
+cp .env.example .env.local
 ```
 
-2. **Resend Setup** (for email notifications):
-   - Sign up at [resend.com](https://resend.com)
-   - Go to [API Keys](https://resend.com/api-keys) and create a new key
-   - Add it as `RESEND_API_KEY`
+2. **Cal.com** (scheduling) — the studio's Cal.com account owns availability and
+   holds the slot while payment is taken.
+   - Create an API key at Settings > Developer > API keys, add it as `CAL_API_KEY`.
+   - Set `NEXT_PUBLIC_CAL_USERNAME` to the account's username.
+   - Run the setup script to create the schedule, one event type per package,
+     and the booking webhook. It reads `lib/pricing.ts`, so Cal.com can never
+     drift from the site's own package list:
 
-3. **Stripe Setup** (for payments):
-   - Sign up at [stripe.com](https://stripe.com)
-   - Get your API keys from [Stripe Dashboard](https://dashboard.stripe.com/apikeys)
-   - Add `STRIPE_SECRET_KEY` (starts with `sk_test_` for test mode, `sk_live_` for production)
-   - For webhooks, go to [Webhooks](https://dashboard.stripe.com/webhooks) and create an endpoint:
-     - URL: `https://yourdomain.com/api/webhooks/stripe`
-     - Events: `checkout.session.completed`
-     - Copy the webhook secret as `STRIPE_WEBHOOK_SECRET`
+     ```bash
+     node scripts/setup-calcom.ts              # dry run, writes nothing
+     node scripts/setup-calcom.ts --apply      # create/update
+     ```
 
-4. **Calendly Setup** (for scheduling):
-   - Sign up at [calendly.com](https://calendly.com) if you haven't already
-   - Create an event type in your Calendly account (e.g., "Studio Booking")
-   - Get your scheduling link:
-     - Go to your Calendly event type settings
-     - Copy your public Calendly scheduling link
-     - Format: `https://calendly.com/your-username/event-type`
-     - Add as `NEXT_PUBLIC_CALENDLY_SCHEDULING_LINK` in your `.env.local`
-   - The Calendly widget will be embedded on the booking page, allowing customers to see availability and select times before payment
-   - **Keep the calendar always available:** If visitors see "This calendar is currently unavailable", the Calendly account owner must log in at [calendly.com](https://calendly.com) and:
-     - Ensure the event type is **active** (not paused)
-     - Set **Availability** so there are open hours (e.g. "When can you meet?" or sync with Google/Outlook so slots exist)
-     - Avoid leaving the event type in "Away" or with zero availability
+   - Connect the studio calendar (Outlook or Google) in Cal.com settings, and
+     set it as the destination calendar so bookings land in the real diary.
+
+3. **Stripe** (payments):
+   - Add `STRIPE_SECRET_KEY` (`sk_test_` in test mode, `sk_live_` in production).
+   - Add a webhook endpoint at `https://yourdomain.com/api/webhooks/stripe`
+     subscribed to `checkout.session.completed` and
+     `checkout.session.async_payment_failed`, and copy its signing secret into
+     `STRIPE_WEBHOOK_SECRET`.
+
+4. **Resend** (email), **Upstash Redis** (bookings, holds, discounts) and the
+   admin password: see `.env.example`.
+
+5. **Cron** — `vercel.json` schedules `/api/cancel-expired-bookings` every five
+   minutes to release unpaid holds. Set `CRON_SECRET` in Vercel; the endpoint
+   refuses to run without it.
 
 ### Running the Development Server
 
@@ -90,36 +82,40 @@ The booking system offers two booking options:
 - Manual confirmation required (within 24 hours)
 
 ### 2. Pay & Book Now (Automated)
-- Customer selects time from Calendly calendar (shows real availability)
-- Customer completes booking form and pays via Stripe
-- Payment processed securely
-- **Automated workflow triggers:**
-  1. ✅ Calendly event created when time is selected
-  2. ✅ Booking confirmed automatically after payment
-  3. ✅ Booking saved to database with payment details
-  4. ✅ Confirmation emails sent to both parties
-  5. ✅ Calendar invite already sent (via Calendly)
+- Customer picks a package, then a time from the embedded Cal.com calendar
+- Cal.com creates the booking **unconfirmed**, holding the slot for 15 minutes
+- Customer pays the deposit via Stripe Checkout
+- The Stripe webhook confirms the Cal.com booking, saves it, and emails both parties
+- If payment never lands, the cron sweep cancels the hold and frees the slot
 
-### Booking Flow (Pay & Book)
+**The price is computed entirely on the server.** The browser sends only
+identifiers (which package, which add-ons, which Cal.com booking); the amount
+charged is derived from the Cal.com booking times and the admin-managed package
+list, so it cannot be influenced by the client.
 
-1. **Customer selects time in Calendly widget** (embedded on booking page)
-   - Sees all available time slots in real-time
-   - Selects preferred date/time
-   - Calendly event is created (reserves the time slot)
+## Booking Flow (Pay & Book)
 
-2. **Booking form appears with pre-filled data**
-   - Name, email, date, and time from Calendly
-   - Customer adds notes/requirements
+1. **Customer picks a package** in the wizard (add-ons optional)
+
+2. **Customer picks a time** in the embedded Cal.com calendar
+   - Availability = studio opening hours minus the connected calendar's busy times
+   - Hourly-hire packages offer a duration picker, so the calendar blocks the
+     real amount of room time
+   - Cal.com creates the booking **unconfirmed** and holds the slot
 
 3. **Customer clicks "Proceed to Payment"**
-   - Redirected to Stripe Checkout for secure payment
+   - The server re-reads the booking from Cal.com, prices it, and creates a
+     Stripe Checkout session
 
-4. **After successful payment, Stripe webhook triggers:**
-   - Booking saved to database
-   - Email confirmations sent
-   - Calendly event already exists (from step 1)
+4. **After successful payment, the Stripe webhook:**
+   - Confirms the Cal.com booking (this is the only thing that makes it real)
+   - Saves the booking and sends confirmation emails
+   - The booking appears in the studio's connected calendar
 
 5. **Customer redirected back with success message**
+
+If payment is abandoned, the cron sweep cancels the unconfirmed booking after
+15 minutes and the slot returns to the calendar.
 
 ### Pricing
 

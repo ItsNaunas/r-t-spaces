@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import Link from "next/link";
-import { CalendlyWidget } from "@/components/CalendlyWidget";
+import { CalcomWidget, type CalBookingSuccess } from "@/components/CalcomWidget";
 import {
   calculateHours,
   calculatePrice,
@@ -33,24 +33,13 @@ type Step = "offer" | "option" | "time" | "pay";
 
 type BookingPrefill = { offer?: Offer; packageId?: string } | null;
 
-type CalendlyEvent = {
-  event: string;
-  payload: {
-    event_type: string;
-    invitee: { email: string; name: string; uri: string };
-    scheduled_event: { start_time: string; end_time: string; location: string };
-    event: { uri: string };
-  };
-};
-
 type FormState = {
   name: string;
   email: string;
   date: string;
   hours: string;
   notes: string;
-  calendlyEventUri?: string;
-  calendlyInviteeUri?: string;
+  calBookingUid?: string;
   pendingBookingId?: string;
 };
 
@@ -60,8 +49,7 @@ const initialForm: FormState = {
   date: "",
   hours: "",
   notes: "",
-  calendlyEventUri: "",
-  calendlyInviteeUri: "",
+  calBookingUid: "",
   pendingBookingId: "",
 };
 
@@ -89,13 +77,13 @@ export function BookingWizard({
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
-  const [calendlyTimeSelected, setCalendlyTimeSelected] = useState(false);
-  const [calendlyData, setCalendlyData] = useState<{
+  const [slotSelected, setSlotSelected] = useState(false);
+  const [slotData, setSlotData] = useState<{
     eventType: string;
     startTime: string;
     endTime: string;
-    inviteeEmail: string;
-    inviteeName: string;
+    attendeeEmail: string;
+    attendeeName: string;
   } | null>(null);
 
   const [selectedPackage, setSelectedPackage] = useState<BookingPackage | null>(null);
@@ -126,7 +114,11 @@ export function BookingWizard({
   const [discountLoading, setDiscountLoading] = useState(false);
   const [discountError, setDiscountError] = useState("");
 
-  const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_SCHEDULING_LINK || "";
+  // Each package is its own Cal.com event type, slugged with the package id, so
+  // the calendar enforces that package's real duration and buffers. Hourly-hire
+  // event types carry a duration picker; we deliberately don't preselect one.
+  const calUsername = process.env.NEXT_PUBLIC_CAL_USERNAME || "";
+  const calLink = calUsername && selectedPackage ? `${calUsername}/${selectedPackage.id}` : "";
 
   const selectedAddons: SelectedAddon[] = ADDONS.filter(
     (a) => a.price != null && a.id !== "prints-albums"
@@ -190,7 +182,7 @@ export function BookingWizard({
     }
     if (selectedPackage) {
       const isTimeBased =
-        selectedPackage.priceFromTime && calendlyData?.startTime && calendlyData?.endTime;
+        selectedPackage.priceFromTime && slotData?.startTime && slotData?.endTime;
       if (selectedPackage.priceFromTime && !isTimeBased) {
         setBookingPrice(null);
         setDepositAmount(null);
@@ -198,7 +190,7 @@ export function BookingWizard({
         return;
       }
       const hours = isTimeBased
-        ? calculateHours(calendlyData!.startTime, calendlyData!.endTime, selectedPackage.minimumHours)
+        ? calculateHours(slotData!.startTime, slotData!.endTime, selectedPackage.minimumHours)
         : selectedPackage.hours;
       const packagePrice = isTimeBased
         ? getPackagePriceForHours(selectedPackage, hours)
@@ -208,8 +200,8 @@ export function BookingWizard({
       setBookingPrice(packagePrice + addonsTotal);
       setDepositAmount(packageDeposit);
       setBalanceAmount(packageBalance + addonsTotal);
-    } else if (calendlyData?.startTime && calendlyData?.endTime) {
-      const hours = calculateHours(calendlyData.startTime, calendlyData.endTime);
+    } else if (slotData?.startTime && slotData?.endTime) {
+      const hours = calculateHours(slotData.startTime, slotData.endTime);
       const totalPrice = calculatePrice(hours);
       const deposit = calculateDeposit(totalPrice);
       setBookingPrice(totalPrice);
@@ -220,21 +212,21 @@ export function BookingWizard({
       setDepositAmount(null);
       setBalanceAmount(null);
     }
-  }, [selectedPackage, calendlyData, paymentMode, addonsTotal]);
+  }, [selectedPackage, slotData, paymentMode, addonsTotal]);
 
   // Create a pending booking once package + time are both set (pay mode).
   useEffect(() => {
     if (
       paymentMode === "pay" &&
-      calendlyTimeSelected &&
-      calendlyData &&
+      slotSelected &&
+      slotData &&
       selectedPackage &&
       bookingPrice &&
       depositAmount &&
-      calendlyData.inviteeName &&
-      calendlyData.inviteeEmail &&
+      slotData.attendeeName &&
+      slotData.attendeeEmail &&
       !formData.pendingBookingId &&
-      formData.calendlyEventUri &&
+      formData.calBookingUid &&
       !pendingCreationRef.current
     ) {
       // Guard against a duplicate POST: the effect re-runs when deps like
@@ -247,12 +239,8 @@ export function BookingWizard({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              calendlyEventUri: formData.calendlyEventUri,
-              calendlyInviteeUri: formData.calendlyInviteeUri,
-              customerName: calendlyData.inviteeName,
-              customerEmail: calendlyData.inviteeEmail,
-              startTime: calendlyData.startTime,
-              endTime: calendlyData.endTime,
+              // The server re-reads name, email and times from Cal.com itself.
+              calBookingUid: formData.calBookingUid,
               packageId: selectedPackage.id,
               packageTitle: selectedPackage.title,
               totalPrice: bookingPrice,
@@ -277,15 +265,14 @@ export function BookingWizard({
     }
   }, [
     paymentMode,
-    calendlyTimeSelected,
-    calendlyData,
+    slotSelected,
+    slotData,
     selectedPackage,
     bookingPrice,
     depositAmount,
     addonsTotal,
     addonsSummary,
-    formData.calendlyEventUri,
-    formData.calendlyInviteeUri,
+    formData.calBookingUid,
     formData.pendingBookingId,
   ]);
 
@@ -302,7 +289,7 @@ export function BookingWizard({
     setFormData((prev) => (prev.pendingBookingId ? { ...prev, pendingBookingId: "" } : prev));
     setPendingBookingExpiresAt(null);
     pendingCreationRef.current = false;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [selectedPackage?.id, offer]);
 
   // Countdown for the payment hold.
@@ -345,64 +332,45 @@ export function BookingWizard({
     }
   };
 
-  const handleCalendlyEvent = async (event: CalendlyEvent | { event?: string; payload?: unknown }) => {
+  /**
+   * Cal.com's embed hands us the booking directly, so unlike the old Calendly
+   * flow there is no server round-trip here to look the booking up. That round
+   * trip was what leaked the scheduling API token.
+   *
+   * The booking exists in Cal.com at this point but is unconfirmed — it only
+   * becomes real when Stripe tells the server the deposit has been paid.
+   */
+  const handleBookingSuccessful = (booking: CalBookingSuccess) => {
     try {
-      if (event?.event !== "calendly.event_scheduled") return;
-      const payload = (event as CalendlyEvent).payload;
-      if (!payload?.event?.uri || !payload?.invitee?.uri) return;
-
-      const eventUri = payload.event.uri;
-      const inviteeUri = payload.invitee.uri;
-
-      try {
-        const response = await fetch("/api/calendly-event-details", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ eventUri, inviteeUri }),
-        });
-        if (!response.ok) throw new Error("Failed to fetch event details");
-        const eventData = await response.json();
-        if (!eventData.start_time || !eventData.end_time || !eventData.invitee)
-          throw new Error("Incomplete event data");
-
-        const start = new Date(eventData.start_time);
-        const end = new Date(eventData.end_time);
-        const dateStr = start.toISOString().split("T")[0];
-        const fmt = (d: Date) =>
-          d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-
-        setCalendlyData({
-          eventType: eventData.event_type || "",
-          startTime: eventData.start_time,
-          endTime: eventData.end_time,
-          inviteeEmail: eventData.invitee.email,
-          inviteeName: eventData.invitee.name,
-        });
-        setFormData((prev) => ({
-          ...prev,
-          name: eventData.invitee.name || prev.name,
-          email: eventData.invitee.email || prev.email,
-          date: dateStr,
-          hours: `${fmt(start)} – ${fmt(end)}`,
-          calendlyEventUri: eventUri,
-          calendlyInviteeUri: inviteeUri,
-        }));
-        setCalendlyTimeSelected(true);
-        track("booking_time");
-      } catch (error) {
-        console.error("Error fetching Calendly event details:", error);
-        setFormData((prev) => ({
-          ...prev,
-          calendlyEventUri: eventUri,
-          calendlyInviteeUri: inviteeUri,
-        }));
-        setMessage("Time selected, but some details could not be loaded. Please add your name and email.");
-        setStatus("error");
-        setCalendlyTimeSelected(true);
-        track("booking_time");
+      const start = new Date(booking.startTime);
+      const end = new Date(booking.endTime);
+      if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+        console.error("Cal.com returned an unparseable booking time", booking);
+        return;
       }
+
+      const fmt = (d: Date) =>
+        d.toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit", hour12: true });
+
+      setSlotData({
+        eventType: selectedPackage?.id ?? "",
+        startTime: booking.startTime,
+        endTime: booking.endTime,
+        attendeeEmail: booking.email ?? "",
+        attendeeName: booking.name ?? "",
+      });
+      setFormData((prev) => ({
+        ...prev,
+        name: booking.name || prev.name,
+        email: booking.email || prev.email,
+        date: start.toISOString().split("T")[0],
+        hours: `${fmt(start)} – ${fmt(end)}`,
+        calBookingUid: booking.uid,
+      }));
+      setSlotSelected(true);
+      track("booking_time");
     } catch (err) {
-      console.error("Error handling Calendly event:", err);
+      console.error("Error handling Cal.com booking:", err);
     }
   };
 
@@ -411,10 +379,10 @@ export function BookingWizard({
 
     if (paymentMode === "pay") {
       if (!selectedPackage) return fail("Please choose an option first.");
-      if (!calendlyTimeSelected || !calendlyData) return fail("Please pick a time first.");
+      if (!slotSelected || !slotData) return fail("Please pick a time first.");
       if (!bookingPrice || !depositAmount) return fail("Unable to calculate pricing. Pick an option and time.");
     }
-    if (paymentMode === "request" && !calendlyTimeSelected) return fail("Please pick a time first.");
+    if (paymentMode === "request" && !slotSelected) return fail("Please pick a time first.");
     if (!formData.name || !formData.email)
       return fail("Please complete the calendar step so we have your name and email.");
 
@@ -430,20 +398,15 @@ export function BookingWizard({
         const response = await fetch("/api/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          // Identifiers only. The server prices the booking from the Cal.com
+          // booking and the admin-controlled package list; any amount sent from
+          // here would be ignored.
           body: JSON.stringify({
-            ...formData,
             notes: notesWithAddons,
-            startTime: calendlyData?.startTime,
-            endTime: calendlyData?.endTime,
-            totalPrice: bookingPrice,
-            depositAmount,
             selectedPackage: selectedPackage?.id,
-            packageTitle: selectedPackage?.title,
-            addonsTotal: addonsTotal || 0,
-            addonsSummary: addonsSummary || "",
+            selectedAddons,
             pendingBookingId: formData.pendingBookingId,
-            calendlyEventUri: formData.calendlyEventUri,
-            calendlyInviteeUri: formData.calendlyInviteeUri,
+            calBookingUid: formData.calBookingUid,
             discountCode: appliedDiscount?.code ?? "",
           }),
         });
@@ -489,7 +452,7 @@ export function BookingWizard({
       : step === "option"
         ? Boolean(selectedPackage)
         : step === "time"
-          ? calendlyTimeSelected
+          ? slotSelected
           : false;
 
   const goBack = () => {
@@ -725,9 +688,9 @@ export function BookingWizard({
             <p className="text-sm text-[var(--muted-plum)]">
               Choose an available slot. Open daily 8 AM – 11 PM.
             </p>
-            {calendlyUrl ? (
+            {calLink ? (
               <div className="rounded-2xl border-2 border-[var(--lavender)] bg-white">
-                <CalendlyWidget url={calendlyUrl} onEventScheduled={handleCalendlyEvent} />
+                <CalcomWidget calLink={calLink} onBookingSuccessful={handleBookingSuccessful} />
               </div>
             ) : (
               <div className="rounded-2xl border-2 border-[var(--lavender)] bg-white p-6 text-sm text-[var(--muted-plum)]">
@@ -738,15 +701,15 @@ export function BookingWizard({
                 or DM @rtspaces to book.
               </div>
             )}
-            {calendlyTimeSelected && calendlyData && (
+            {slotSelected && slotData && (
               <div className="border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
-                ✓ {new Date(calendlyData.startTime).toLocaleDateString("en-GB", {
+                ✓ {new Date(slotData.startTime).toLocaleDateString("en-GB", {
                   weekday: "long",
                   day: "numeric",
                   month: "long",
                 })}{" "}
                 at{" "}
-                {new Date(calendlyData.startTime).toLocaleTimeString("en-GB", {
+                {new Date(slotData.startTime).toLocaleTimeString("en-GB", {
                   hour: "numeric",
                   minute: "2-digit",
                 })}
@@ -761,12 +724,12 @@ export function BookingWizard({
               {paymentMode === "pay" ? "Review & pay your deposit" : "Confirm your enquiry"}
             </h3>
 
-            {calendlyData && (
+            {slotData && (
               <div className="space-y-1 border border-[var(--lavender)] bg-white p-4 text-sm">
-                <p className="font-semibold text-[var(--primary)]">{calendlyData.inviteeName}</p>
-                <p className="text-[var(--muted-plum)]">{calendlyData.inviteeEmail}</p>
+                <p className="font-semibold text-[var(--primary)]">{slotData.attendeeName}</p>
+                <p className="text-[var(--muted-plum)]">{slotData.attendeeEmail}</p>
                 <p className="text-[var(--muted-plum)]">
-                  {new Date(calendlyData.startTime).toLocaleString("en-GB", {
+                  {new Date(slotData.startTime).toLocaleString("en-GB", {
                     weekday: "long",
                     day: "numeric",
                     month: "long",

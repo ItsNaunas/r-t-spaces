@@ -19,7 +19,8 @@ export function BookingSuccessMessage() {
             Payment Successful!
           </h2>
           <p className="text-emerald-700 mb-4">
-            Your booking deposit has been processed successfully. We'll send you a confirmation email shortly with your booking details and a link to confirm your exact time slot.
+            Your deposit has been received and your studio time is confirmed. We&apos;ve emailed
+            you the details.
           </p>
           
           {sessionId && (
@@ -34,12 +35,12 @@ export function BookingSuccessMessage() {
           )}
 
           <div className="mt-4 text-sm text-emerald-700">
-            <p className="font-semibold mb-2">What's next?</p>
+            <p className="font-semibold mb-2">What&apos;s next?</p>
             <ul className="list-disc list-inside space-y-1 ml-2">
-              <li>Check your email for booking confirmation</li>
-              <li>Click the Calendly link in your email to confirm your exact time slot</li>
-              <li>We'll send a reminder 48 hours before your booking</li>
-              <li>The remaining balance will be due 48 hours before your booking</li>
+              <li>Check your email for the booking confirmation and calendar invite</li>
+              <li>Your slot is held in our diary, so there is nothing else to confirm</li>
+              <li>We&apos;ll send a reminder before your session</li>
+              <li>The remaining balance is due before your session starts</li>
             </ul>
           </div>
 

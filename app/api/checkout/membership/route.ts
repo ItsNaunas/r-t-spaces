@@ -38,7 +38,8 @@ export async function POST(request: Request) {
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
-      payment_method_types: ["card"],
+      // Omitted deliberately: listing ["card"] suppresses the wallets (Apple
+      // Pay / Google Pay / Link) that are enabled in the Stripe Dashboard.
       success_url: `${baseUrl}/members?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/members?cancelled=true`,
       line_items: [
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
             currency: "gbp",
             product_data: {
               name: `${tier.name} — RT Spaces Membership`,
-              description: `Monthly membership. Billed every month. Cancel anytime.`,
+              description: `Monthly membership. Billed every month, three-month minimum term.`,
             },
             unit_amount: tier.amount * 100,
             recurring: { interval: "month" },

@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
 import localFont from "next/font/local";
-import Script from "next/script";
 import "./globals.css";
 import { PublicChrome } from "@/app/_components/PublicChrome";
 import { BookingProvider } from "@/components/booking/BookingProvider";
@@ -88,9 +87,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
-      </head>
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} ${newIconScript.variable} antialiased`}
       >
@@ -99,10 +95,6 @@ export default function RootLayout({
           {children}
         </BookingProvider>
         <Analytics />
-        <Script
-          src="https://assets.calendly.com/assets/external/widget.js"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   );
