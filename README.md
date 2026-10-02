@@ -30,9 +30,10 @@ cp .env.example .env.local
 3. **Stripe** (payments):
    - Add `STRIPE_SECRET_KEY` (`sk_test_` in test mode, `sk_live_` in production).
    - Add a webhook endpoint at `https://yourdomain.com/api/webhooks/stripe`
-     subscribed to `checkout.session.completed` and
-     `checkout.session.async_payment_failed`, and copy its signing secret into
-     `STRIPE_WEBHOOK_SECRET`.
+     subscribed to `checkout.session.completed`,
+     `checkout.session.async_payment_failed` and `checkout.session.expired`
+     (the last one is what releases abandoned holds), and copy its signing
+     secret into `STRIPE_WEBHOOK_SECRET`.
 
 4. **Resend** (email), **Upstash Redis** (bookings, holds, discounts) and the
    admin password: see `.env.example`.

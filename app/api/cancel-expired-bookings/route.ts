@@ -3,9 +3,11 @@ import { headers } from "next/headers";
 import { cancelExpiredPendingBookings } from "@/lib/pendingBookings";
 
 /**
- * Releases Cal.com holds whose 15-minute payment window has passed.
+ * Releases Cal.com holds whose payment window has passed.
  *
- * Driven by the Vercel cron in vercel.json (every 5 minutes). Previously this
+ * A daily backstop (Vercel cron in vercel.json; Hobby allows daily only). The
+ * Stripe checkout.session.expired webhook releases holds within ~30 minutes;
+ * this catches any it missed. Previously this
  * had no caller at all, so unpaid holds blocked the studio's calendar forever.
  *
  * Vercel sends `Authorization: Bearer $CRON_SECRET` on scheduled invocations.

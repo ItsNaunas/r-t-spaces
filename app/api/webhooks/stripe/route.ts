@@ -8,6 +8,7 @@ import {
   getPendingBooking,
   getPendingBookingByStripeSession,
   confirmPendingBooking,
+  cancelPendingBooking,
 } from '@/lib/pendingBookings';
 import { getRedis } from '@/lib/redis';
 
@@ -144,6 +145,28 @@ export async function POST(request: Request) {
         const calBookingUid = session.metadata?.calBookingUid;
         if (calBookingUid) {
           await cancelCalBooking(calBookingUid, 'Payment failed');
+        }
+        break;
+      }
+
+      case 'checkout.session.expired': {
+        // The customer never paid and the session closed at its expires_at
+        // (set by /api/checkout). This is what releases abandoned holds; the
+        // daily cron sweep is only a backstop.
+        const session = event.data.object as Stripe.Checkout.Session;
+        const pendingId = session.metadata?.pendingBookingId;
+        const pending = pendingId
+          ? await getPendingBooking(pendingId)
+          : await getPendingBookingByStripeSession(session.id);
+
+        if (pending) {
+          // Never release a slot that has already been paid for.
+          if (pending.status === 'pending') {
+            await cancelPendingBooking(pending.id, 'Checkout expired without payment');
+            console.log('Hold released after checkout expired:', pending.id);
+          }
+        } else if (session.metadata?.calBookingUid) {
+          await cancelCalBooking(session.metadata.calBookingUid, 'Checkout expired without payment');
         }
         break;
       }

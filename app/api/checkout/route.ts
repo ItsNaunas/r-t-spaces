@@ -10,7 +10,7 @@ import {
 } from '@/lib/pricing';
 import { getMergedPackages } from '@/lib/admin/pricing-merged';
 import { getCalBooking } from '@/lib/calcom';
-import { updatePendingBookingStripeSession } from '@/lib/pendingBookings';
+import { updatePendingBookingStripeSession, CHECKOUT_WINDOW_MINUTES } from '@/lib/pendingBookings';
 import { validateDiscountCode } from '@/lib/admin/validateDiscount';
 
 /**
@@ -165,6 +165,9 @@ export async function POST(request: Request) {
       ],
       mode: 'payment',
       customer_email: email,
+      // Close the session when the hold's payment window does; Stripe then
+      // sends checkout.session.expired and the webhook releases the slot.
+      expires_at: Math.floor(Date.now() / 1000) + CHECKOUT_WINDOW_MINUTES * 60,
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/book-online?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/book-online?cancelled=true`,
       metadata: {

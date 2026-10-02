@@ -11,7 +11,7 @@ export type PendingBooking = {
   endTime: string;
   stripeSessionId?: string;
   createdAt: string;
-  expiresAt: string; // 15 minutes from creation
+  expiresAt: string; // HOLD_MINUTES from creation
   status: "pending" | "confirmed" | "cancelled";
   bookingData?: {
     packageId?: string;
@@ -32,12 +32,23 @@ const calIdx = (uid: string) => `pending:cal:${uid}`;
 // session lifetime + webhook). Keeps Redis from accumulating dead records.
 const TTL_SECONDS = 24 * 60 * 60;
 
+/**
+ * How long a customer has to pay. Stripe will not expire a Checkout Session
+ * sooner than 30 minutes, so the session gets 31 (a minute of slack for the
+ * request in flight) and closes itself; its checkout.session.expired webhook
+ * releases the hold. The hold outlives the session by a few minutes so the
+ * daily backstop sweep can never release a slot that is still payable.
+ */
+export const CHECKOUT_WINDOW_MINUTES = 31;
+const HOLD_MINUTES = CHECKOUT_WINDOW_MINUTES + 5;
+const UNPAID_REASON = "Payment not completed in time";
+
 export async function savePendingBooking(
   booking: Omit<PendingBooking, "createdAt" | "expiresAt" | "status">
 ): Promise<PendingBooking> {
   const redis = getRedis();
   const now = new Date();
-  const expiresAt = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes from now
+  const expiresAt = new Date(now.getTime() + HOLD_MINUTES * 60 * 1000);
 
   const newBooking: PendingBooking = {
     ...booking,
@@ -118,7 +129,7 @@ export async function cancelPendingBooking(id: string, reason?: string): Promise
   if (!booking) return false;
 
   if (booking.status === "pending" && booking.calBookingUid) {
-    await cancelCalBooking(booking.calBookingUid, reason || "Payment not completed within 15 minutes");
+    await cancelCalBooking(booking.calBookingUid, reason || UNPAID_REASON);
   }
 
   booking.status = "cancelled";
@@ -144,7 +155,7 @@ export async function cancelExpiredPendingBookings(): Promise<number> {
     if (!current || current.status !== "pending") continue;
 
     if (current.calBookingUid) {
-      await cancelCalBooking(current.calBookingUid, "Payment not completed within 15 minutes");
+      await cancelCalBooking(current.calBookingUid, UNPAID_REASON);
     }
     current.status = "cancelled";
     const redis = getRedis();
