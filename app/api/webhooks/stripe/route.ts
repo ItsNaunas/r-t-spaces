@@ -110,6 +110,7 @@ export async function POST(request: Request) {
 
           sendBookingNotification({
             ...savedBooking,
+            paid: true,
             totalPrice: session.metadata?.totalPrice,
             depositAmount: session.metadata?.depositAmount,
             balanceDue: session.metadata?.balanceDue,

@@ -173,13 +173,17 @@ export function CalcomWidget({ calLink, duration, onBookingSuccessful }: CalcomW
           },
         });
 
-        ns("on", {
-          action: "bookingSuccessful",
-          callback: (e: { detail?: unknown }) => {
-            const booking = normalise(e?.detail);
-            if (booking) onBookingRef.current?.(booking);
-          },
-        });
+        // Cal.com emits both events; V2 reliably carries the uid and times.
+        // Whichever arrives first wins, the other is ignored by uid.
+        let handledUid = "";
+        const onBooked = (e: { detail?: unknown }) => {
+          const booking = normalise(e?.detail);
+          if (!booking || booking.uid === handledUid) return;
+          handledUid = booking.uid;
+          onBookingRef.current?.(booking);
+        };
+        ns("on", { action: "bookingSuccessfulV2", callback: onBooked });
+        ns("on", { action: "bookingSuccessful", callback: onBooked });
 
         ns("on", {
           action: "linkReady",

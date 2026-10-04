@@ -229,8 +229,6 @@ export function BookingWizard({
       selectedPackage &&
       bookingPrice &&
       depositAmount &&
-      slotData.attendeeName &&
-      slotData.attendeeEmail &&
       !formData.pendingBookingId &&
       formData.calBookingUid &&
       !pendingCreationRef.current
@@ -257,7 +255,23 @@ export function BookingWizard({
           });
           if (response.ok) {
             const data = await response.json();
-            setFormData((prev) => ({ ...prev, pendingBookingId: data.id }));
+            // Cal.com's embed events don't reliably include the attendee, so
+            // take name and email from the server's Cal.com lookup.
+            setFormData((prev) => ({
+              ...prev,
+              pendingBookingId: data.id,
+              name: prev.name || data.customerName || "",
+              email: prev.email || data.customerEmail || "",
+            }));
+            setSlotData((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    attendeeName: prev.attendeeName || data.customerName || "",
+                    attendeeEmail: prev.attendeeEmail || data.customerEmail || "",
+                  }
+                : prev
+            );
             setPendingBookingExpiresAt(new Date(data.expiresAt));
           } else {
             pendingCreationRef.current = false; // allow retry
@@ -388,9 +402,9 @@ export function BookingWizard({
       if (!slotSelected || !slotData) return fail("Please pick a time first.");
       if (!bookingPrice || !depositAmount) return fail("Unable to calculate pricing. Pick an option and time.");
     }
-    if (paymentMode === "request" && !slotSelected) return fail("Please pick a time first.");
-    if (!formData.name || !formData.email)
-      return fail("Please complete the calendar step so we have your name and email.");
+    // Paid bookings: checkout reads name and email from the Cal.com booking.
+    if (paymentMode === "request" && (!formData.name.trim() || !formData.email.trim()))
+      return fail("Please add your name and email so we can reply.");
 
     setStatus("loading");
     setMessage("");
@@ -450,7 +464,7 @@ export function BookingWizard({
   }
 
   // ---- derived UI state ----
-  const steps: Step[] = paymentMode === "request" ? ["offer", "time", "pay"] : ["offer", "option", "time", "pay"];
+  const steps: Step[] = paymentMode === "request" ? ["offer", "pay"] : ["offer", "option", "time", "pay"];
   const stepIndex = steps.indexOf(step);
   const canContinue =
     step === "offer"
@@ -477,7 +491,7 @@ export function BookingWizard({
   const startEnquiry = () => {
     setPaymentMode("request");
     setSelectedPackage(null);
-    setStep("time");
+    setStep("pay");
   };
 
   const footerPrice =
@@ -757,8 +771,39 @@ export function BookingWizard({
         {step === "pay" && (
           <form id="booking-form" onSubmit={handleSubmit} className="space-y-5">
             <h3 className="font-heading text-2xl text-[var(--primary)]">
-              {paymentMode === "pay" ? "Review & pay your deposit" : "Confirm your enquiry"}
+              {paymentMode === "pay" ? "Review & pay your deposit" : "Send us an enquiry"}
             </h3>
+
+            {paymentMode === "request" && (
+              <div className="grid gap-3">
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
+                  placeholder="Full name"
+                  autoComplete="name"
+                  required
+                  className="rounded-xl border border-[var(--lavender)] bg-white px-3 py-2 text-sm text-[var(--primary)] outline-none focus:border-[var(--primary)]"
+                />
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
+                  placeholder="Email"
+                  autoComplete="email"
+                  required
+                  className="rounded-xl border border-[var(--lavender)] bg-white px-3 py-2 text-sm text-[var(--primary)] outline-none focus:border-[var(--primary)]"
+                />
+                <textarea
+                  value={formData.notes}
+                  onChange={(e) => setFormData((p) => ({ ...p, notes: e.target.value }))}
+                  placeholder="What are you planning, and roughly when?"
+                  rows={4}
+                  maxLength={1000}
+                  className="rounded-xl border border-[var(--lavender)] bg-white px-3 py-2 text-sm text-[var(--primary)] outline-none focus:border-[var(--primary)]"
+                />
+              </div>
+            )}
 
             {slotData && (
               <div className="space-y-1 border border-[var(--lavender)] bg-white p-4 text-sm">

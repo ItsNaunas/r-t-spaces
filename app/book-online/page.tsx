@@ -49,11 +49,13 @@ const availabilityInfo = {
   ],
 };
 
-export default function BookOnlinePage({
+export default async function BookOnlinePage({
   searchParams,
 }: {
-  searchParams?: { success?: string; cancelled?: string; session_id?: string };
+  // Next 16 passes search params as a promise; reading it directly is always undefined.
+  searchParams: Promise<{ success?: string; cancelled?: string; session_id?: string }>;
 }) {
+  const params = await searchParams;
   return (
     <div className="bg-[var(--base)]">
       {/* Hero band */}
@@ -80,12 +82,12 @@ export default function BookOnlinePage({
 
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         {/* Success Message */}
-        {searchParams?.success === "true" && (
+        {params?.success === "true" && (
           <BookingSuccessMessage />
         )}
 
         {/* Cancel Message */}
-        {searchParams?.cancelled === "true" && (
+        {params?.cancelled === "true" && (
           <div className="rounded-2xl border border-[var(--primary)]/20 bg-[var(--primary)]/5 p-6 text-[var(--primary)]">
             <p className="font-semibold">Booking Cancelled</p>
             <p className="text-sm mt-2">

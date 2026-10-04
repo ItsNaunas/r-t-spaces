@@ -6,7 +6,8 @@ interface BookingData {
   date?: string;
   hours?: string;
   notes?: string;
-  calendlyLink?: string | null;
+  /** True for bookings paid through Stripe; false/absent for enquiries. */
+  paid?: boolean;
   totalPrice?: string;
   depositAmount?: string;
   balanceDue?: string;
@@ -14,7 +15,25 @@ interface BookingData {
   addonsTotal?: string;
 }
 
-export async function sendBookingNotification(booking: BookingData) {
+/** Customer-supplied text goes into HTML email: escape it. */
+function esc(value: string | undefined): string {
+  return (value ?? '').replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!
+  );
+}
+
+export async function sendBookingNotification(raw: BookingData) {
+  // Paid status used to be inferred from a Calendly link, which no longer exists.
+  const paid = Boolean(raw.paid);
+  const booking = {
+    ...raw,
+    name: esc(raw.name),
+    email: esc(raw.email),
+    date: raw.date && esc(raw.date),
+    hours: raw.hours && esc(raw.hours),
+    notes: raw.notes && esc(raw.notes),
+    addonsSummary: raw.addonsSummary && esc(raw.addonsSummary),
+  };
   if (!process.env.RESEND_API_KEY) {
     console.warn('RESEND_API_KEY not configured - skipping email notification');
     return;
@@ -47,46 +66,29 @@ export async function sendBookingNotification(booking: BookingData) {
     await resend.emails.send({
       from: fromEmail,
       to: studioEmail,
-      subject: `New Booking ${booking.calendlyLink ? '(Paid)' : 'Request'} from ${booking.name}`,
+      subject: `New Booking ${paid ? '(Paid)' : 'Request'} from ${booking.name}`,
       html: `
-        <h2>New Booking ${booking.calendlyLink ? '(Paid)' : 'Request'}</h2>
+        <h2>New Booking ${paid ? '(Paid)' : 'Request'}</h2>
         <p><strong>Name:</strong> ${booking.name}</p>
         <p><strong>Email:</strong> ${booking.email}</p>
         ${booking.date ? `<p><strong>Date:</strong> ${booking.date}</p>` : ''}
         ${booking.hours ? `<p><strong>Hours:</strong> ${booking.hours}</p>` : ''}
         ${pricingSection}
         ${booking.notes ? `<p><strong>Notes:</strong> ${booking.notes}</p>` : ''}
-        ${booking.calendlyLink ? `<p><strong>Calendly Link:</strong> <a href="${booking.calendlyLink}">${booking.calendlyLink}</a></p>` : ''}
       `,
     });
 
     // Send confirmation to customer
-    const calendlySection = booking.calendlyLink 
-      ? `
-        <div style="margin: 20px 0; padding: 15px; background-color: #f0f9ff; border-radius: 8px; border: 2px solid #0ea5e9;">
-          <h3 style="margin-top: 0; color: #0c4a6e;">📅 Confirm Your Booking Time</h3>
-          <p>Your payment was successful! Please click the link below to confirm your booking time in our calendar:</p>
-          <p style="text-align: center; margin: 20px 0;">
-            <a href="${booking.calendlyLink}" 
-               style="display: inline-block; padding: 12px 24px; background-color: #0069ff; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
-              Confirm Booking Time
-            </a>
-          </p>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 0;">Or copy this link: ${booking.calendlyLink}</p>
-        </div>
-      `
-      : '';
-
     await resend.emails.send({
       from: fromEmail,
-      to: booking.email,
-      subject: booking.calendlyLink 
-        ? 'Booking Confirmed - Confirm Your Time - RT Spaces'
+      to: raw.email,
+      subject: paid
+        ? 'Booking Confirmed - RT Spaces'
         : 'Booking Request Received - RT Spaces',
       html: `
-        <h2>${booking.calendlyLink ? 'Booking Confirmed!' : 'Thank you for your booking request!'}</h2>
+        <h2>${paid ? 'Booking Confirmed!' : 'Thank you for your booking request!'}</h2>
         <p>Hi ${booking.name},</p>
-        ${booking.calendlyLink 
+        ${paid
           ? '<p>Your payment was successful and your booking has been confirmed!</p>'
           : '<p>We\'ve received your booking request and will get back to you shortly.</p>'
         }
@@ -103,7 +105,6 @@ export async function sendBookingNotification(booking: BookingData) {
             </ul>
           </div>
         ` : ''}
-        ${calendlySection}
         <p>If you have any questions, feel free to reach out to us.</p>
         <p>Best regards,<br>RT Spaces Team</p>
       `,
