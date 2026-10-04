@@ -204,6 +204,8 @@ export async function POST(request: Request) {
           packageTitle: title,
           pendingBookingId: pending.id,
           calBookingUid: held[0].uid,
+          // Every day, so a refund weeks later can still cancel them all.
+          calBookingUids: held.map((b) => b.uid).join(',').slice(0, 500),
         },
       });
     } catch (error) {

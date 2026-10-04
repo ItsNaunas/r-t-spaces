@@ -945,7 +945,7 @@ export function BookingWizard({
             </div>
             {paymentMode === "pay" && (
               <p className="text-[11px] leading-snug text-[var(--muted-plum)]">
-                Pay just the deposit now. Balance before your session · deposit non-refundable.
+                Pay just the deposit now. Balance due before your session begins · deposit non-refundable.
               </p>
             )}
           </div>

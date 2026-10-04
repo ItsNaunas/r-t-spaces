@@ -188,8 +188,31 @@ export async function POST(request: Request) {
 
       case 'charge.refunded': {
         const charge = event.data.object as Stripe.Charge;
-        console.log('Refund processed:', charge.id);
-        // TODO: cancel the Cal.com booking once bookings carry a status.
+        // Only a full refund frees the slot. A partial refund (e.g. keeping
+        // the deposit) leaves the booking alone.
+        if (!charge.refunded) {
+          console.log('Partial refund, booking kept:', charge.id);
+          break;
+        }
+        const paymentIntent =
+          typeof charge.payment_intent === 'string' ? charge.payment_intent : charge.payment_intent?.id;
+        if (!paymentIntent) break;
+
+        const sessions = await stripe.checkout.sessions.list({ payment_intent: paymentIntent, limit: 1 });
+        const meta = sessions.data[0]?.metadata ?? {};
+        const uids = (meta.calBookingUids || meta.calBookingUid || '')
+          .split(',')
+          .map((u) => u.trim())
+          .filter(Boolean);
+        if (!uids.length) {
+          console.log('Refund with no linked Cal.com booking:', charge.id);
+          break;
+        }
+        for (const uid of uids) {
+          const ok = await cancelCalBooking(uid, 'Payment refunded');
+          if (!ok) console.error('Refunded, but could not cancel in Cal.com (check it is not still booked):', uid);
+        }
+        console.log('Refund processed, Cal.com booking(s) cancelled:', charge.id, uids.length);
         break;
       }
 

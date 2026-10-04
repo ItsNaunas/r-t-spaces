@@ -101,7 +101,7 @@ export async function sendBookingNotification(raw: BookingData) {
               ${booking.addonsSummary ? `<li>Add-ons: ${booking.addonsSummary}</li>` : ''}
               <li>Total Price: £${parseFloat(booking.totalPrice).toFixed(2)}</li>
               <li>Deposit Paid: £${parseFloat(booking.depositAmount || '0').toFixed(2)}</li>
-              <li>Balance Due: £${parseFloat(booking.balanceDue || '0').toFixed(2)}${booking.addonsSummary ? ' (on the day, includes add-ons)' : ' (48h before booking)'}</li>
+              <li>Balance Due: £${parseFloat(booking.balanceDue || '0').toFixed(2)}${booking.addonsSummary ? ' (due before your session begins, includes add-ons)' : ' (due before your session begins)'}</li>
             </ul>
           </div>
         ` : ''}

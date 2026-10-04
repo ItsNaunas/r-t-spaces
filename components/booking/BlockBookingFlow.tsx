@@ -432,7 +432,7 @@ export function BlockBookingFlow({
                 <span className="font-semibold text-[var(--primary)]">{gbp(deposit)}</span>
               </div>
               <div className="flex justify-between text-xs text-[var(--muted-plum)]">
-                <span>Balance before your first day</span>
+                <span>Balance due before your first session begins</span>
                 <span>{gbp(bundle.price - deposit + backdropTotal)}</span>
               </div>
             </div>
