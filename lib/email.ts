@@ -22,8 +22,8 @@ export async function sendBookingNotification(booking: BookingData) {
 
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  const studioEmail = process.env.STUDIO_EMAIL || 'studio@rtspaces.com';
-  const fromEmail = process.env.FROM_EMAIL || 'notifications@rtspaces.com';
+  const studioEmail = process.env.STUDIO_EMAIL || 'enquires@rtspaces.co.uk';
+  const fromEmail = process.env.FROM_EMAIL || 'notifications@rtspaces.co.uk';
 
   try {
     // Send notification to studio
@@ -135,8 +135,8 @@ export async function subscribeToNewsletter(email: string) {
   }
 
   // Always notify the studio so a signup is never lost, even without an audience.
-  const studioEmail = process.env.STUDIO_EMAIL || 'studio@rtspaces.com';
-  const fromEmail = process.env.FROM_EMAIL || 'notifications@rtspaces.com';
+  const studioEmail = process.env.STUDIO_EMAIL || 'enquires@rtspaces.co.uk';
+  const fromEmail = process.env.FROM_EMAIL || 'notifications@rtspaces.co.uk';
 
   await resend.emails.send({
     from: fromEmail,

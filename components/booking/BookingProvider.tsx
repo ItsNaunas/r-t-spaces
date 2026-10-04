@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 import { BookingDrawer } from "./BookingDrawer";
 
-type Offer = "hire" | "session";
+type Offer = "hire" | "session" | "block";
 type BookingPrefill = { offer?: Offer; packageId?: string };
 
 type BookingContextValue = {

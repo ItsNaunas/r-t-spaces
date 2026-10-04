@@ -1,3 +1,6 @@
+> **Superseded.** This describes the Calendly-era booking flow, which was replaced in
+> `docs/CALCOM-MIGRATION.md`. Kept for history; do not follow these steps.
+
 # Stripe Setup Guide
 
 ## Your Test Keys

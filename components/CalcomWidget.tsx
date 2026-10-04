@@ -1,0 +1,195 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+/** Normalised booking result, so the wizard never sees Cal.com's raw payload shape. */
+export type CalBookingSuccess = {
+  uid: string;
+  startTime: string;
+  endTime: string;
+  name?: string;
+  email?: string;
+};
+
+type CalGlobal = ((...args: unknown[]) => void) & {
+  ns?: Record<string, (...args: unknown[]) => void>;
+  loaded?: boolean;
+  q?: unknown[];
+};
+
+interface CalcomWidgetProps {
+  /** "username/event-slug", e.g. "rtspaces/standard-rate". */
+  calLink: string;
+  /** Minutes. Only meaningful for multi-duration event types (hourly hire). */
+  duration?: number;
+  onBookingSuccessful?: (booking: CalBookingSuccess) => void;
+}
+
+/** Loads Cal.com's embed script once per page, no matter how many widgets mount. */
+function loadCalEmbed(): Promise<CalGlobal> {
+  const w = window as unknown as { Cal?: CalGlobal };
+  if (w.Cal) return Promise.resolve(w.Cal);
+
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>("script[data-cal-embed]");
+    const onReady = () => (w.Cal ? resolve(w.Cal) : reject(new Error("Cal embed did not initialise")));
+
+    if (existing) {
+      existing.addEventListener("load", onReady);
+      existing.addEventListener("error", () => reject(new Error("Cal embed failed to load")));
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://app.cal.com/embed/embed.js";
+    script.async = true;
+    script.dataset.calEmbed = "true";
+    script.addEventListener("load", onReady);
+    script.addEventListener("error", () => reject(new Error("Cal embed failed to load")));
+    document.head.appendChild(script);
+  });
+}
+
+/**
+ * Cal.com's payload shape has moved around between embed versions, so pull the
+ * fields out defensively rather than trusting one path. Returning null is
+ * treated as "not a usable booking" by the caller.
+ */
+type Loose = Record<string, unknown>;
+
+const asRecord = (v: unknown): Loose | null =>
+  typeof v === "object" && v !== null ? (v as Loose) : null;
+
+/** First present, non-empty string among the given keys. */
+const pick = (o: Loose, ...keys: string[]): string | undefined => {
+  for (const k of keys) {
+    const v = o[k];
+    if (typeof v === "string" && v) return v;
+    if (typeof v === "number") return String(v);
+  }
+  return undefined;
+};
+
+function normalise(detail: unknown): CalBookingSuccess | null {
+  const outer = asRecord(detail);
+  const data = asRecord(outer?.data);
+  const b =
+    asRecord(data?.booking) ?? data ?? asRecord(outer?.booking) ?? outer;
+  if (!b) return null;
+
+  const uid = pick(b, "uid", "bookingUid", "id");
+  const startTime = pick(b, "startTime", "start", "start_time");
+  const endTime = pick(b, "endTime", "end", "end_time");
+  if (!uid || !startTime || !endTime) return null;
+
+  const attendee = Array.isArray(b.attendees) ? asRecord(b.attendees[0]) : null;
+  return {
+    uid,
+    startTime,
+    endTime,
+    name: (attendee && pick(attendee, "name")) ?? pick(b, "name"),
+    email: (attendee && pick(attendee, "email")) ?? pick(b, "email"),
+  };
+}
+
+export function CalcomWidget({ calLink, duration, onBookingSuccessful }: CalcomWidgetProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  // Keep the latest callback in a ref so the init effect depends only on the
+  // booking parameters. A parent re-render must not tear down an in-progress
+  // selection.
+  const onBookingRef = useRef(onBookingSuccessful);
+  useEffect(() => {
+    onBookingRef.current = onBookingSuccessful;
+  }, [onBookingSuccessful]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!calLink || !container) return;
+
+    let cancelled = false;
+    // One namespace per link+duration, so switching package cleanly rebuilds
+    // rather than stacking listeners on a shared instance.
+    const namespace = `rts-${calLink.replace(/[^a-z0-9]/gi, "-")}-${duration ?? "fixed"}`;
+
+    loadCalEmbed()
+      .then((Cal) => {
+        if (cancelled) return;
+        container.innerHTML = "";
+
+        Cal("init", namespace, { origin: "https://app.cal.com" });
+        const ns = Cal.ns?.[namespace];
+        if (!ns) {
+          setFailed(true);
+          return;
+        }
+
+        ns("inline", {
+          elementOrSelector: container,
+          calLink,
+          config: {
+            layout: "month_view",
+            ...(duration ? { duration: String(duration) } : {}),
+          },
+        });
+
+        ns("on", {
+          action: "bookingSuccessful",
+          callback: (e: { detail?: unknown }) => {
+            const booking = normalise(e?.detail);
+            if (booking) onBookingRef.current?.(booking);
+          },
+        });
+
+        ns("on", {
+          action: "linkReady",
+          callback: () => setIsLoaded(true),
+        });
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+
+    // Safety net: reveal the widget even if linkReady never fires.
+    const fallback = setTimeout(() => setIsLoaded(true), 8000);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(fallback);
+      container.innerHTML = "";
+    };
+  }, [calLink, duration]);
+
+  if (!calLink) {
+    return (
+      <div className="rounded-2xl border-2 border-[var(--primary)]/40 bg-white p-8 text-center text-[var(--muted-plum)]">
+        <p>Booking calendar is not configured. Set NEXT_PUBLIC_CAL_USERNAME in the environment.</p>
+      </div>
+    );
+  }
+
+  if (failed) {
+    return (
+      <div className="rounded-2xl border-2 border-[var(--primary)]/40 bg-white p-8 text-center text-[var(--muted-plum)]">
+        <p>We could not load the calendar. Please refresh, or email enquires@rtspaces.co.uk and we will book you in.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full" style={{ minHeight: "700px" }}>
+      {!isLoaded && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 text-[var(--muted-plum)]">
+          <svg className="h-8 w-8 animate-spin text-[var(--primary)]" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          <p className="text-sm">Loading available times…</p>
+        </div>
+      )}
+      <div ref={containerRef} className="w-full" style={{ minHeight: "700px" }} />
+    </div>
+  );
+}

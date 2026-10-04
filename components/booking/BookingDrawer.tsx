@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { BookingWizard } from "./BookingWizard";
 
-type Offer = "hire" | "session";
+type Offer = "hire" | "session" | "block";
 type BookingPrefill = { offer?: Offer; packageId?: string } | null;
 
 const FOCUSABLE =

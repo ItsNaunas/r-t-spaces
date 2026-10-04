@@ -1,3 +1,6 @@
+> **Superseded.** This describes the Calendly-era booking flow, which was replaced in
+> `docs/CALCOM-MIGRATION.md`. Kept for history; do not follow these steps.
+
 # Payment-First Flow Implementation Summary
 
 ## ✅ What Was Implemented

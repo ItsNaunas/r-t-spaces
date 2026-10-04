@@ -1,3 +1,5 @@
+// No imports: scripts/setup-calcom.ts loads this file directly under Node.
+
 export const PRICING_CONFIG = {
   hourlyRate: 55,
   minimumHours: 2,
@@ -28,6 +30,12 @@ export type BookingPackage = {
   hourlyRate?: number;
   /** When set, minimum booking hours for this package (e.g. 1 for student rate) */
   minimumHours?: number;
+  /** Price on Saturdays and Sundays (London time), when different from price. */
+  weekendPrice?: number;
+  /** Only sold while the special offer is live; priced from the promotion. */
+  promoOnly?: boolean;
+  /** Withdrawn while the special offer is live (its promo version replaces it). */
+  hiddenDuringPromo?: boolean;
 };
 
 export const BOOKING_PACKAGES: BookingPackage[] = [
@@ -149,6 +157,7 @@ export const BOOKING_PACKAGES: BookingPackage[] = [
       "Full use of studio space",
     ],
     availabilityNote: "Fixed rate for 5 hours",
+    hiddenDuringPromo: true,
   },
   {
     id: "full-day",
@@ -163,11 +172,49 @@ export const BOOKING_PACKAGES: BookingPackage[] = [
       "Full use of studio space",
     ],
     availabilityNote: "Fixed rate for 9 hours",
+    hiddenDuringPromo: true,
+  },
+  // Special offer versions. These prices are placeholders: the live ones come
+  // from the promotion (/admin/promotion), and they are only on sale while it runs.
+  {
+    id: "offer-half-day",
+    title: "Half Day (Special Offer)",
+    price: 50,
+    weekendPrice: 60,
+    duration: "4 Hours",
+    hours: 4,
+    includes: [
+      "4-hour studio hire",
+      "Professional equipment included",
+      "Full use of studio space",
+    ],
+    availabilityNote: "Special offer for a limited time",
+    limitedOffer: true,
+    promoOnly: true,
+  },
+  {
+    id: "offer-full-day",
+    title: "Full Day (Special Offer)",
+    price: 80,
+    weekendPrice: 100,
+    duration: "8 Hours",
+    hours: 8,
+    includes: [
+      "8-hour studio hire",
+      "Professional equipment included",
+      "Full use of studio space",
+    ],
+    availabilityNote: "Special offer for a limited time",
+    limitedOffer: true,
+    promoOnly: true,
   },
 ];
 
 /** IDs for studio hire / standard rate packages (Standard Rate, Student, Half Day, Full Day) */
 export const HIRE_RATE_IDS = ["standard-rate", "student-studio-hire", "half-day", "full-day"];
+
+/** Hire options in the booking wizard: offers first, then the normal rates. */
+export const WIZARD_HIRE_IDS = ["offer-half-day", "offer-full-day", ...HIRE_RATE_IDS];
 
 export type PricingAddon = {
   id: string;
@@ -271,6 +318,43 @@ export function getPackagePriceForHours(pkg: BookingPackage, hours: number): num
     return hours * getHourlyRateForPackage(pkg);
   }
   return pkg.price;
+}
+
+const londonWeekday = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/London",
+  weekday: "short",
+});
+
+/** Saturday or Sunday at the studio, whatever timezone the customer is in. */
+export function isWeekendInLondon(iso: string | Date): boolean {
+  const day = londonWeekday.format(new Date(iso));
+  return day === "Sat" || day === "Sun";
+}
+
+/**
+ * The package price for an actual booking: hourly packages from the booked
+ * hours, packages with a weekend rate from the (London) day of the start.
+ * Server and wizard both use this, so what is shown is what is charged.
+ */
+export function getPackagePriceForBooking(
+  pkg: BookingPackage,
+  startTime: string,
+  endTime: string
+): number {
+  if (pkg.priceFromTime) {
+    return getPackagePriceForHours(pkg, calculateHours(startTime, endTime, pkg.minimumHours));
+  }
+  if (pkg.weekendPrice != null && isWeekendInLondon(startTime)) return pkg.weekendPrice;
+  return pkg.price;
+}
+
+/** Price label for cards: "£50 weekdays · £60 weekends", "£55/hr" or "£450". */
+export function packagePriceLabel(pkg: BookingPackage): string {
+  if (pkg.priceFromTime) return `£${getHourlyRateForPackage(pkg)}/hr`;
+  if (pkg.weekendPrice != null && pkg.weekendPrice !== pkg.price) {
+    return `£${pkg.price} weekdays · £${pkg.weekendPrice} weekends`;
+  }
+  return `£${pkg.price}`;
 }
 
 /**

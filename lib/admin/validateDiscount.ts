@@ -9,6 +9,11 @@ export async function validateDiscountCode(
   basePrice: number,
   pkg?: BookingPackage
 ): Promise<ValidateDiscountResponse> {
+  // Special offer prices are already discounted; codes never stack on them.
+  if (pkg?.promoOnly) {
+    return { valid: false, error: "Discount codes can't be used with special offer prices" };
+  }
+
   const record = await getDiscountCode(code.toUpperCase());
 
   if (!record || !record.active) {

@@ -26,9 +26,21 @@ async function getHmacKey(secret: string): Promise<CryptoKey> {
   );
 }
 
+/**
+ * Signing secret for admin session cookies.
+ *
+ * Prefers a dedicated ADMIN_SESSION_SECRET, falling back to ADMIN_PASSWORD so
+ * an existing deployment keeps working. They should be different: reusing the
+ * password means every password change silently invalidates live sessions, and
+ * the password ends up doing two unrelated jobs.
+ */
+function sessionSecret(): string | undefined {
+  return process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_PASSWORD;
+}
+
 export async function createSessionToken(): Promise<string> {
-  const secret = process.env.ADMIN_PASSWORD;
-  if (!secret) throw new Error("ADMIN_PASSWORD not set");
+  const secret = sessionSecret();
+  if (!secret) throw new Error("ADMIN_SESSION_SECRET / ADMIN_PASSWORD not set");
 
   const payload = base64urlEncode(
     new TextEncoder().encode(
@@ -42,7 +54,7 @@ export async function createSessionToken(): Promise<string> {
 
 export async function verifySessionToken(token: string): Promise<boolean> {
   try {
-    const secret = process.env.ADMIN_PASSWORD;
+    const secret = sessionSecret();
     if (!secret) return false;
 
     const dotIndex = token.lastIndexOf(".");

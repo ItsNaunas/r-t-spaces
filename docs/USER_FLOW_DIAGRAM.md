@@ -1,3 +1,6 @@
+> **Superseded.** This describes the Calendly-era booking flow, which was replaced in
+> `docs/CALCOM-MIGRATION.md`. Kept for history; do not follow these steps.
+
 # User Flow Diagrams
 
 ## Current Flow: "Pay & Book Now"

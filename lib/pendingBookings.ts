@@ -1,17 +1,19 @@
 import { getRedis } from "./redis";
-import { cancelCalendlyEvent } from "./calendlyApi";
+import { cancelCalBooking } from "./calcom";
 
 export type PendingBooking = {
   id: string;
-  calendlyEventUri: string;
-  calendlyInviteeUri?: string;
+  /** Cal.com booking uid. The booking exists but is unconfirmed until paid. */
+  calBookingUid: string;
+  /** Block bookings: the other days' Cal.com uids, held and confirmed together. */
+  extraCalBookingUids?: string[];
   customerName: string;
   customerEmail: string;
   startTime: string;
   endTime: string;
   stripeSessionId?: string;
   createdAt: string;
-  expiresAt: string; // 15 minutes from creation
+  expiresAt: string; // HOLD_MINUTES from creation
   status: "pending" | "confirmed" | "cancelled";
   bookingData?: {
     packageId?: string;
@@ -26,23 +28,29 @@ export type PendingBooking = {
 const key = (id: string) => `pending:${id}`;
 const IDS_KEY = "pending:ids";
 const stripeIdx = (sessionId: string) => `pending:stripe:${sessionId}`;
-const calendlyIdx = (eventUri: string) => `pending:calendly:${eventUri}`;
+const calIdx = (uid: string) => `pending:cal:${uid}`;
 
 // All pending:* records self-expire after 24h (covers the Stripe checkout
 // session lifetime + webhook). Keeps Redis from accumulating dead records.
 const TTL_SECONDS = 24 * 60 * 60;
 
-async function put(booking: PendingBooking): Promise<void> {
-  const redis = getRedis();
-  await redis.set(key(booking.id), JSON.stringify(booking), { ex: TTL_SECONDS });
-}
+/**
+ * How long a customer has to pay. Stripe will not expire a Checkout Session
+ * sooner than 30 minutes, so the session gets 31 (a minute of slack for the
+ * request in flight) and closes itself; its checkout.session.expired webhook
+ * releases the hold. The hold outlives the session by a few minutes so the
+ * daily backstop sweep can never release a slot that is still payable.
+ */
+export const CHECKOUT_WINDOW_MINUTES = 31;
+const HOLD_MINUTES = CHECKOUT_WINDOW_MINUTES + 5;
+const UNPAID_REASON = "Payment not completed in time";
 
 export async function savePendingBooking(
   booking: Omit<PendingBooking, "createdAt" | "expiresAt" | "status">
 ): Promise<PendingBooking> {
   const redis = getRedis();
   const now = new Date();
-  const expiresAt = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes from now
+  const expiresAt = new Date(now.getTime() + HOLD_MINUTES * 60 * 1000);
 
   const newBooking: PendingBooking = {
     ...booking,
@@ -54,11 +62,20 @@ export async function savePendingBooking(
   const pipeline = redis.pipeline();
   pipeline.set(key(newBooking.id), JSON.stringify(newBooking), { ex: TTL_SECONDS });
   pipeline.sadd(IDS_KEY, newBooking.id);
-  if (newBooking.calendlyEventUri) {
-    pipeline.set(calendlyIdx(newBooking.calendlyEventUri), newBooking.id, { ex: TTL_SECONDS });
+  for (const uid of allCalUids(newBooking)) {
+    pipeline.set(calIdx(uid), newBooking.id, { ex: TTL_SECONDS });
   }
   await pipeline.exec();
   return newBooking;
+}
+
+/** Every Cal.com booking a hold covers (one per day for a block booking). */
+export function allCalUids(booking: Pick<PendingBooking, "calBookingUid" | "extraCalBookingUids">): string[] {
+  return [booking.calBookingUid, ...(booking.extraCalBookingUids ?? [])].filter(Boolean);
+}
+
+async function cancelAllCal(booking: PendingBooking, reason: string) {
+  await Promise.all(allCalUids(booking).map((uid) => cancelCalBooking(uid, reason)));
 }
 
 export async function getPendingBooking(id: string): Promise<PendingBooking | null> {
@@ -66,11 +83,11 @@ export async function getPendingBooking(id: string): Promise<PendingBooking | nu
   return redis.get<PendingBooking>(key(id));
 }
 
-export async function getPendingBookingByCalendlyEvent(
-  calendlyEventUri: string
+export async function getPendingBookingByCalUid(
+  calBookingUid: string
 ): Promise<PendingBooking | null> {
   const redis = getRedis();
-  const id = await redis.get<string>(calendlyIdx(calendlyEventUri));
+  const id = await redis.get<string>(calIdx(calBookingUid));
   if (!id) return null;
   const booking = await getPendingBooking(id);
   return booking && booking.status === "pending" ? booking : null;
@@ -122,8 +139,8 @@ export async function cancelPendingBooking(id: string, reason?: string): Promise
   const booking = await getPendingBooking(id);
   if (!booking) return false;
 
-  if (booking.status === "pending" && booking.calendlyEventUri) {
-    await cancelCalendlyEvent(booking.calendlyEventUri, reason || "Payment not completed within 15 minutes");
+  if (booking.status === "pending") {
+    await cancelAllCal(booking, reason || UNPAID_REASON);
   }
 
   booking.status = "cancelled";
@@ -148,12 +165,7 @@ export async function cancelExpiredPendingBookings(): Promise<number> {
     const current = await getPendingBooking(snapshot.id);
     if (!current || current.status !== "pending") continue;
 
-    if (current.calendlyEventUri) {
-      await cancelCalendlyEvent(
-        current.calendlyEventUri,
-        "Payment not completed within 15 minutes"
-      );
-    }
+    await cancelAllCal(current, UNPAID_REASON);
     current.status = "cancelled";
     const redis = getRedis();
     const pipeline = redis.pipeline();
