@@ -25,29 +25,63 @@ interface CalcomWidgetProps {
   onBookingSuccessful?: (booking: CalBookingSuccess) => void;
 }
 
-/** Loads Cal.com's embed script once per page, no matter how many widgets mount. */
-function loadCalEmbed(): Promise<CalGlobal> {
+const EMBED_SRC = "https://app.cal.com/embed/embed.js";
+
+/**
+ * Installs Cal.com's official bootstrap: a queueing `window.Cal` stub that
+ * loads embed.js on first use. embed.js requires this stub to already exist
+ * ("Cal is not defined. This shouldn't happen") and replays the queued calls,
+ * so loading the script on its own leaves the calendar blank.
+ */
+function installCalStub(): CalGlobal {
   const w = window as unknown as { Cal?: CalGlobal };
-  if (w.Cal) return Promise.resolve(w.Cal);
+  if (w.Cal) return w.Cal;
 
-  return new Promise((resolve, reject) => {
-    const existing = document.querySelector<HTMLScriptElement>("script[data-cal-embed]");
-    const onReady = () => (w.Cal ? resolve(w.Cal) : reject(new Error("Cal embed did not initialise")));
+  type Queue = ((...args: unknown[]) => void) & { q: unknown[] };
+  const push = (api: Queue, args: unknown) => api.q.push(args);
 
-    if (existing) {
-      existing.addEventListener("load", onReady);
-      existing.addEventListener("error", () => reject(new Error("Cal embed failed to load")));
+  const cal = function (...args: unknown[]) {
+    const self = w.Cal as CalGlobal & Queue;
+    if (!self.loaded) {
+      self.ns = {};
+      self.q = self.q || [];
+      const script = document.createElement("script");
+      script.src = EMBED_SRC;
+      script.async = true;
+      document.head.appendChild(script);
+      self.loaded = true;
+    }
+    if (args[0] === "init") {
+      const namespace = args[1];
+      if (typeof namespace === "string") {
+        const api = function (...a: unknown[]) {
+          push(api as Queue, a);
+        } as Queue;
+        api.q = [];
+        self.ns![namespace] = self.ns![namespace] || api;
+        push(self.ns![namespace] as Queue, args);
+        push(self, ["initNamespace", namespace]);
+      } else {
+        push(self, args);
+      }
       return;
     }
+    push(self, args);
+  } as CalGlobal;
 
-    const script = document.createElement("script");
-    script.src = "https://app.cal.com/embed/embed.js";
-    script.async = true;
-    script.dataset.calEmbed = "true";
-    script.addEventListener("load", onReady);
-    script.addEventListener("error", () => reject(new Error("Cal embed failed to load")));
-    document.head.appendChild(script);
-  });
+  w.Cal = cal;
+  return cal;
+}
+
+/** The Cal global, plus a promise that rejects if embed.js itself fails to load. */
+function loadCalEmbed(): Promise<CalGlobal> {
+  return Promise.resolve(installCalStub());
+}
+
+function watchEmbedScript(onError: () => void): () => void {
+  const script = document.querySelector<HTMLScriptElement>(`script[src="${EMBED_SRC}"]`);
+  script?.addEventListener("error", onError);
+  return () => script?.removeEventListener("error", onError);
 }
 
 /**
@@ -110,6 +144,7 @@ export function CalcomWidget({ calLink, duration, onBookingSuccessful }: CalcomW
     if (!calLink || !container) return;
 
     let cancelled = false;
+    let unwatch = () => {};
     // One namespace per link+duration, so switching package cleanly rebuilds
     // rather than stacking listeners on a shared instance.
     const namespace = `rts-${calLink.replace(/[^a-z0-9]/gi, "-")}-${duration ?? "fixed"}`;
@@ -120,6 +155,9 @@ export function CalcomWidget({ calLink, duration, onBookingSuccessful }: CalcomW
         container.innerHTML = "";
 
         Cal("init", namespace, { origin: "https://app.cal.com" });
+        // The first call above injects embed.js; a blocked or failed load
+        // means the calendar can never appear.
+        unwatch = watchEmbedScript(() => !cancelled && setFailed(true));
         const ns = Cal.ns?.[namespace];
         if (!ns) {
           setFailed(true);
@@ -157,6 +195,7 @@ export function CalcomWidget({ calLink, duration, onBookingSuccessful }: CalcomW
 
     return () => {
       cancelled = true;
+      unwatch();
       clearTimeout(fallback);
       container.innerHTML = "";
     };
