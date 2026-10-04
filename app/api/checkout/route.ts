@@ -5,11 +5,11 @@ import {
   computeAddonsTotal,
   getBalanceForPackage,
   getDepositForPackage,
-  getPackagePriceForHours,
+  getPackagePriceForBooking,
   type SelectedAddon,
 } from '@/lib/pricing';
 import { getMergedPackages } from '@/lib/admin/pricing-merged';
-import { getCalBooking } from '@/lib/calcom';
+import { getCalBooking, bookingIsForPackage } from '@/lib/calcom';
 import { updatePendingBookingStripeSession, CHECKOUT_WINDOW_MINUTES } from '@/lib/pendingBookings';
 import { validateDiscountCode } from '@/lib/admin/validateDiscount';
 
@@ -88,12 +88,25 @@ export async function POST(request: Request) {
       );
     }
 
+    // The slot must have been booked on this package's own event type, or a
+    // customer could hold a 4-hour photo session and pay the 4-hour offer price.
+    const matches = await bookingIsForPackage(booking, pkg.id);
+    const minutes = (new Date(booking.end).getTime() - new Date(booking.start).getTime()) / 60000;
+    if (matches === false || (matches === null && !pkg.priceFromTime && minutes !== pkg.hours * 60)) {
+      console.error('Booking/package mismatch', { uid: calBookingUid, pkg: pkg.id, minutes });
+      return NextResponse.json(
+        { error: 'That time was booked for a different option. Please pick a time again.' },
+        { status: 400 }
+      );
+    }
+
     // ── Price, computed here and nowhere else ────────────────────────────────
     const hours = pkg.priceFromTime
       ? calculateHours(booking.start, booking.end, pkg.minimumHours)
       : pkg.hours;
 
-    const packagePrice = getPackagePriceForHours(pkg, hours);
+    // Weekend rates are decided by the booked date, in London.
+    const packagePrice = getPackagePriceForBooking(pkg, booking.start, booking.end);
 
     // Re-derive add-on money from the submitted *selection*, never a submitted total.
     const requestedAddons: SelectedAddon[] = Array.isArray(selectedAddons)

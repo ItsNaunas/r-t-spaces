@@ -4,7 +4,7 @@ import { getMergedPackages } from "@/lib/admin/pricing-merged";
 import { PackagesClient } from "./PackagesClient";
 
 export default async function PackagesPage() {
-  const packages = await getMergedPackages();
+  const packages = (await getMergedPackages()).filter((p) => !p.promoOnly);
   return (
     <div className="p-6 max-w-5xl">
       <div className="mb-6">

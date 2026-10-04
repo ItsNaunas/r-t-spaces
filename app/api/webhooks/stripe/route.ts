@@ -9,6 +9,7 @@ import {
   getPendingBookingByStripeSession,
   confirmPendingBooking,
   cancelPendingBooking,
+  allCalUids,
 } from '@/lib/pendingBookings';
 import { getRedis } from '@/lib/redis';
 
@@ -69,8 +70,11 @@ export async function POST(request: Request) {
 
         // The slot is held in Cal.com as an unconfirmed booking. Payment has
         // now landed, so this is the one and only place it becomes real.
-        const calBookingUid = session.metadata?.calBookingUid || pendingBooking?.calBookingUid;
-        if (calBookingUid) {
+        // A block booking holds one Cal.com booking per day; confirm them all.
+        const calBookingUids = pendingBooking
+          ? allCalUids(pendingBooking)
+          : [session.metadata?.calBookingUid].filter((u): u is string => Boolean(u));
+        for (const calBookingUid of calBookingUids) {
           const confirmed = await confirmCalBooking(calBookingUid);
           if (!confirmed) {
             // Money has been taken but the slot is not secured. Loud, and
@@ -142,9 +146,12 @@ export async function POST(request: Request) {
 
         // Release the slot straight away rather than making the studio wait for
         // the expiry sweep.
-        const calBookingUid = session.metadata?.calBookingUid;
-        if (calBookingUid) {
-          await cancelCalBooking(calBookingUid, 'Payment failed');
+        const failedId = session.metadata?.pendingBookingId;
+        const failedHold = failedId ? await getPendingBooking(failedId) : null;
+        if (failedHold?.status === 'pending') {
+          await cancelPendingBooking(failedHold.id, 'Payment failed');
+        } else if (session.metadata?.calBookingUid) {
+          await cancelCalBooking(session.metadata.calBookingUid, 'Payment failed');
         }
         break;
       }

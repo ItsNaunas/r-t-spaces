@@ -6,7 +6,7 @@ import { BOOKING_PACKAGES, HIRE_RATE_IDS } from "@/lib/pricing";
 
 export default async function DiscountsPage() {
   const codes = await getAllDiscountCodes();
-  const packages = BOOKING_PACKAGES.map((p) => ({
+  const packages = BOOKING_PACKAGES.filter((p) => !p.promoOnly).map((p) => ({
     id: p.id,
     title: p.title,
     group: (HIRE_RATE_IDS.includes(p.id) ? "Studio Hire" : "Photo Sessions") as "Photo Sessions" | "Studio Hire",

@@ -5,6 +5,8 @@ export type PendingBooking = {
   id: string;
   /** Cal.com booking uid. The booking exists but is unconfirmed until paid. */
   calBookingUid: string;
+  /** Block bookings: the other days' Cal.com uids, held and confirmed together. */
+  extraCalBookingUids?: string[];
   customerName: string;
   customerEmail: string;
   startTime: string;
@@ -60,11 +62,20 @@ export async function savePendingBooking(
   const pipeline = redis.pipeline();
   pipeline.set(key(newBooking.id), JSON.stringify(newBooking), { ex: TTL_SECONDS });
   pipeline.sadd(IDS_KEY, newBooking.id);
-  if (newBooking.calBookingUid) {
-    pipeline.set(calIdx(newBooking.calBookingUid), newBooking.id, { ex: TTL_SECONDS });
+  for (const uid of allCalUids(newBooking)) {
+    pipeline.set(calIdx(uid), newBooking.id, { ex: TTL_SECONDS });
   }
   await pipeline.exec();
   return newBooking;
+}
+
+/** Every Cal.com booking a hold covers (one per day for a block booking). */
+export function allCalUids(booking: Pick<PendingBooking, "calBookingUid" | "extraCalBookingUids">): string[] {
+  return [booking.calBookingUid, ...(booking.extraCalBookingUids ?? [])].filter(Boolean);
+}
+
+async function cancelAllCal(booking: PendingBooking, reason: string) {
+  await Promise.all(allCalUids(booking).map((uid) => cancelCalBooking(uid, reason)));
 }
 
 export async function getPendingBooking(id: string): Promise<PendingBooking | null> {
@@ -128,8 +139,8 @@ export async function cancelPendingBooking(id: string, reason?: string): Promise
   const booking = await getPendingBooking(id);
   if (!booking) return false;
 
-  if (booking.status === "pending" && booking.calBookingUid) {
-    await cancelCalBooking(booking.calBookingUid, reason || UNPAID_REASON);
+  if (booking.status === "pending") {
+    await cancelAllCal(booking, reason || UNPAID_REASON);
   }
 
   booking.status = "cancelled";
@@ -154,9 +165,7 @@ export async function cancelExpiredPendingBookings(): Promise<number> {
     const current = await getPendingBooking(snapshot.id);
     if (!current || current.status !== "pending") continue;
 
-    if (current.calBookingUid) {
-      await cancelCalBooking(current.calBookingUid, UNPAID_REASON);
-    }
+    await cancelAllCal(current, UNPAID_REASON);
     current.status = "cancelled";
     const redis = getRedis();
     const pipeline = redis.pipeline();

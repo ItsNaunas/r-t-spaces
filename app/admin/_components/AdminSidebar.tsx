@@ -8,6 +8,7 @@ const navItems = [
   { href: "/admin/bookings", label: "Bookings" },
   { href: "/admin/discounts", label: "Discount Codes" },
   { href: "/admin/packages", label: "Packages" },
+  { href: "/admin/promotion", label: "Special Offer" },
 ];
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {

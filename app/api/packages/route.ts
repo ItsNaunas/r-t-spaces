@@ -13,6 +13,6 @@ export async function GET() {
     console.error("GET packages error:", error);
     // Fall back to raw packages if KV is unavailable
     const { BOOKING_PACKAGES } = await import("@/lib/pricing");
-    return NextResponse.json({ packages: BOOKING_PACKAGES.map((p) => ({ ...p, enabled: true, priceOverrideActive: false })) });
+    return NextResponse.json({ packages: BOOKING_PACKAGES.filter((p) => !p.promoOnly).map((p) => ({ ...p, enabled: true, priceOverrideActive: false })) });
   }
 }

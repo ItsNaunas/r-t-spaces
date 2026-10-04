@@ -8,6 +8,8 @@
  * Usage:
  *   node scripts/setup-calcom.ts             # dry run, prints the plan, writes nothing
  *   node scripts/setup-calcom.ts --apply     # actually create/update
+ *   --only=offer-half-day,offer-full-day     # limit to these event types
+ *   --skip-webhook                           # leave the webhook alone
  *
  * Requires CAL_API_KEY in the environment (from .env.local or the shell).
  * The key is never printed, logged, or written to disk by this script.
@@ -56,6 +58,7 @@ const WEBHOOK_TRIGGERS = [
   "BOOKING_REQUESTED",
   "BOOKING_CREATED",
   "BOOKING_CANCELLED",
+  "BOOKING_REJECTED",
   "BOOKING_RESCHEDULED",
 ];
 
@@ -191,7 +194,11 @@ async function ensureEventTypes(scheduleId: number | null, apply: boolean) {
     (existing.data ?? []).map((e: any) => [e.slug, e])
   );
 
+  const onlyArg = process.argv.find((a) => a.startsWith("--only="));
+  const only = onlyArg ? new Set(onlyArg.slice("--only=".length).split(",")) : null;
+
   for (const pkg of BOOKING_PACKAGES) {
+    if (only && !only.has(pkg.id)) continue;
     const plan = planEventType(pkg);
     const durations = plan.lengthInMinutesOptions
       ? `${plan.lengthInMinutesOptions.length} options, ${plan.lengthInMinutesOptions[0] / 60}-${
@@ -210,12 +217,16 @@ async function ensureEventTypes(scheduleId: number | null, apply: boolean) {
       slotInterval: SLOT_INTERVAL,
       afterEventBuffer: AFTER_EVENT_BUFFER,
       minimumBookingNotice: MINIMUM_BOOKING_NOTICE,
-      bookingWindow: { type: "businessDays", value: BOOKING_WINDOW_DAYS, rolling: true },
+      // Cal.com caps rolling windows at 61 days, so this is a plain 120-business-day window.
+      bookingWindow: { type: "businessDays", value: BOOKING_WINDOW_DAYS, rolling: false },
       locations: [LOCATION],
       // The hold: a new booking sits pending until the Stripe webhook confirms
       // it. Unpaid ones are cancelled by the expiry job, so the slot is never
       // blocked by someone who did not pay.
       confirmationPolicy: { type: "always", blockUnconfirmedBookingsInBooker: true },
+      // Special offer event types are only sold through the website while the
+      // offer runs, so keep them off the public Cal.com profile page.
+      hidden: Boolean(pkg.promoOnly),
       ...(scheduleId ? { scheduleId } : {}),
     };
 
@@ -266,9 +277,12 @@ async function googleCalendarConnectUrl() {
     const res = await call("GET", "/calendars/google/connect", null);
     const url = res.data?.authUrl ?? res.authUrl;
     if (url) {
-      console.log("\nConnect the studio Google Calendar by opening this once:");
-      console.log(`  ${url}`);
-      console.log("(Needs a human click on Google's consent screen. Nothing can script past it.)");
+      // Never print this link: Cal.com embeds the API key in its `state`
+      // parameter, so printing it leaks the secret into logs and transcripts.
+      console.log(
+        "\nIf the studio Google Calendar is not connected yet, connect it in Cal.com:\n" +
+          "  Settings -> Calendars -> Add calendar -> Google Calendar"
+      );
     }
   } catch {
     console.log(

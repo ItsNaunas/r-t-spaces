@@ -137,6 +137,16 @@ export const STUDIO_TERMS_SECTIONS: PolicySection[] = [
     body: "These Terms & Conditions shall be governed by and interpreted in accordance with the laws of England and Wales.",
   },
   {
+    title: "16. Special offers & block bookings",
+    items: [
+      "Special offer prices apply only to bookings made while the offer is running and are confirmed at checkout.",
+      "Block bookings are limited to 1 backdrop for the whole booking. Each additional backdrop is charged at the price shown when booking.",
+      "Weekend days can only be included in block bookings of the minimum number of days shown when booking.",
+      "Discount codes cannot be combined with special offer or block booking prices.",
+      "Each day of a block booking is a full day (8 hours). The deposit secures all days together, and the remaining balance must be paid before the first day begins.",
+    ],
+  },
+  {
     title: "Client agreement",
     body: "By completing a booking with RTspaces, you confirm that:",
     items: [

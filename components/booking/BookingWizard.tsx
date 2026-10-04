@@ -4,17 +4,20 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import Link from "next/link";
 import { CalcomWidget, type CalBookingSuccess } from "@/components/CalcomWidget";
+import { BlockBookingFlow } from "@/components/booking/BlockBookingFlow";
+import { promoFromPrice, type PublicPromotion } from "@/lib/promotion";
 import {
   calculateHours,
   calculatePrice,
   calculateDeposit,
   calculateBalance,
-  getPackagePriceForHours,
+  getPackagePriceForBooking,
   getDepositForPackage,
   getBalanceForPackage,
   getHourlyRateForPackage,
   BOOKING_PACKAGES,
-  HIRE_RATE_IDS,
+  WIZARD_HIRE_IDS,
+  packagePriceLabel,
   ADDONS,
   computeAddonsTotal,
   type BookingPackage,
@@ -28,7 +31,8 @@ const SESSION_PACKAGE_IDS = [
   "engagement-story",
 ];
 
-type Offer = "hire" | "session";
+type Offer = "hire" | "session" | "block";
+type LivePromotion = Extract<PublicPromotion, { live: true }>;
 type Step = "offer" | "option" | "time" | "pay";
 
 type BookingPrefill = { offer?: Offer; packageId?: string } | null;
@@ -59,7 +63,7 @@ function fromPrice(pkg: BookingPackage): number {
     const min = pkg.minimumHours ?? 2;
     return min * getHourlyRateForPackage(pkg);
   }
-  return pkg.price;
+  return Math.min(pkg.price, pkg.weekendPrice ?? pkg.price);
 }
 
 export function BookingWizard({
@@ -100,7 +104,10 @@ export function BookingWizard({
   const pendingCreationRef = useRef(false);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
 
-  const [livePackages, setLivePackages] = useState<BookingPackage[]>(BOOKING_PACKAGES);
+  const [livePackages, setLivePackages] = useState<BookingPackage[]>(
+    BOOKING_PACKAGES.filter((p) => !p.promoOnly)
+  );
+  const [promo, setPromo] = useState<LivePromotion | null>(null);
 
   const [discountInput, setDiscountInput] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<{
@@ -136,7 +143,7 @@ export function BookingWizard({
     displayPrice != null && displayDeposit != null ? displayPrice - displayDeposit : balanceAmount;
 
   const optionList = useMemo(() => {
-    const ids = offer === "hire" ? HIRE_RATE_IDS : SESSION_PACKAGE_IDS;
+    const ids = offer === "hire" ? WIZARD_HIRE_IDS : SESSION_PACKAGE_IDS;
     return ids
       .map((id) => livePackages.find((p) => p.id === id))
       .filter((p): p is BookingPackage => Boolean(p));
@@ -150,6 +157,10 @@ export function BookingWizard({
         if (data.packages?.length) setLivePackages(data.packages);
       })
       .catch(() => {});
+    fetch("/api/promotion")
+      .then((r) => r.json())
+      .then((data: PublicPromotion) => setPromo(data.live ? data : null))
+      .catch(() => {});
   }, []);
 
   // Apply prefill once.
@@ -157,7 +168,7 @@ export function BookingWizard({
     if (!prefill) return;
     if (prefill.offer) {
       setOffer(prefill.offer);
-      setStep("option");
+      setStep(prefill.offer === "block" ? "offer" : "option");
     }
     if (prefill.packageId) {
       const pkg = (livePackages.length ? livePackages : BOOKING_PACKAGES).find(
@@ -165,7 +176,7 @@ export function BookingWizard({
       );
       if (pkg) {
         setSelectedPackage(pkg);
-        setOffer(HIRE_RATE_IDS.includes(pkg.id) ? "hire" : "session");
+        setOffer(WIZARD_HIRE_IDS.includes(pkg.id) ? "hire" : "session");
         setStep("time");
       }
     }
@@ -189,11 +200,9 @@ export function BookingWizard({
         setBalanceAmount(null);
         return;
       }
-      const hours = isTimeBased
-        ? calculateHours(slotData!.startTime, slotData!.endTime, selectedPackage.minimumHours)
-        : selectedPackage.hours;
-      const packagePrice = isTimeBased
-        ? getPackagePriceForHours(selectedPackage, hours)
+      // Same function the server charges with (hours, weekend rates).
+      const packagePrice = slotData?.startTime && slotData?.endTime
+        ? getPackagePriceForBooking(selectedPackage, slotData.startTime, slotData.endTime)
         : selectedPackage.price;
       const packageDeposit = getDepositForPackage(selectedPackage, packagePrice);
       const packageBalance = getBalanceForPackage(selectedPackage, packagePrice, packageDeposit);
@@ -483,6 +492,18 @@ export function BookingWizard({
           : null
       : null;
 
+  if (offer === "block" && promo) {
+    return (
+      <BlockBookingFlow
+        promo={promo}
+        onBack={() => {
+          setOffer(null);
+          setStep("offer");
+        }}
+      />
+    );
+  }
+
   return (
     <div className="flex h-full flex-col bg-[var(--base)]">
       {/* Progress */}
@@ -515,7 +536,7 @@ export function BookingWizard({
               <OfferCard
                 title="Hire the studio"
                 blurb="Bring your own camera and crew. Full run of the space and all equipment, by the hour or day."
-                price="From £55/hr"
+                price={promo ? `From £${promoFromPrice(promo)}` : "From £55/hr"}
                 active={offer === "hire"}
                 onClick={() => {
                   track("booking_offer", { offer: "hire" });
@@ -536,6 +557,19 @@ export function BookingWizard({
                   goNext();
                 }}
               />
+              {promo && promo.bundles.length > 0 && (
+                <OfferCard
+                  title="Block booking (special offer)"
+                  blurb={`Book ${promo.bundles.map((b) => b.days).join(", ")} full days for less. Pick any dates; one deposit secures them all.`}
+                  price={`From £${promo.bundles[0].price}`}
+                  active={offer === "block"}
+                  onClick={() => {
+                    track("booking_offer", { offer: "block" });
+                    setOffer("block");
+                    setSelectedPackage(null);
+                  }}
+                />
+              )}
             </div>
             <button
               type="button"
@@ -569,6 +603,11 @@ export function BookingWizard({
                         : "border-[var(--lavender)] bg-white hover:border-[var(--primary)]/60"
                     }`}
                   >
+                    {pkg.promoOnly && (
+                      <span className="absolute -top-2.5 left-4 bg-white px-1 text-[10px] font-semibold uppercase tracking-wider text-red-600">
+                        Special offer
+                      </span>
+                    )}
                     {pkg.popular && (
                       <span className="absolute -top-2.5 left-4 text-[10px] font-semibold uppercase tracking-wider text-[var(--gold-text)]">
                         Most popular
@@ -580,7 +619,7 @@ export function BookingWizard({
                         <p className="text-sm text-[var(--muted-plum)]">{pkg.duration}</p>
                       </div>
                       <p className="shrink-0 font-heading text-lg font-semibold text-[var(--primary)]">
-                        {pkg.priceFromTime ? `£${getHourlyRateForPackage(pkg)}/hr` : `£${pkg.price}`}
+                        <span className={pkg.promoOnly ? "text-red-600" : undefined}>{packagePriceLabel(pkg)}</span>
                       </p>
                     </div>
                     <ul className="mt-2 space-y-1">
@@ -745,7 +784,7 @@ export function BookingWizard({
                 <div className="flex justify-between">
                   <span className="text-[var(--muted-plum)]">{selectedPackage.title}</span>
                   <span className="font-semibold text-[var(--primary)]">
-                    £{(selectedPackage.priceFromTime ? bookingPrice! - addonsTotal : selectedPackage.price).toFixed(2)}
+                    £{(bookingPrice! - addonsTotal).toFixed(2)}
                   </span>
                 </div>
                 {addonsTotal > 0 && (
@@ -780,7 +819,7 @@ export function BookingWizard({
             )}
 
             {/* Discount */}
-            {paymentMode === "pay" && bookingPrice != null && selectedPackage && !appliedDiscount && (
+            {paymentMode === "pay" && bookingPrice != null && selectedPackage && !selectedPackage.promoOnly && !appliedDiscount && (
               <div className="flex gap-2">
                 <input
                   type="text"

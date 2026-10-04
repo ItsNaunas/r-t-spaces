@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { packageId, enabled, priceOverride } = body ?? {};
 
-    if (!packageId || !BOOKING_PACKAGES.find((p) => p.id === packageId)) {
+    if (!packageId || !BOOKING_PACKAGES.find((p) => p.id === packageId && !p.promoOnly)) {
       return NextResponse.json({ error: "Invalid packageId" }, { status: 400 });
     }
 
