@@ -258,3 +258,24 @@ export function formatPromoEnd(endsAt: string | null): string | null {
     month: "long",
   });
 }
+
+/** London's offset from UTC, in minutes, at a given instant (0 in winter, 60 in summer). */
+function londonOffsetMinutes(at: Date): number {
+  const name =
+    new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/London", timeZoneName: "shortOffset" })
+      .formatToParts(at)
+      .find((p) => p.type === "timeZoneName")?.value ?? "GMT";
+  const m = name.match(/GMT([+-]\d{1,2})(?::(\d{2}))?/);
+  if (!m) return 0;
+  const hours = Number(m[1]);
+  return hours * 60 + Math.sign(hours) * Number(m[2] ?? 0);
+}
+
+/**
+ * The UTC instant of a London wall-clock time on a YYYY-MM-DD date, so offer
+ * dates mean UK time whatever timezone the admin's laptop is in.
+ */
+export function londonTimeToIso(key: string, time: "00:00:00" | "23:59:59"): string {
+  const asUtc = new Date(`${key}T${time}Z`);
+  return new Date(asUtc.getTime() - londonOffsetMinutes(asUtc) * 60000).toISOString();
+}

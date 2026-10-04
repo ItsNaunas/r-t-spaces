@@ -5,15 +5,14 @@ import {
   bundleWasPrice,
   checkPromotion,
   isPromotionLive,
+  londonDateKey,
+  londonTimeToIso,
   type Promotion,
 } from "@/lib/promotion";
 
-/** ISO instant -> YYYY-MM-DD in the browser's (the studio's) timezone. */
+/** ISO instant -> YYYY-MM-DD in UK time (the studio's), not the laptop's. */
 function toDateInput(iso: string | null): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  return iso ? londonDateKey(iso) : "";
 }
 
 const inputCls =
@@ -102,7 +101,7 @@ export function PromotionClient({ initial }: { initial: Promotion }) {
               type="date"
               value={toDateInput(p.startsAt)}
               onChange={(e) =>
-                set({ startsAt: e.target.value ? new Date(`${e.target.value}T00:00:00`).toISOString() : null })
+                set({ startsAt: e.target.value ? londonTimeToIso(e.target.value, "00:00:00") : null })
               }
               className={`${inputCls} w-full`}
             />
@@ -113,13 +112,14 @@ export function PromotionClient({ initial }: { initial: Promotion }) {
               type="date"
               value={toDateInput(p.endsAt)}
               onChange={(e) =>
-                set({ endsAt: e.target.value ? new Date(`${e.target.value}T23:59:59`).toISOString() : null })
+                set({ endsAt: e.target.value ? londonTimeToIso(e.target.value, "23:59:59") : null })
               }
               className={`${inputCls} w-full`}
             />
           </label>
         </div>
         <p className="text-xs text-gray-400">
+          Dates are UK time: the offer starts at midnight and ends at 23:59 on the last day.
           Customers who booked during the offer keep their price. New bookings at offer prices stop
           at the end of the last day.
         </p>
