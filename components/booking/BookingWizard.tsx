@@ -5,7 +5,8 @@ import { track } from "@vercel/analytics";
 import Link from "next/link";
 import { CalcomWidget, type CalBookingSuccess } from "@/components/CalcomWidget";
 import { BlockBookingFlow } from "@/components/booking/BlockBookingFlow";
-import { promoFromPrice, type PublicPromotion } from "@/lib/promotion";
+import { formatPromoEnd, promoFromPrice } from "@/lib/promotion";
+import { usePromotion } from "@/components/usePromotion";
 import {
   calculateHours,
   calculatePrice,
@@ -32,7 +33,6 @@ const SESSION_PACKAGE_IDS = [
 ];
 
 type Offer = "hire" | "session" | "block";
-type LivePromotion = Extract<PublicPromotion, { live: true }>;
 type Step = "offer" | "option" | "time" | "pay";
 
 type BookingPrefill = { offer?: Offer; packageId?: string } | null;
@@ -107,7 +107,8 @@ export function BookingWizard({
   const [livePackages, setLivePackages] = useState<BookingPackage[]>(
     BOOKING_PACKAGES.filter((p) => !p.promoOnly)
   );
-  const [promo, setPromo] = useState<LivePromotion | null>(null);
+  const promo = usePromotion();
+  const promoEnds = formatPromoEnd(promo?.endsAt ?? null);
 
   const [discountInput, setDiscountInput] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<{
@@ -156,10 +157,6 @@ export function BookingWizard({
       .then((data) => {
         if (data.packages?.length) setLivePackages(data.packages);
       })
-      .catch(() => {});
-    fetch("/api/promotion")
-      .then((r) => r.json())
-      .then((data: PublicPromotion) => setPromo(data.live ? data : null))
       .catch(() => {});
   }, []);
 
@@ -559,7 +556,7 @@ export function BookingWizard({
               />
               {promo && promo.bundles.length > 0 && (
                 <OfferCard
-                  title="Block booking (special offer)"
+                  title={`Block booking (special offer${promoEnds ? `, ends ${promoEnds}` : ""})`}
                   blurb={`Book ${promo.bundles.map((b) => b.days).join(", ")} full days for less. Pick any dates; one deposit secures them all.`}
                   price={`From £${promo.bundles[0].price}`}
                   active={offer === "block"}
@@ -605,7 +602,7 @@ export function BookingWizard({
                   >
                     {pkg.promoOnly && (
                       <span className="absolute -top-2.5 left-4 bg-white px-1 text-[10px] font-semibold uppercase tracking-wider text-red-600">
-                        Special offer
+                        Special offer{promoEnds ? ` · ends ${promoEnds}` : ""}
                       </span>
                     )}
                     {pkg.popular && (

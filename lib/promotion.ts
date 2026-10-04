@@ -248,3 +248,13 @@ export function addDaysToKey(key: string, days: number): string {
   d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
 }
+
+/** "4 November" — the last day of the offer, in London. */
+export function formatPromoEnd(endsAt: string | null): string | null {
+  if (!endsAt) return null;
+  return new Date(endsAt).toLocaleDateString("en-GB", {
+    timeZone: "Europe/London",
+    day: "numeric",
+    month: "long",
+  });
+}

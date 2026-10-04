@@ -3,11 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import { useBooking } from "@/components/booking/BookingProvider";
-import { promoFromPrice, type PublicPromotion } from "@/lib/promotion";
+import { formatPromoEnd, promoFromPrice } from "@/lib/promotion";
+import { usePromotion } from "@/components/usePromotion";
 
 const SEEN_KEY = "rt-promo-popup-seen";
-
-type LivePromotion = Extract<PublicPromotion, { live: true }>;
 
 /**
  * The special offer pop-up: the first thing a visitor sees while the offer is
@@ -17,33 +16,26 @@ type LivePromotion = Extract<PublicPromotion, { live: true }>;
  */
 export function PromoPopup() {
   const { openBooking } = useBooking();
-  const [promo, setPromo] = useState<LivePromotion | null>(null);
-  const [open, setOpen] = useState(false);
+  const promo = usePromotion();
+  // Read once on mount. On the server (or with storage blocked) this is false,
+  // which only means the pop-up may show again on the next page load.
+  const [seenThisSession] = useState(() => {
+    try {
+      return sessionStorage.getItem(SEEN_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+  const [dismissed, setDismissed] = useState(false);
+  const open = Boolean(promo?.popupEnabled) && !seenThisSession && !dismissed;
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    let seen = false;
-    try {
-      seen = sessionStorage.getItem(SEEN_KEY) === "1";
-    } catch {
-      // Storage blocked: show it, it just may show again next page load.
-    }
-    if (seen) return;
-
-    fetch("/api/promotion")
-      .then((r) => r.json())
-      .then((data: PublicPromotion) => {
-        if (data.live && data.popupEnabled) {
-          setPromo(data);
-          setOpen(true);
-          track("promo_popup_shown");
-        }
-      })
-      .catch(() => {});
-  }, []);
+    if (open) track("promo_popup_shown");
+  }, [open]);
 
   const dismiss = useCallback(() => {
-    setOpen(false);
+    setDismissed(true);
     try {
       sessionStorage.setItem(SEEN_KEY, "1");
     } catch {}
@@ -66,9 +58,7 @@ export function PromoPopup() {
     { label: "Weekend Full Day", hours: "8 hours", price: promo.fullDay.weekend },
   ];
   const fromBlock = promo.bundles[0];
-  const ends = promo.endsAt
-    ? new Date(promo.endsAt).toLocaleDateString("en-GB", { day: "numeric", month: "long" })
-    : null;
+  const ends = formatPromoEnd(promo.endsAt);
 
   return (
     <div
@@ -92,7 +82,9 @@ export function PromoPopup() {
           ×
         </button>
 
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-600">🎉 Special offer</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-600">
+          🎉 Special offer{ends ? ` · until ${ends}` : ""}
+        </p>
         <h2 id="promo-title" className="mt-2 font-heading text-2xl text-[var(--primary)] sm:text-3xl">
           {promo.headline || `Studio hire from £${promoFromPrice(promo)}`}
         </h2>

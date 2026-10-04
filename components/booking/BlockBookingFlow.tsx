@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { track } from "@vercel/analytics";
 import { calculateDeposit } from "@/lib/pricing";
-import { addDaysToKey, isWeekendDateKey, type PublicPromotion } from "@/lib/promotion";
+import { addDaysToKey, formatPromoEnd, isWeekendDateKey, type PublicPromotion } from "@/lib/promotion";
 
 type LivePromotion = Extract<PublicPromotion, { live: true }>;
 type Step = "size" | "dates" | "details";
@@ -193,7 +193,9 @@ export function BlockBookingFlow({
         {step === "size" && (
           <div className="space-y-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-600">Special offer</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-600">
+                Special offer{promo.endsAt ? ` · ends ${formatPromoEnd(promo.endsAt)}` : ""}
+              </p>
               <h3 className="mt-1 font-heading text-2xl text-[var(--primary)]">Block bookings</h3>
               <p className="mt-1 text-sm text-[var(--muted-plum)]">
                 Full days (8 hours each). Pick any days you like; they don&apos;t have to be in a row.
