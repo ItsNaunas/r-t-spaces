@@ -165,6 +165,7 @@ export async function sendBookingNotification(raw: BookingData) {
               <li>Total Price: £${parseFloat(booking.totalPrice).toFixed(2)}</li>
               <li>Deposit Paid: £${parseFloat(booking.depositAmount || '0').toFixed(2)}</li>
               <li>Balance Due: £${parseFloat(booking.balanceDue || '0').toFixed(2)}${booking.addonsSummary ? ' (due before your session begins, includes add-ons)' : ' (due before your session begins)'}</li>
+              ${paid && parseFloat(booking.balanceDue || '0') > 0 ? "<li>We'll email you a secure link to pay the balance 2 days before your session.</li>" : ''}
             </ul>
           </div>
         ` : ''}
@@ -214,6 +215,81 @@ export async function sendMembershipNotification(raw: MembershipData) {
         <p>Hi ${name},</p>
         <p>Your <strong>${tier}</strong> membership${amount} is active. We'll be in touch with how to book your member sessions.</p>
         <p>If you have any questions, feel free to reach out to us.</p>
+        <p>Best regards,<br>RT Spaces Team</p>
+      `,
+    },
+  ]);
+}
+
+interface BalanceEmailData {
+  name: string;
+  email: string;
+  /** Pounds, e.g. "15.00". */
+  amount: string;
+  bookingDate?: string;
+  bookingHours?: string;
+  packageTitle?: string;
+}
+
+function sessionLines(d: BalanceEmailData): string {
+  return [
+    d.packageTitle ? `<p><strong>Booking:</strong> ${esc(d.packageTitle)}</p>` : '',
+    d.bookingDate ? `<p><strong>Date:</strong> ${esc(d.bookingDate)}</p>` : '',
+    d.bookingHours ? `<p><strong>Time:</strong> ${esc(d.bookingHours)}</p>` : '',
+  ].join('');
+}
+
+/** The customer's link to pay the rest before their session. */
+export async function sendBalanceLinkEmail(raw: BalanceEmailData & { payUrl: string }) {
+  const m = mailer();
+  if (!m) return;
+  await sendAll(m, [
+    {
+      to: raw.email,
+      subject: 'Your RT Spaces session: pay your balance',
+      html: `
+        <h2>Your session is coming up</h2>
+        <p>Hi ${esc(raw.name)},</p>
+        <p>Your remaining balance of <strong>£${esc(raw.amount)}</strong> is due before your session begins.</p>
+        ${sessionLines(raw)}
+        <p style="margin: 24px 0;">
+          <a href="${esc(raw.payUrl)}" style="background:#111;color:#fff;padding:12px 20px;border-radius:6px;text-decoration:none;">Pay £${esc(raw.amount)} now</a>
+        </p>
+        <p>If the button doesn't work, copy this link into your browser:<br>${esc(raw.payUrl)}</p>
+        <p>If you have any questions, just reply to this email.</p>
+        <p>Best regards,<br>RT Spaces Team</p>
+      `,
+    },
+  ]);
+}
+
+/** Balance paid: tell the studio and send the customer a receipt. */
+export async function sendBalancePaidNotification(raw: BalanceEmailData & { stripeUrl?: string }) {
+  const m = mailer();
+  if (!m) return;
+  await sendAll(m, [
+    {
+      to: m.studioEmail,
+      replyTo: raw.email || undefined,
+      subject: `Balance Paid: £${esc(raw.amount)} from ${esc(raw.name)}`,
+      html: `
+        <h2>Balance paid in full</h2>
+        <p><strong>Name:</strong> ${esc(raw.name)}</p>
+        <p><strong>Email:</strong> ${esc(raw.email)}</p>
+        <p><strong>Amount:</strong> £${esc(raw.amount)}</p>
+        ${sessionLines(raw)}
+        ${raw.stripeUrl ? `<p><a href="${esc(raw.stripeUrl)}">View the payment in Stripe</a></p>` : ''}
+      `,
+    },
+    {
+      to: raw.email,
+      subject: 'Balance Paid - RT Spaces',
+      html: `
+        <h2>Thank you, you're all paid up</h2>
+        <p>Hi ${esc(raw.name)},</p>
+        <p>We've received your balance of <strong>£${esc(raw.amount)}</strong>. Your booking is now paid in full.</p>
+        ${sessionLines(raw)}
+        <p>See you soon!</p>
         <p>Best regards,<br>RT Spaces Team</p>
       `,
     },

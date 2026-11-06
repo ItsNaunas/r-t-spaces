@@ -188,6 +188,8 @@ export async function POST(request: Request) {
         customerEmail: email,
         bookingDate,
         bookingHours,
+        // Machine-readable start, used to time the balance payment link.
+        sessionStart: new Date(booking.start).toISOString(),
         bookingNotes: typeof notes === 'string' ? notes.slice(0, 500) : '',
         totalPrice: totalPrice.toFixed(2),
         depositAmount: deposit.toFixed(2),

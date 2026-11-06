@@ -20,7 +20,7 @@ export type BookingPackage = {
   availabilityNote?: string;
   /** When set, deposit is fixed instead of 50% */
   depositAmount?: number;
-  /** When set with depositAmount, balance due on day */
+  /** When set with depositAmount, the fixed balance due before the session */
   balanceOnDay?: number;
   /** Show a "Limited offer" badge (e.g. seasonal packages) */
   limitedOffer?: boolean;
@@ -142,7 +142,7 @@ export const BOOKING_PACKAGES: BookingPackage[] = [
       "Optional: photographer available £55/hr (must be pre-booked)",
     ],
     bestFor: "students, personal & educational use",
-    availabilityNote: "Student proof required: valid student ID, college/university email, or enrolment confirmation. Student rate for personal & educational use only; commercial shoots require standard pricing. Studio rules & late fees apply. £20 non-refundable deposit; remaining balance due on the day.",
+    availabilityNote: "Student proof required: valid student ID, college/university email, or enrolment confirmation. Student rate for personal & educational use only; commercial shoots require standard pricing. Studio rules & late fees apply. £20 non-refundable deposit; remaining balance due before your session.",
   },
   {
     id: "half-day",
@@ -272,7 +272,7 @@ export function getDepositForPackage(
 }
 
 /**
- * Get balance due (on the day) for a package. Uses balanceOnDay when set with fixed deposit, otherwise total - deposit.
+ * Get balance due (before the session) for a package. Uses balanceOnDay when set with fixed deposit, otherwise total - deposit.
  */
 export function getBalanceForPackage(
   pkg: BookingPackage,

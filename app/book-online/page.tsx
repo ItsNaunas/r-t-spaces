@@ -24,7 +24,7 @@ const bookingPolicies = [
   {
     title: "Payment",
     content:
-      "A 50% non-refundable deposit is required to secure your booking. The remaining balance is due 48 hours before your session date.",
+      "A 50% non-refundable deposit is required to secure your booking. The remaining balance is due before your session begins: we'll email you a secure payment link 2 days before.",
   },
   {
     title: "Studio Hours",
@@ -37,6 +37,25 @@ const bookingPolicies = [
       "All listed equipment is included in your booking. Let us know your specific requirements when booking, and we'll have everything ready before your call time.",
   },
 ];
+
+const BALANCE_MESSAGES: Record<string, { title: string; body: string }> = {
+  paid: {
+    title: "Nothing left to pay",
+    body: "Your booking is already paid in full. See you at the studio!",
+  },
+  invalid: {
+    title: "That payment link isn't valid",
+    body: "Please use the latest link from your email, or contact us and we'll send a new one.",
+  },
+  busy: {
+    title: "Too many attempts",
+    body: "Please wait a few minutes and try your payment link again.",
+  },
+  error: {
+    title: "We couldn't open the payment page",
+    body: "Please try your link again in a moment, or contact us and we'll help you pay.",
+  },
+};
 
 const availabilityInfo = {
   title: "Check Availability",
@@ -54,7 +73,7 @@ export default async function BookOnlinePage({
   searchParams,
 }: {
   // Next 16 passes search params as a promise; reading it directly is always undefined.
-  searchParams: Promise<{ success?: string; cancelled?: string; session_id?: string }>;
+  searchParams: Promise<{ success?: string; cancelled?: string; session_id?: string; balance?: string }>;
 }) {
   const params = await searchParams;
   // Finalise the booking here too, so a missed Stripe webhook can't lose it.
@@ -86,6 +105,14 @@ export default async function BookOnlinePage({
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         {/* Success Message */}
         {outcome && <BookingSuccessMessage outcome={outcome} />}
+
+        {/* Returned from a balance payment link */}
+        {params?.balance && BALANCE_MESSAGES[params.balance] && (
+          <div className="rounded-2xl border border-[var(--primary)]/20 bg-[var(--primary)]/5 p-6 text-[var(--primary)]">
+            <p className="font-semibold">{BALANCE_MESSAGES[params.balance].title}</p>
+            <p className="text-sm mt-2">{BALANCE_MESSAGES[params.balance].body}</p>
+          </div>
+        )}
 
         {/* Cancel Message */}
         {params?.cancelled === "true" && (

@@ -873,7 +873,7 @@ export function BookingWizard({
                 </div>
                 {displayBalance != null && displayBalance > 0 && (
                   <div className="flex justify-between text-xs text-[var(--muted-plum)]">
-                    <span>Balance on the day</span>
+                    <span>Balance before your session</span>
                     <span>£{displayBalance.toFixed(2)}</span>
                   </div>
                 )}

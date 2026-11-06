@@ -194,6 +194,8 @@ export async function POST(request: Request) {
           customerEmail: email,
           bookingDate: dayList.slice(0, 480),
           bookingHours: `${bundle.days} full days (8 hours each)`,
+          // The balance is due before the first day; time the payment link off it.
+          sessionStart: new Date(held[0].start).toISOString(),
           bookingNotes: notes,
           totalPrice: totalPrice.toFixed(2),
           depositAmount: deposit.toFixed(2),

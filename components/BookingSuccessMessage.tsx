@@ -24,6 +24,11 @@ const COPY: Record<CheckoutOutcome, { title: string; body: string; next: string[
       'The remaining balance is due before your session starts',
     ],
   },
+  balance_paid: {
+    title: "You're all paid up!",
+    body: "Thanks, your remaining balance has been received and your booking is now paid in full. We've emailed you a receipt.",
+    next: ['Nothing else to pay', 'We look forward to seeing you at the studio'],
+  },
   processing: {
     title: 'Thanks! We are checking your payment',
     body: "We're finalising your booking. You'll get a confirmation email as soon as it's done.",

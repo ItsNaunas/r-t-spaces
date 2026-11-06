@@ -42,7 +42,7 @@ function PackageCard({ pkg }: { pkg: BookingPackage }) {
           </div>
           {pkg.depositAmount != null && pkg.balanceOnDay != null && (
             <p className="text-sm text-[var(--muted-plum)] mt-2">
-              £{pkg.depositAmount} non-refundable deposit to book. Remaining £{pkg.balanceOnDay} paid on the day.
+              £{pkg.depositAmount} non-refundable deposit to book. Remaining £{pkg.balanceOnDay} paid before your session (we&apos;ll email you a payment link).
             </p>
           )}
         </div>
@@ -292,7 +292,7 @@ export default function ServicesPage() {
               </div>
               <ul className="flex-grow space-y-2 text-base text-[var(--muted-plum)] list-disc list-inside">
                 <li>A non-refundable deposit is required to secure your booking.</li>
-                <li>Remaining balance is due on the day of your session.</li>
+                <li>Remaining balance is due before your session begins. We&apos;ll email you a secure payment link 2 days before.</li>
                 <li>Special mini sessions are released for limited events only (Valentine&apos;s, Mother&apos;s Day, Christmas).</li>
               </ul>
             </div>

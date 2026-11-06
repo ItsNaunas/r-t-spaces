@@ -10,6 +10,8 @@ const h = vi.hoisted(() => ({
   sendBookingNotification: vi.fn(),
   sendMembershipNotification: vi.fn(),
   sendStudioNotice: vi.fn(),
+  sendBalanceLinkEmail: vi.fn(),
+  sendBalancePaidNotification: vi.fn(),
 }));
 
 vi.mock("@/lib/redis", () => ({ getRedis: () => h.redis }));
@@ -22,6 +24,8 @@ vi.mock("@/lib/email", () => ({
   sendBookingNotification: h.sendBookingNotification,
   sendMembershipNotification: h.sendMembershipNotification,
   sendStudioNotice: h.sendStudioNotice,
+  sendBalanceLinkEmail: h.sendBalanceLinkEmail,
+  sendBalancePaidNotification: h.sendBalancePaidNotification,
 }));
 vi.mock("next/headers", () => ({
   headers: async () => new Headers({ "stripe-signature": "t=1,v1=test" }),
@@ -83,6 +87,8 @@ beforeEach(() => {
   h.sendBookingNotification.mockResolvedValue(undefined);
   h.sendMembershipNotification.mockResolvedValue(undefined);
   h.sendStudioNotice.mockResolvedValue(undefined);
+  h.sendBalanceLinkEmail.mockResolvedValue(undefined);
+  h.sendBalancePaidNotification.mockResolvedValue(undefined);
   // The hold the wizard created before checkout.
   h.redis.kv.set("pending:p1", {
     id: "p1",
@@ -206,6 +212,43 @@ describe("Stripe webhook: memberships (finding #4)", () => {
       amount_due: 25000,
     });
     expect(h.sendStudioNotice).toHaveBeenCalledWith("Membership payment failed", expect.any(Array));
+  });
+});
+
+describe("Stripe webhook: balance payments", () => {
+  it("a paid balance is recorded and the studio told, without touching Cal.com or adding a booking", async () => {
+    const res = await deliver("checkout.session.completed", {
+      id: "cs_test_balance1",
+      object: "checkout.session",
+      mode: "payment",
+      payment_status: "paid",
+      payment_intent: "pi_bal",
+      amount_total: 2000,
+      metadata: { kind: "balance", depositSessionId: "cs_test_session1", customerName: "Ada", customerEmail: "ada@example.com" },
+    });
+    expect(res.status).toBe(200);
+    expect(h.sendBalancePaidNotification).toHaveBeenCalledWith(expect.objectContaining({ amount: "20.00" }));
+    expect(h.confirmCalBooking).not.toHaveBeenCalled();
+    expect(h.sendBookingNotification).not.toHaveBeenCalled();
+    expect(h.redis.lists.get("bookings")).toBeUndefined();
+    expect(h.redis.kv.get("balance:status:cs_test_session1")).toMatchObject({ paidAt: expect.any(String) });
+  });
+
+  it("a booking made close to the session gets its balance link straight away", async () => {
+    const soon = new Date(Date.now() + 20 * 3600_000).toISOString();
+    await deliver("checkout.session.completed", bookingSession({
+      metadata: { ...bookingSession().metadata, sessionStart: soon },
+    }));
+    expect(h.sendBookingNotification).toHaveBeenCalledTimes(1);
+    expect(h.sendBalanceLinkEmail).toHaveBeenCalledWith(expect.objectContaining({ amount: "20.00" }));
+  });
+
+  it("a booking weeks away does not get a link yet", async () => {
+    const later = new Date(Date.now() + 20 * 24 * 3600_000).toISOString();
+    await deliver("checkout.session.completed", bookingSession({
+      metadata: { ...bookingSession().metadata, sessionStart: later },
+    }));
+    expect(h.sendBalanceLinkEmail).not.toHaveBeenCalled();
   });
 });
 

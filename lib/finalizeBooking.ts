@@ -10,6 +10,7 @@ import {
   allCalUids,
 } from "./pendingBookings";
 import { MEMBERSHIP_TIERS } from "./membership";
+import { recordBalancePaid, sendBalanceLinkIfDue } from "./balance";
 
 /**
  * Turns a paid Stripe Checkout session into a real booking (or membership).
@@ -34,13 +35,13 @@ export type FinalizeResult =
   | { status: "busy" }
   | {
       status: "done";
-      kind: "booking" | "membership" | "skipped";
+      kind: "booking" | "membership" | "balance" | "skipped";
       /** False only when money is in but a Cal.com hold could not be confirmed. */
       calConfirmed: boolean;
       alreadyDone: boolean;
     };
 
-type DoneRecord = { kind: "booking" | "membership" | "skipped"; calConfirmed: boolean };
+type DoneRecord = { kind: "booking" | "membership" | "balance" | "skipped"; calConfirmed: boolean };
 
 const KEEP_SECONDS = 60 * 60 * 24 * 30;
 const LOCK_SECONDS = 120;
@@ -78,7 +79,9 @@ export async function finalizePaidSession(session: Stripe.Checkout.Session): Pro
     const record: DoneRecord =
       session.mode === "subscription"
         ? await finalizeMembership(session)
-        : session.mode === "payment"
+        : session.metadata?.kind === "balance"
+          ? await finalizeBalance(session)
+          : session.mode === "payment"
           ? await finalizeBooking(session)
           : { kind: "skipped", calConfirmed: true };
     await redis.set(doneKey(session.id), record, { ex: KEEP_SECONDS });
@@ -186,7 +189,21 @@ async function finalizeBooking(session: Stripe.Checkout.Session): Promise<DoneRe
     })
   ).catch((err) => logError("booking saved, but email failed:", session.id, err));
 
+  // Booked close to the session: the daily job might not run in time, so send
+  // the balance link now. A no-op for sessions further out.
+  await sendBalanceLinkIfDue(session).catch((err) =>
+    logError("could not send balance link:", session.id, err)
+  );
+
   return { kind: "booking", calConfirmed };
+}
+
+async function finalizeBalance(session: Stripe.Checkout.Session): Promise<DoneRecord> {
+  const { notify } = await recordBalancePaid(session, stripeDashboardUrl(session));
+  await once(session.id, "emailed", notify).catch((err) =>
+    logError("balance recorded, but email failed:", session.id, err)
+  );
+  return { kind: "balance", calConfirmed: true };
 }
 
 async function finalizeMembership(session: Stripe.Checkout.Session): Promise<DoneRecord> {

@@ -8,7 +8,7 @@ import { finalizePaidSession } from "./finalizeBooking";
  *  - unconfirmed: paid, but a hold could not be confirmed (the studio is emailed)
  *  - processing:  not paid yet, being finalised elsewhere, or we couldn't check
  */
-export type CheckoutOutcome = "confirmed" | "unconfirmed" | "processing";
+export type CheckoutOutcome = "confirmed" | "unconfirmed" | "processing" | "balance_paid";
 
 const SESSION_ID = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
 
@@ -27,6 +27,7 @@ export async function resolveCheckout(sessionId: string | undefined): Promise<Ch
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     const result = await finalizePaidSession(session);
     if (result.status !== "done") return "processing";
+    if (result.kind === "balance") return "balance_paid";
     return result.calConfirmed ? "confirmed" : "unconfirmed";
   } catch (error) {
     // The webhook remains the primary path; the customer just sees neutral copy.
