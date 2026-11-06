@@ -148,8 +148,16 @@ export default function MembersPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get("success") === "true" && params.get("session_id")) {
+    const sessionId = params.get("session_id");
+    if (params.get("success") === "true" && sessionId) {
       setShowSuccess(true);
+      // Backstop for the Stripe webhook: records the membership and emails the
+      // studio if the webhook hasn't already. Idempotent, so harmless if it has.
+      fetch("/api/checkout/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      }).catch(() => {});
       window.history.replaceState({}, "", "/members");
     }
     if (params.get("cancelled") === "true") {

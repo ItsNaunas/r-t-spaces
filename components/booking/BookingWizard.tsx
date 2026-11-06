@@ -305,12 +305,32 @@ export function BookingWizard({
   // Changing the package/offer invalidates any pending hold we created — clear it
   // so checkout never sends a stale pendingBookingId (which would book/charge the
   // wrong package), and a fresh hold gets created for the new selection.
+  // The picked time belonged to the old package's calendar, so release that
+  // Cal.com hold too; otherwise it blocks the slot until the expiry sweep.
+  const calUidRef = useRef("");
   useEffect(() => {
-    setFormData((prev) => (prev.pendingBookingId ? { ...prev, pendingBookingId: "" } : prev));
+    const staleUid = calUidRef.current;
+    if (staleUid) {
+      fetch("/api/pending-bookings/release", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ calBookingUid: staleUid }),
+      }).catch(() => {});
+      setSlotSelected(false);
+      setSlotData(null);
+    }
+    setFormData((prev) =>
+      prev.pendingBookingId || prev.calBookingUid
+        ? { ...prev, pendingBookingId: "", calBookingUid: "" }
+        : prev
+    );
     setPendingBookingExpiresAt(null);
     pendingCreationRef.current = false;
-     
+
   }, [selectedPackage?.id, offer]);
+  useEffect(() => {
+    calUidRef.current = formData.calBookingUid ?? "";
+  }, [formData.calBookingUid]);
 
   // Countdown for the payment hold.
   useEffect(() => {

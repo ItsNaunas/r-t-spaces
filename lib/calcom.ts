@@ -14,7 +14,9 @@ const V_BOOKINGS = "2026-02-25";
 
 export type CalBooking = {
   uid: string;
-  status: "upcoming" | "pending" | "cancelled" | "rejected" | "past";
+  // The v2 API reports a confirmed booking as "accepted"; the list filters
+  // use "upcoming"/"past". Accept all three as confirmed.
+  status: "accepted" | "upcoming" | "pending" | "cancelled" | "rejected" | "past";
   start: string;
   end: string;
   duration?: number;

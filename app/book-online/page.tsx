@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/StudioSections";
 import { BookingWizard } from "@/components/booking/BookingWizard";
 import { BookingSuccessMessage } from "@/components/BookingSuccessMessage";
 import { GradientBars } from "@/components/ui/gradient-bars";
+import { resolveCheckout } from "@/lib/checkoutOutcome";
 
 const bookingPolicies = [
   {
@@ -56,6 +57,8 @@ export default async function BookOnlinePage({
   searchParams: Promise<{ success?: string; cancelled?: string; session_id?: string }>;
 }) {
   const params = await searchParams;
+  // Finalise the booking here too, so a missed Stripe webhook can't lose it.
+  const outcome = params?.success === "true" ? await resolveCheckout(params.session_id) : null;
   return (
     <div className="bg-[var(--base)]">
       {/* Hero band */}
@@ -82,9 +85,7 @@ export default async function BookOnlinePage({
 
       <main className="mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-12 sm:space-y-16 sm:px-6 lg:px-8">
         {/* Success Message */}
-        {params?.success === "true" && (
-          <BookingSuccessMessage />
-        )}
+        {outcome && <BookingSuccessMessage outcome={outcome} />}
 
         {/* Cancel Message */}
         {params?.cancelled === "true" && (
