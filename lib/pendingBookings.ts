@@ -109,6 +109,10 @@ export async function updatePendingBookingStripeSession(
   const booking = await getPendingBooking(id);
   if (!booking) return false;
   booking.stripeSessionId = stripeSessionId;
+  // The hold's clock started when the time was picked, but the Checkout
+  // session gets a full CHECKOUT_WINDOW_MINUTES from now. Restart the hold so
+  // the expiry sweep can never release a slot the customer can still pay for.
+  booking.expiresAt = new Date(Date.now() + HOLD_MINUTES * 60 * 1000).toISOString();
   const redis = getRedis();
   const pipeline = redis.pipeline();
   pipeline.set(key(id), JSON.stringify(booking), { ex: TTL_SECONDS });
@@ -150,6 +154,19 @@ export async function cancelPendingBooking(id: string, reason?: string): Promise
   pipeline.srem(IDS_KEY, id);
   await pipeline.exec();
   return true;
+}
+
+/**
+ * Release a hold the customer has walked away from in the wizard (they picked
+ * a time, then changed package). Only a hold that is still pending AND never
+ * reached Stripe Checkout can be released this way, so this can never cancel
+ * a slot that is paid for, or one that is being paid for right now. Anything
+ * else is left for the Checkout expiry webhook or the expiry sweep.
+ */
+export async function releaseUnpaidHold(calBookingUid: string): Promise<boolean> {
+  const booking = await getPendingBookingByCalUid(calBookingUid);
+  if (!booking || booking.stripeSessionId) return false;
+  return cancelPendingBooking(booking.id, "Customer changed their booking before paying");
 }
 
 export async function cancelExpiredPendingBookings(): Promise<number> {

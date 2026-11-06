@@ -12,12 +12,35 @@ type Booking = {
   totalPrice: string;
   depositPaid: string;
   balanceDue: string;
+  balanceState: "none" | "owed" | "link_sent" | "paid";
+  balanceAt: string | null;
   addonsSummary: string;
   discountCode: string;
   discountAmount: string;
   paidAt: number;
   stripeUrl: string;
 };
+
+const BALANCE_BADGE: Record<Booking["balanceState"], { label: string; className: string } | null> = {
+  none: null,
+  owed: { label: "Owed", className: "bg-amber-50 text-amber-700 border-amber-200" },
+  link_sent: { label: "Link sent", className: "bg-sky-50 text-sky-700 border-sky-200" },
+  paid: { label: "Paid", className: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+};
+
+function BalanceBadge({ state, at }: { state: Booking["balanceState"]; at: string | null }) {
+  const badge = BALANCE_BADGE[state];
+  if (!badge) return null;
+  const when = at
+    ? ` ${new Date(at).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}`
+    : "";
+  return (
+    <span className={`mt-1 inline-flex items-center px-1.5 py-0.5 rounded text-xs border whitespace-nowrap ${badge.className}`}>
+      {badge.label}
+      {when}
+    </span>
+  );
+}
 
 export function BookingsTable({ bookings }: { bookings: Booking[] }) {
   const [search, setSearch] = useState("");
@@ -81,7 +104,10 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
                   </td>
                   <td className="px-4 py-3 font-semibold text-gray-900">{b.totalPrice}</td>
                   <td className="px-4 py-3 text-gray-700">{b.depositPaid}</td>
-                  <td className="px-4 py-3 text-gray-500">{b.balanceDue}</td>
+                  <td className="px-4 py-3">
+                    <p className="text-gray-500">{b.balanceDue}</p>
+                    <BalanceBadge state={b.balanceState} at={b.balanceAt} />
+                  </td>
                   <td className="px-4 py-3">
                     {b.discountCode ? (
                       <div>

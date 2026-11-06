@@ -1,17 +1,43 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { headers } from 'next/headers';
-import { saveBooking } from '@/lib/bookingStore';
-import { sendBookingNotification } from '@/lib/email';
-import { confirmCalBooking, cancelCalBooking } from '@/lib/calcom';
+import { sendStudioNotice } from '@/lib/email';
+import { cancelCalBooking } from '@/lib/calcom';
 import {
   getPendingBooking,
   getPendingBookingByStripeSession,
-  confirmPendingBooking,
   cancelPendingBooking,
-  allCalUids,
 } from '@/lib/pendingBookings';
 import { getRedis } from '@/lib/redis';
+import { finalizePaidSession } from '@/lib/finalizeBooking';
+import { MEMBERSHIP_TIERS } from '@/lib/membership';
+
+function tierName(tierId: string | undefined): string {
+  return (tierId && MEMBERSHIP_TIERS[tierId]?.name) || 'membership';
+}
+
+async function customerLabel(
+  stripe: Stripe,
+  customer: string | Stripe.Customer | Stripe.DeletedCustomer | null
+): Promise<string> {
+  if (!customer) return 'A member';
+  try {
+    const c = typeof customer === 'string' ? await stripe.customers.retrieve(customer) : customer;
+    if (c.deleted) return 'A member';
+    return [c.name, c.email].filter(Boolean).join(' / ') || 'A member';
+  } catch {
+    return 'A member';
+  }
+}
+
+/** Studio heads-ups go out once per Stripe event; the marker is set after sending. */
+async function noticeOnce(eventId: string, send: () => Promise<void>) {
+  const redis = getRedis();
+  const key = `stripe:notice:${eventId}`;
+  if (await redis.get(key)) return;
+  await send();
+  await redis.set(key, '1', { ex: 60 * 60 * 24 * 7 });
+}
 
 export async function POST(request: Request) {
   try {
@@ -43,101 +69,44 @@ export async function POST(request: Request) {
     }
 
     switch (event.type) {
-      case 'checkout.session.completed': {
+      case 'checkout.session.completed':
+      case 'checkout.session.async_payment_succeeded': {
         const session = event.data.object as Stripe.Checkout.Session;
-        console.log('Payment successful:', session.id);
+        console.log('[BOOKING] checkout event:', event.type, session.id);
 
-        // Idempotency: claim this event so a Stripe retry / duplicate delivery
-        // doesn't save the booking or send emails twice. Released on failure
-        // below so genuine retries can still reprocess.
-        const redis = getRedis();
-        const eventKey = `stripe:evt:${event.id}`;
-        const claimed = await redis.set(eventKey, '1', { nx: true, ex: 60 * 60 * 24 * 7 });
-        if (claimed === null) {
-          console.log('Duplicate Stripe event, already handled — skipping:', event.id);
-          break;
+        // Idempotent per session, shared with the success page. Errors throw
+        // to the outer catch -> 500, so Stripe retries and the retry finishes
+        // whatever didn't happen.
+        const result = await finalizePaidSession(session);
+        if (result.status === 'busy') {
+          // The success page is finalising this session right now. Ask Stripe
+          // to come back; by then it will be done (or free to redo).
+          return NextResponse.json({ error: 'In progress, retry' }, { status: 409 });
         }
+        break;
+      }
 
-        const pendingBookingId = session.metadata?.pendingBookingId;
-        let pendingBooking = null;
+      case 'customer.subscription.deleted': {
+        const sub = event.data.object as Stripe.Subscription;
+        await noticeOnce(event.id, async () => {
+          const who = await customerLabel(stripe, sub.customer);
+          await sendStudioNotice('Membership cancelled', [
+            `${who}'s membership (${tierName(sub.metadata?.tierId)}) has ended.`,
+            `Stripe: https://dashboard.stripe.com/subscriptions/${sub.id}`,
+          ]);
+        });
+        break;
+      }
 
-        if (pendingBookingId) {
-          pendingBooking = await getPendingBooking(pendingBookingId);
-        }
-        if (!pendingBooking) {
-          pendingBooking = await getPendingBookingByStripeSession(session.id);
-        }
-
-        // The slot is held in Cal.com as an unconfirmed booking. Payment has
-        // now landed, so this is the one and only place it becomes real.
-        // A block booking holds one Cal.com booking per day; confirm them all.
-        const calBookingUids = pendingBooking
-          ? allCalUids(pendingBooking)
-          : [session.metadata?.calBookingUid].filter((u): u is string => Boolean(u));
-        for (const calBookingUid of calBookingUids) {
-          const confirmed = await confirmCalBooking(calBookingUid);
-          if (!confirmed) {
-            // Money has been taken but the slot is not secured. Loud, and
-            // deliberately not silently swallowed.
-            console.error(
-              'PAID BUT UNCONFIRMED — needs manual confirmation in Cal.com.',
-              { session: session.id, calBookingUid }
-            );
-          }
-        }
-
-        if (pendingBooking) {
-          await confirmPendingBooking(pendingBooking.id, session.id);
-          console.log('Pending booking confirmed:', pendingBooking.id);
-        }
-
-        const bookingData = {
-          name: session.metadata?.customerName || session.customer_email || 'Unknown',
-          email: session.metadata?.customerEmail || session.customer_email || '',
-          date: session.metadata?.bookingDate || undefined,
-          hours: session.metadata?.bookingHours || undefined,
-          notes: session.metadata?.bookingNotes || undefined,
-        };
-
-        if (!bookingData.name || !bookingData.email) {
-          console.error('Missing required booking data:', bookingData);
-          break;
-        }
-
-        try {
-          const savedBooking = await saveBooking(bookingData);
-          console.log('Booking saved:', savedBooking);
-
-          sendBookingNotification({
-            ...savedBooking,
-            paid: true,
-            totalPrice: session.metadata?.totalPrice,
-            depositAmount: session.metadata?.depositAmount,
-            balanceDue: session.metadata?.balanceDue,
-            addonsSummary: session.metadata?.addonsSummary || undefined,
-            addonsTotal: session.metadata?.addonsTotal || undefined,
-          }).catch((error) => {
-            console.error('Email notification failed (booking still saved):', error);
-          });
-        } catch (error) {
-          console.error(
-            'Error processing booking after payment — requires manual review. Session:',
-            session.id,
-            error
-          );
-          // Release the idempotency claim so Stripe's retry can reprocess.
-          await redis.del(eventKey);
-          return NextResponse.json({ error: 'Booking processing failed' }, { status: 500 });
-        }
-
-        const discountCode = session.metadata?.discountCode;
-        if (discountCode) {
-          const { incrementDiscountUsage } = await import('@/lib/admin/kv');
-          incrementDiscountUsage(discountCode).catch((err) => {
-            console.error('Failed to increment discount usage:', err);
-          });
-        }
-
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object as Stripe.Invoice;
+        await noticeOnce(event.id, async () => {
+          const who = invoice.customer_email || (await customerLabel(stripe, invoice.customer));
+          await sendStudioNotice('Membership payment failed', [
+            `A membership payment of £${((invoice.amount_due ?? 0) / 100).toFixed(2)} from ${who} failed. Stripe will retry it automatically.`,
+            invoice.hosted_invoice_url ? `Invoice: ${invoice.hosted_invoice_url}` : '',
+          ].filter(Boolean));
+        });
         break;
       }
 

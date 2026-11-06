@@ -1,13 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-
-const MEMBERSHIP_TIERS: Record<
-  string,
-  { name: string; amount: number }
-> = {
-  essentials: { name: "Essentials Off Peak", amount: 120 },
-  signature: { name: "Signature Flex", amount: 250 },
-};
+import { MEMBERSHIP_TIERS } from "@/lib/membership";
 
 export async function POST(request: Request) {
   try {

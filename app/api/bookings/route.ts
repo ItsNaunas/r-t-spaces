@@ -35,8 +35,9 @@ export async function POST(request: Request) {
     // Save booking
     const savedBooking = await saveBooking(bookingEntry);
 
-    // Send email notifications (non-blocking - don't fail if email fails)
-    sendBookingNotification(savedBooking).catch((error) => {
+    // Awaited (an un-awaited send can be cut off when the function returns),
+    // but a failed email never fails the request: the booking is saved.
+    await sendBookingNotification(savedBooking).catch((error) => {
       console.error("Email notification failed (booking still saved):", error);
     });
 

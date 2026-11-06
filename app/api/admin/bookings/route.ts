@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { toBookingRows } from "@/lib/admin/bookingRows";
 
 export async function GET(request: Request) {
   if (!process.env.STRIPE_SECRET_KEY?.startsWith("sk_")) {
@@ -18,24 +19,7 @@ export async function GET(request: Request) {
       expand: ["data.payment_intent"],
     });
 
-    const bookings = sessions.data
-      .filter((s) => s.payment_status === "paid")
-      .map((s) => ({
-        sessionId: s.id,
-        customerName: s.metadata?.customerName ?? s.customer_details?.name ?? "—",
-        customerEmail: s.metadata?.customerEmail ?? s.customer_email ?? "—",
-        bookingDate: s.metadata?.bookingDate ?? "—",
-        bookingHours: s.metadata?.bookingHours ?? "—",
-        packageTitle: s.metadata?.packageTitle ?? "—",
-        totalPrice: s.metadata?.totalPrice ? `£${s.metadata.totalPrice}` : "—",
-        depositPaid: `£${((s.amount_total ?? 0) / 100).toFixed(2)}`,
-        balanceDue: s.metadata?.balanceDue ? `£${s.metadata.balanceDue}` : "—",
-        addonsSummary: s.metadata?.addonsSummary ?? "",
-        discountCode: s.metadata?.discountCode ?? "",
-        discountAmount: s.metadata?.discountAmount ? `£${s.metadata.discountAmount}` : "",
-        paidAt: s.created,
-        stripeUrl: `https://dashboard.stripe.com/payments/${typeof s.payment_intent === "string" ? s.payment_intent : s.payment_intent?.id}`,
-      }));
+    const bookings = await toBookingRows(sessions.data);
 
     return NextResponse.json({
       bookings,
