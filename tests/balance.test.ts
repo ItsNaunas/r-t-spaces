@@ -82,9 +82,9 @@ describe("Daily balance links", () => {
       })
     );
 
-    // The next day's run must not email again.
+    // The next day's run must not send the first link again (only the reminder).
     expect(await balance.sendDueBalanceLinks(new Date(NOW.getTime() + 24 * 3600_000))).toMatchObject({ sent: 0 });
-    expect(h.sendBalanceLinkEmail).toHaveBeenCalledTimes(1);
+    expect(h.sendBalanceLinkEmail.mock.calls.filter((c) => !c[0].reminder)).toHaveLength(1);
   });
 
   it("uses the start time stored at checkout when there is one", async () => {
@@ -126,6 +126,51 @@ describe("Daily balance links", () => {
     expect(await balance.sendDueBalanceLinks(NOW)).toMatchObject({ sent: 1 });
     const [first, second] = h.sendBalanceLinkEmail.mock.calls.map((c) => c[0].payUrl);
     expect(second).toBe(first);
+  });
+});
+
+describe("Day-before reminder", () => {
+  const at = (hours: number) => new Date(NOW.getTime() + hours * 3600_000);
+
+  it("resends the same link once, the day before, if still unpaid", async () => {
+    h.sessions = [deposit("cs_test_viktoriia")]; // session Sunday 1pm
+    await balance.sendDueBalanceLinks(NOW); // Friday: first link
+    expect(await balance.sendDueBalanceLinks(at(24))).toMatchObject({ sent: 0, reminded: 1 }); // Saturday
+    expect(await balance.sendDueBalanceLinks(at(24))).toMatchObject({ reminded: 0 }); // rerun same day
+    expect(await balance.sendDueBalanceLinks(at(48))).toMatchObject({ reminded: 0 }); // Sunday
+
+    const [link, reminder] = h.sendBalanceLinkEmail.mock.calls.map((c) => c[0]);
+    expect(link.reminder).toBeUndefined();
+    expect(reminder).toMatchObject({ reminder: true, amount: "15.00", payUrl: link.payUrl });
+    expect(h.sendBalanceLinkEmail).toHaveBeenCalledTimes(2);
+  });
+
+  it("sends no reminder once the balance is paid", async () => {
+    h.sessions = [deposit("cs_test_viktoriia")];
+    await balance.sendDueBalanceLinks(NOW);
+    await balance.recordBalancePaid({
+      id: "cs_test_balance1",
+      amount_total: 1500,
+      metadata: { kind: "balance", depositSessionId: "cs_test_viktoriia" },
+    } as never);
+    expect(await balance.sendDueBalanceLinks(at(24))).toMatchObject({ reminded: 0 });
+    expect(h.sendBalanceLinkEmail).toHaveBeenCalledTimes(1);
+  });
+
+  it("sends no reminder if the booking was cancelled after the link went out", async () => {
+    h.sessions = [deposit("cs_test_viktoriia")];
+    await balance.sendDueBalanceLinks(NOW);
+    h.getCalBooking.mockResolvedValue({ uid: "x", status: "cancelled", start: hoursFromNow(53) });
+    expect(await balance.sendDueBalanceLinks(at(24))).toMatchObject({ reminded: 0 });
+  });
+
+  it("does not double up when the first link only just went out", async () => {
+    // Booked at 7am Saturday for Sunday: link with the confirmation, and the
+    // 8am run an hour later must not send a reminder on top.
+    h.getCalBooking.mockImplementation(async (uid: string) => ({ uid, status: "accepted", start: hoursFromNow(29) }));
+    h.sessions = [deposit("cs_test_late")];
+    expect(await balance.sendBalanceLinkIfDue(h.sessions[0] as never, at(-1))).toBe(true);
+    expect(await balance.sendDueBalanceLinks(NOW)).toMatchObject({ sent: 0, reminded: 0 });
   });
 });
 

@@ -1,5 +1,6 @@
 import { getRedis } from "./redis";
 import { cancelCalBooking } from "./calcom";
+import { queueAbandonedHold } from "./abandoned";
 
 export type PendingBooking = {
   id: string;
@@ -44,6 +45,17 @@ const TTL_SECONDS = 24 * 60 * 60;
 export const CHECKOUT_WINDOW_MINUTES = 31;
 const HOLD_MINUTES = CHECKOUT_WINDOW_MINUTES + 5;
 const UNPAID_REASON = "Payment not completed in time";
+/** Releases that mean the customer walked away: they get a follow-up email. */
+const ABANDONED_REASONS = new Set([UNPAID_REASON, "Checkout expired without payment", "Payment failed"]);
+
+/** Queue the "Still want to book?" email. Never blocks releasing the slot. */
+async function queueFollowUp(booking: PendingBooking) {
+  try {
+    await queueAbandonedHold(booking);
+  } catch (error) {
+    console.error("Could not queue abandoned-booking follow-up:", booking.id, error);
+  }
+}
 
 export async function savePendingBooking(
   booking: Omit<PendingBooking, "createdAt" | "expiresAt" | "status">
@@ -145,6 +157,7 @@ export async function cancelPendingBooking(id: string, reason?: string): Promise
 
   if (booking.status === "pending") {
     await cancelAllCal(booking, reason || UNPAID_REASON);
+    if (ABANDONED_REASONS.has(reason || UNPAID_REASON)) await queueFollowUp(booking);
   }
 
   booking.status = "cancelled";
@@ -183,6 +196,7 @@ export async function cancelExpiredPendingBookings(): Promise<number> {
     if (!current || current.status !== "pending") continue;
 
     await cancelAllCal(current, UNPAID_REASON);
+    await queueFollowUp(current);
     current.status = "cancelled";
     const redis = getRedis();
     const pipeline = redis.pipeline();

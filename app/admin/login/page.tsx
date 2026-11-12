@@ -6,5 +6,5 @@ export default async function AdminLoginPage({
   searchParams: Promise<{ from?: string }>;
 }) {
   const { from } = await searchParams;
-  return <LoginForm from={from ?? "/admin/bookings"} />;
+  return <LoginForm from={from ?? "/admin/upcoming"} />;
 }

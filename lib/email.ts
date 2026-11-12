@@ -239,18 +239,25 @@ function sessionLines(d: BalanceEmailData): string {
   ].join('');
 }
 
-/** The customer's link to pay the rest before their session. */
-export async function sendBalanceLinkEmail(raw: BalanceEmailData & { payUrl: string }) {
+/**
+ * The customer's link to pay the rest before their session. With `reminder`,
+ * it's the day-before nudge for a balance that is still unpaid.
+ */
+export async function sendBalanceLinkEmail(raw: BalanceEmailData & { payUrl: string; reminder?: boolean }) {
   const m = mailer();
   if (!m) return;
   await sendAll(m, [
     {
       to: raw.email,
-      subject: 'Your RT Spaces session: pay your balance',
+      subject: raw.reminder
+        ? 'Reminder: your RT Spaces balance is due tomorrow'
+        : 'Your RT Spaces session: pay your balance',
       html: `
-        <h2>Your session is coming up</h2>
+        <h2>${raw.reminder ? 'Your session is tomorrow' : 'Your session is coming up'}</h2>
         <p>Hi ${esc(raw.name)},</p>
-        <p>Your remaining balance of <strong>£${esc(raw.amount)}</strong> is due before your session begins.</p>
+        ${raw.reminder
+          ? `<p>Just a reminder: your remaining balance of <strong>£${esc(raw.amount)}</strong> is still to pay. Please pay it before your session begins.</p>`
+          : `<p>Your remaining balance of <strong>£${esc(raw.amount)}</strong> is due before your session begins.</p>`}
         ${sessionLines(raw)}
         <p style="margin: 24px 0;">
           <a href="${esc(raw.payUrl)}" style="background:#111;color:#fff;padding:12px 20px;border-radius:6px;text-decoration:none;">Pay £${esc(raw.amount)} now</a>
@@ -329,6 +336,90 @@ export async function subscribeToNewsletter(email: string) {
       to: m.studioEmail,
       subject: 'New Creator Circle signup',
       html: `<h2>New newsletter signup</h2><p><strong>Email:</strong> ${esc(email)}</p>`,
+    },
+  ]);
+}
+
+function siteUrl(): string {
+  return (process.env.NEXT_PUBLIC_BASE_URL || 'https://www.rtspaces.co.uk').replace(/\/$/, '');
+}
+
+/** A booking the studio added by hand: the customer's confirmation. */
+export async function sendManualBookingConfirmation(
+  raw: BalanceEmailData & { totalPrice: string; paidUpfront: string }
+) {
+  const m = mailer();
+  if (!m) return;
+  const owed = Number(raw.amount) > 0;
+  await sendAll(m, [
+    {
+      to: raw.email,
+      subject: 'Booking Confirmed - RT Spaces',
+      html: `
+        <h2>You're booked in</h2>
+        <p>Hi ${esc(raw.name)},</p>
+        <p>Your booking at RT Spaces is confirmed.</p>
+        ${sessionLines(raw)}
+        <p><strong>Total:</strong> £${esc(raw.totalPrice)}</p>
+        ${Number(raw.paidUpfront) > 0 ? `<p><strong>Paid:</strong> £${esc(raw.paidUpfront)}</p>` : ''}
+        ${owed
+          ? `<p><strong>Balance:</strong> £${esc(raw.amount)}, due before your session begins. We'll email you a secure payment link 2 days before.</p>`
+          : `<p>You're all paid up.</p>`}
+        <p>If you have any questions, just reply to this email.</p>
+        <p>See you soon!<br>RT Spaces Team</p>
+      `,
+    },
+  ]);
+}
+
+/** Someone held a time but never paid, so the slot was released. */
+export async function sendAbandonedBookingEmail(raw: {
+  name: string;
+  email: string;
+  packageTitle?: string;
+  bookingDate?: string;
+}) {
+  const m = mailer();
+  if (!m) return;
+  const what = raw.packageTitle ? esc(raw.packageTitle) : 'your session';
+  const when = raw.bookingDate ? ` on ${esc(raw.bookingDate)}` : '';
+  await sendAll(m, [
+    {
+      to: raw.email,
+      subject: 'Still want to book RT Spaces?',
+      html: `
+        <h2>Your booking wasn't completed</h2>
+        <p>Hi ${esc(raw.name)},</p>
+        <p>You started booking ${what}${when}, but the deposit wasn't paid, so we couldn't hold that time for you.</p>
+        <p>If you'd still like to come in, you can pick a time again here:</p>
+        <p style="margin: 24px 0;">
+          <a href="${siteUrl()}/book-online" style="background:#111;color:#fff;padding:12px 20px;border-radius:6px;text-decoration:none;">Book your session</a>
+        </p>
+        <p>If something went wrong with the payment, or you have a question, just reply to this email and we'll help.</p>
+        <p>Best regards,<br>RT Spaces Team</p>
+      `,
+    },
+  ]);
+}
+
+/** The day after a session: ask for a Google review. */
+export async function sendReviewRequestEmail(raw: { name: string; email: string; reviewUrl: string }) {
+  const m = mailer();
+  if (!m) return;
+  await sendAll(m, [
+    {
+      to: raw.email,
+      subject: 'How was your session at RT Spaces?',
+      html: `
+        <h2>Thanks for shooting with us</h2>
+        <p>Hi ${esc(raw.name)},</p>
+        <p>We hope your session went well. If you have a minute, a quick Google review helps other creatives find the studio, and it means a lot to us.</p>
+        <p style="margin: 24px 0;">
+          <a href="${esc(raw.reviewUrl)}" style="background:#111;color:#fff;padding:12px 20px;border-radius:6px;text-decoration:none;">Leave a review</a>
+        </p>
+        <p>Want to book again? <a href="${siteUrl()}/book-online">Pick your next session here</a>.</p>
+        <p>Thank you!<br>RT Spaces Team</p>
+      `,
     },
   ]);
 }

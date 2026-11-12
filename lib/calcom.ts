@@ -175,13 +175,16 @@ export async function getEventTypeId(slug: string): Promise<number | null> {
 export async function getAvailableSlots(
   eventTypeId: number,
   start: string,
-  end: string
+  end: string,
+  /** For event types with several lengths (hourly hire): the length wanted. */
+  durationMinutes?: number
 ): Promise<Record<string, string[]>> {
   const qs = new URLSearchParams({
     eventTypeId: String(eventTypeId),
     start,
     end,
     timeZone: "Europe/London",
+    ...(durationMinutes ? { duration: String(durationMinutes) } : {}),
   });
   const res = await callVersion<unknown>(V_SLOTS, `/slots?${qs}`);
   const raw = (res.data ?? {}) as Record<string, unknown>;
@@ -213,10 +216,13 @@ export async function createCalBooking(input: {
   name: string;
   email: string;
   notes?: string;
+  /** For event types with several lengths (hourly hire). */
+  lengthInMinutes?: number;
 }): Promise<CalBooking> {
   const res = await call<CalBooking>("POST", "/bookings", {
     start: new Date(input.start).toISOString(),
     eventTypeId: input.eventTypeId,
+    ...(input.lengthInMinutes ? { lengthInMinutes: input.lengthInMinutes } : {}),
     attendee: { name: input.name, email: input.email, timeZone: "Europe/London", language: "en" },
     ...(input.notes ? { bookingFieldsResponses: { notes: input.notes } } : {}),
   });
@@ -243,4 +249,24 @@ export async function bookingIsForPackage(
     console.error("Could not look up Cal.com event types:", error);
     return null;
   }
+}
+
+/**
+ * Bookings starting in [from, to), soonest first. `status` "upcoming" is
+ * confirmed bookings, "unconfirmed" the holds awaiting payment.
+ */
+export async function listCalBookings(
+  status: "upcoming" | "unconfirmed" | "past",
+  from: Date,
+  to: Date
+): Promise<CalBooking[]> {
+  const qs = new URLSearchParams({
+    status,
+    afterStart: from.toISOString(),
+    beforeEnd: to.toISOString(),
+    sortStart: "asc",
+    take: "100",
+  });
+  const res = await call<CalBooking[]>("GET", `/bookings?${qs}`);
+  return Array.isArray(res.data) ? res.data : [];
 }
