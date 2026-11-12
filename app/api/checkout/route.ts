@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
 import { attributionMetadata } from '@/lib/attribution';
+import { checkVoucher, looksLikeVoucher, splitVoucher } from '@/lib/vouchers';
+import { bookWithVoucher, VoucherBookingError } from '@/lib/voucherBooking';
+
+/** Stripe's smallest GBP charge. */
+const STRIPE_MIN_PENCE = 30;
 import Stripe from 'stripe';
 import {
   calculateHours,
@@ -138,7 +143,53 @@ export async function POST(request: Request) {
       }
     }
 
-    const balanceDue = getBalanceForPackage(pkg, totalPrice, deposit);
+    let balanceDue = getBalanceForPackage(pkg, totalPrice, deposit);
+
+    // ── Gift voucher in the code box: money, paying the deposit first ────────
+    let voucherCode = '';
+    let voucherPence = 0;
+    if (!appliedDiscountCode && typeof discountCode === 'string' && looksLikeVoucher(discountCode)) {
+      const check = await checkVoucher(discountCode);
+      if (!check.ok) {
+        return NextResponse.json({ error: check.error }, { status: 400 });
+      }
+      const split = splitVoucher(check.balancePence, Math.round(deposit * 100), Math.round(balanceDue * 100));
+      voucherCode = check.code;
+      voucherPence = split.applied;
+      deposit = split.chargeNow / 100;
+      balanceDue = split.balanceAfter / 100;
+
+      // Stripe can't take less than 30p: the voucher covers the deposit, so
+      // book it here (anything under 30p moves onto the balance).
+      if (split.chargeNow < STRIPE_MIN_PENCE) {
+        balanceDue += split.chargeNow / 100;
+        try {
+          const record = await bookWithVoucher({
+            booking,
+            pendingBookingId: typeof pendingBookingId === 'string' ? pendingBookingId : undefined,
+            name,
+            email,
+            packageId: pkg.id,
+            packageTitle: pkg.title,
+            totalPrice,
+            voucherCode,
+            voucherPence,
+            notes: [typeof notes === 'string' ? notes.slice(0, 400) : '', addonsSummary ? `Add-ons (due on the day): ${addonsSummary}` : '']
+              .filter(Boolean)
+              .join(' / '),
+            source: attributionMetadata(request).source,
+          });
+          return NextResponse.json({
+            url: `${process.env.NEXT_PUBLIC_BASE_URL}/book-online?success=true&booking=${record.id}`,
+          });
+        } catch (error) {
+          if (error instanceof VoucherBookingError) {
+            return NextResponse.json({ error: error.message }, { status: 409 });
+          }
+          throw error;
+        }
+      }
+    }
 
     if (!Number.isFinite(deposit) || deposit <= 0) {
       console.error('Computed a non-chargeable deposit', { pkg: pkg.id, hours, totalPrice, deposit });
@@ -203,6 +254,7 @@ export async function POST(request: Request) {
         calBookingUid,
         discountCode: appliedDiscountCode,
         discountAmount: discountAmount.toFixed(2),
+        ...(voucherCode ? { voucherCode, voucherPence: String(voucherPence) } : {}),
         // Where the customer came from (Instagram, TikTok, Google, ...).
         ...attributionMetadata(request),
       },

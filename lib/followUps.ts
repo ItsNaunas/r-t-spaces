@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { getRedis } from "./redis";
 import { getCalBooking } from "./calcom";
+import { getMove, resolveCalUid } from "./calMoves";
 import { listAbandonedHolds } from "./abandoned";
 import { londonDay, subjectFromSession, type BalanceSubject } from "./balance";
 import { listManualBookings } from "./manualBookings";
@@ -86,9 +87,10 @@ export async function sendAbandonedFollowUps(now: Date = new Date()) {
 
 /** Start time for a subject, asking Cal.com only when it isn't stored. */
 async function startOf(subject: BalanceSubject): Promise<{ start: string | null; cancelled: boolean }> {
-  const booking = subject.calBookingUid ? await getCalBooking(subject.calBookingUid) : null;
+  const resolved = subject.calBookingUid ? await resolveCalUid(subject.calBookingUid) : null;
+  const booking = resolved ? await getCalBooking(resolved.uid) : null;
   return {
-    start: subject.start || booking?.start || null,
+    start: (resolved?.move ? booking?.start ?? resolved.move.start : subject.start) || booking?.start || null,
     cancelled: booking?.status === "cancelled" || booking?.status === "rejected",
   };
 }
@@ -122,7 +124,7 @@ export async function sendReviewRequests(now: Date = new Date()) {
   let failed = 0;
   for (const c of candidates) {
     // Stored starts can rule a booking out without asking Cal.com.
-    if (c.start && londonDay(new Date(c.start)) !== yesterday) continue;
+    if (c.start && londonDay(new Date(c.start)) !== yesterday && !(c.calBookingUid && (await getMove(c.calBookingUid)))) continue;
     const key = `followup:review:${c.id}`;
     const email = c.email.toLowerCase();
     try {

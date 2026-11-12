@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { randomBytes } from "node:crypto";
 import { getRedis } from "./redis";
 import { getCalBooking } from "./calcom";
+import { resolveCalUid } from "./calMoves";
 import { sendBalanceLinkEmail, sendBalancePaidNotification } from "./email";
 import {
   getManualBooking,
@@ -178,13 +179,16 @@ export async function loadSubject(id: string): Promise<BalanceSubject | null> {
 async function sessionTiming(subject: BalanceSubject): Promise<{ start: string | null; cancelled: boolean }> {
   if (subject.cancelled) return { start: subject.start ?? null, cancelled: true };
   if (subject.calBookingUid) {
-    const booking = await getCalBooking(subject.calBookingUid);
+    // A moved booking's stored start is out of date: use the new booking's.
+    const { uid, move } = await resolveCalUid(subject.calBookingUid);
+    const booking = await getCalBooking(uid);
     if (booking) {
       return {
-        start: subject.start || booking.start,
+        start: move ? booking.start : subject.start || booking.start,
         cancelled: booking.status === "cancelled" || booking.status === "rejected",
       };
     }
+    if (move) return { start: move.start, cancelled: false };
   }
   return { start: subject.start || null, cancelled: false };
 }

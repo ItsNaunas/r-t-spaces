@@ -14,6 +14,7 @@ import {
 } from "@/lib/webAnalytics";
 import { sourceFromReferrer } from "@/lib/attribution";
 import { recentSessions } from "@/lib/admin/loadBookings";
+import { NOT_BOOKINGS } from "@/lib/admin/bookingRows";
 import { listManualBookings } from "@/lib/manualBookings";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -88,7 +89,7 @@ async function bookingStats(since: Date) {
     listManualBookings(new Date(since.getTime() - 365 * DAY), new Date(Date.now() + 730 * DAY)),
   ]);
   const paid = sessions.filter((s) => s.payment_status === "paid" && s.created * 1000 >= since.getTime());
-  const deposits = paid.filter((s) => s.mode === "payment" && s.metadata?.kind !== "balance");
+  const deposits = paid.filter((s) => s.mode === "payment" && !NOT_BOOKINGS.includes(s.metadata?.kind ?? ""));
   const takenOnline = paid.reduce((sum, s) => sum + (s.amount_total ?? 0) / 100, 0);
 
   const bySource = new Map<string, { bookings: number; value: number }>();
@@ -102,7 +103,7 @@ async function bookingStats(since: Date) {
     add(s.metadata?.source || "not tracked yet", Number(s.metadata?.totalPrice) || (s.amount_total ?? 0) / 100);
   }
   const manualInRange = manual.filter((b) => !b.cancelledAt && Date.parse(b.createdAt) >= since.getTime());
-  for (const b of manualInRange) add("added by hand", b.totalPrice);
+  for (const b of manualInRange) add(b.via === "voucher" ? b.source || "gift voucher" : "added by hand", b.totalPrice);
 
   return {
     bookings: deposits.length + manualInRange.length,

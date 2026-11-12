@@ -1,5 +1,5 @@
 import { getAvailableSlots, getEventTypeId } from "@/lib/calcom";
-import { ActionError, quotePrice } from "@/lib/admin/bookingActions";
+import { ActionError, bookingCalInfo, quotePrice } from "@/lib/admin/bookingActions";
 import { getMergedPackages } from "@/lib/admin/pricing-merged";
 import { respond } from "../_respond";
 
@@ -14,10 +14,18 @@ const DATE = /^\d{4}-\d{2}-\d{2}$/;
 export async function GET(request: Request) {
   return respond(async () => {
     const { searchParams } = new URL(request.url);
-    const packageId = searchParams.get("packageId") ?? "";
     const date = searchParams.get("date") ?? "";
-    const hoursParam = searchParams.get("hours");
     if (!DATE.test(date)) throw new ActionError("Choose a date");
+
+    // Moving a booking: same package and length as it has now.
+    const bookingId = searchParams.get("bookingId");
+    let packageId = searchParams.get("packageId") ?? "";
+    let hoursParam = searchParams.get("hours");
+    if (bookingId) {
+      const info = await bookingCalInfo(bookingId);
+      packageId = info.packageId;
+      hoursParam = String(Math.round(info.minutes / 60));
+    }
 
     const pkg = (await getMergedPackages()).find((p) => p.id === packageId);
     if (!pkg) throw new ActionError("Unknown package");

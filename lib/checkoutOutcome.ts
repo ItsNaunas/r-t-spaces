@@ -8,7 +8,13 @@ import { finalizePaidSession } from "./finalizeBooking";
  *  - unconfirmed: paid, but a hold could not be confirmed (the studio is emailed)
  *  - processing:  not paid yet, being finalised elsewhere, or we couldn't check
  */
-export type CheckoutOutcome = "confirmed" | "unconfirmed" | "processing" | "balance_paid";
+export type CheckoutOutcome =
+  | "confirmed"
+  | "unconfirmed"
+  | "processing"
+  | "balance_paid"
+  | "extra_paid"
+  | "voucher_bought";
 
 const SESSION_ID = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
 
@@ -28,6 +34,8 @@ export async function resolveCheckout(sessionId: string | undefined): Promise<Ch
     const result = await finalizePaidSession(session);
     if (result.status !== "done") return "processing";
     if (result.kind === "balance") return "balance_paid";
+    if (result.kind === "extra") return "extra_paid";
+    if (result.kind === "voucher") return "voucher_bought";
     return result.calConfirmed ? "confirmed" : "unconfirmed";
   } catch (error) {
     // The webhook remains the primary path; the customer just sees neutral copy.

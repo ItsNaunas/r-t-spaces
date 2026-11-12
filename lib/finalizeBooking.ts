@@ -11,6 +11,11 @@ import {
 } from "./pendingBookings";
 import { MEMBERSHIP_TIERS } from "./membership";
 import { recordBalancePaid, sendBalanceLinkIfDue } from "./balance";
+import { recordExtraPaid } from "./extras";
+import { issueVoucher, spendVoucher, getVoucher } from "./vouchers";
+import { sendVoucherEmails } from "./email";
+import { studioWarningFor } from "./customerNotes";
+import { alert } from "./alerts";
 
 /**
  * Turns a paid Stripe Checkout session into a real booking (or membership).
@@ -35,13 +40,14 @@ export type FinalizeResult =
   | { status: "busy" }
   | {
       status: "done";
-      kind: "booking" | "membership" | "balance" | "skipped";
+      kind: DoneKind;
       /** False only when money is in but a Cal.com hold could not be confirmed. */
       calConfirmed: boolean;
       alreadyDone: boolean;
     };
 
-type DoneRecord = { kind: "booking" | "membership" | "balance" | "skipped"; calConfirmed: boolean };
+export type DoneKind = "booking" | "membership" | "balance" | "extra" | "voucher" | "skipped";
+type DoneRecord = { kind: DoneKind; calConfirmed: boolean };
 
 const KEEP_SECONDS = 60 * 60 * 24 * 30;
 const LOCK_SECONDS = 120;
@@ -50,7 +56,11 @@ const lockKey = (id: string) => `stripe:lock:${id}`;
 const stepKey = (id: string, step: string) => `stripe:step:${id}:${step}`;
 
 const log = (msg: string, ...rest: unknown[]) => console.log(`[BOOKING] ${msg}`, ...rest);
-const logError = (msg: string, ...rest: unknown[]) => console.error(`[BOOKING] ${msg}`, ...rest);
+/** Logged and alerted: these are the failures nobody would otherwise see. */
+const logError = (msg: string, ...rest: unknown[]) => {
+  console.error(`[BOOKING] ${msg}`, ...rest);
+  return alert("booking", msg, rest.length ? rest : undefined);
+};
 
 export function stripeDashboardUrl(session: Stripe.Checkout.Session): string | undefined {
   const pi = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
@@ -81,6 +91,10 @@ export async function finalizePaidSession(session: Stripe.Checkout.Session): Pro
         ? await finalizeMembership(session)
         : session.metadata?.kind === "balance"
           ? await finalizeBalance(session)
+          : session.metadata?.kind === "extra"
+          ? await finalizeExtra(session)
+          : session.metadata?.kind === "voucher"
+          ? await finalizeVoucherPurchase(session)
           : session.mode === "payment"
           ? await finalizeBooking(session)
           : { kind: "skipped", calConfirmed: true };
@@ -137,13 +151,13 @@ async function finalizeBooking(session: Stripe.Checkout.Session): Promise<DoneRe
       calConfirmed = false;
       // Money has been taken but the slot is not secured. The studio email
       // says so loudly; this log line is for the record.
-      logError("PAID BUT UNCONFIRMED - needs manual confirmation in Cal.com.", {
+      await logError("PAID BUT UNCONFIRMED - needs manual confirmation in Cal.com.", {
         session: session.id,
         uid,
       });
     }
   }
-  if (!uids.length) logError("paid session has no Cal.com booking linked:", session.id);
+  if (!uids.length) await logError("paid session has no Cal.com booking linked:", session.id);
 
   if (pending) await confirmPendingBooking(pending.id, session.id);
 
@@ -159,6 +173,17 @@ async function finalizeBooking(session: Stripe.Checkout.Session): Promise<DoneRe
     })
   );
 
+  // A gift voucher paid part of it: take that off the voucher, once.
+  if (meta.voucherCode && Number(meta.voucherPence) > 0) {
+    const code = meta.voucherCode;
+    await once(session.id, "voucher", async () => {
+      const taken = await spendVoucher(code, Number(meta.voucherPence), session.id);
+      if (taken < Number(meta.voucherPence)) {
+        await alert("voucher", "A voucher ran short while a booking was being paid", { session: session.id, code, taken });
+      }
+    }).catch((err) => logError("failed to take the voucher amount:", code, err));
+  }
+
   if (meta.discountCode) {
     const code = meta.discountCode;
     await once(session.id, "discount", async () => {
@@ -169,7 +194,7 @@ async function finalizeBooking(session: Stripe.Checkout.Session): Promise<DoneRe
 
   // Awaited: an un-awaited send can be cut off when the function returns.
   // A failed email is logged but never undoes the booking.
-  await once(session.id, "emailed", () =>
+  await once(session.id, "emailed", async () =>
     sendBookingNotification({
       name,
       email,
@@ -186,6 +211,8 @@ async function finalizeBooking(session: Stripe.Checkout.Session): Promise<DoneRe
       balanceDue: meta.balanceDue,
       addonsSummary: meta.addonsSummary || undefined,
       addonsTotal: meta.addonsTotal || undefined,
+      ...(meta.voucherCode ? { voucherCode: meta.voucherCode, voucherAmount: (Number(meta.voucherPence) / 100).toFixed(2) } : {}),
+      studioWarning: await studioWarningFor(email),
     })
   ).catch((err) => logError("booking saved, but email failed:", session.id, err));
 
@@ -204,6 +231,50 @@ async function finalizeBalance(session: Stripe.Checkout.Session): Promise<DoneRe
     logError("balance recorded, but email failed:", session.id, err)
   );
   return { kind: "balance", calConfirmed: true };
+}
+
+async function finalizeExtra(session: Stripe.Checkout.Session): Promise<DoneRecord> {
+  const { notify } = await recordExtraPaid(session, stripeDashboardUrl(session));
+  await once(session.id, "emailed", notify).catch((err) => logError("extra recorded, but email failed:", session.id, err));
+  return { kind: "extra", calConfirmed: true };
+}
+
+/** A gift voucher was bought: create it (once per session) and email it. */
+async function finalizeVoucherPurchase(session: Stripe.Checkout.Session): Promise<DoneRecord> {
+  const meta = session.metadata ?? {};
+  const redis = getRedis();
+  const issuedKey = `voucher:session:${session.id}`;
+  let code = await redis.get<string>(issuedKey);
+  if (!code) {
+    const voucher = await issueVoucher({
+      amountPence: session.amount_total ?? Math.round(Number(meta.amount) * 100),
+      source: "purchase",
+      buyerName: meta.buyerName || session.customer_details?.name || "",
+      buyerEmail: meta.buyerEmail || session.customer_details?.email || "",
+      recipientName: meta.recipientName || undefined,
+      recipientEmail: meta.recipientEmail || undefined,
+      message: meta.message || undefined,
+      stripeSessionId: session.id,
+    });
+    code = voucher.code;
+    await redis.set(issuedKey, code, { ex: KEEP_SECONDS * 40 });
+  }
+  const voucher = await getVoucher(code);
+  if (voucher) {
+    await once(session.id, "emailed", () =>
+      sendVoucherEmails({
+        code: voucher.code,
+        amount: (voucher.amountPence / 100).toFixed(2),
+        expires: new Date(voucher.expiresAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }),
+        buyerName: voucher.buyerName || "there",
+        buyerEmail: voucher.buyerEmail,
+        recipientName: voucher.recipientName,
+        recipientEmail: voucher.recipientEmail,
+        message: voucher.message,
+      })
+    ).catch((err) => logError("voucher issued, but email failed:", session.id, err));
+  }
+  return { kind: "voucher", calConfirmed: true };
 }
 
 async function finalizeMembership(session: Stripe.Checkout.Session): Promise<DoneRecord> {

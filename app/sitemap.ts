@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/equipment",
     "/services",
     "/members",
+    "/gift-vouchers",
     "/gallery",
     "/faq",
     "/book-online",

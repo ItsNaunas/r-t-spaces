@@ -29,6 +29,20 @@ const COPY: Record<CheckoutOutcome, { title: string; body: string; next: string[
     body: "Thanks, your remaining balance has been received and your booking is now paid in full. We've emailed you a receipt.",
     next: ['Nothing else to pay', 'We look forward to seeing you at the studio'],
   },
+  extra_paid: {
+    title: 'Payment received',
+    body: "Thanks, your payment has been received. We've emailed you a receipt.",
+    next: ['Nothing else to pay for this charge'],
+  },
+  voucher_bought: {
+    title: 'Your gift voucher is on its way',
+    body: "Thanks for your purchase! We've emailed the voucher code, and sent it to the recipient if you gave us their email.",
+    next: [
+      'The code works in the discount box when booking',
+      "Any value left over after a booking stays on the code",
+      'Vouchers are valid for 12 months',
+    ],
+  },
   processing: {
     title: 'Thanks! We are checking your payment',
     body: "We're finalising your booking. You'll get a confirmation email as soon as it's done.",

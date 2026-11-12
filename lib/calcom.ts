@@ -270,3 +270,16 @@ export async function listCalBookings(
   const res = await call<CalBooking[]>("GET", `/bookings?${qs}`);
   return Array.isArray(res.data) ? res.data : [];
 }
+
+/**
+ * Move a booking to a new start time. Cal.com cancels the old booking and
+ * returns a new one with a new uid (see lib/calMoves.ts).
+ */
+export async function rescheduleCalBooking(uid: string, start: string, reason?: string): Promise<CalBooking> {
+  const res = await call<CalBooking>("POST", `/bookings/${assertUid(uid)}/reschedule`, {
+    start: new Date(start).toISOString(),
+    ...(reason ? { reschedulingReason: reason } : {}),
+  });
+  if (!res.data?.uid) throw new Error("Cal.com did not return the rescheduled booking");
+  return res.data;
+}

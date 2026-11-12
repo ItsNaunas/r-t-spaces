@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logActivity } from "@/lib/activity";
 import { getDiscountCode, saveDiscountCode, deleteDiscountCode } from "@/lib/admin/kv";
 
 export async function PUT(
@@ -26,6 +27,11 @@ export async function PUT(
     };
 
     await saveDiscountCode(updated);
+    await logActivity({
+      action: "discount.update",
+      summary: `Changed discount code ${updated.code} (${updated.active ? "active" : "switched off"}, ${updated.type === "percentage" ? `${updated.value}%` : `£${updated.value}`} off)`,
+      ref: updated.code,
+    });
     return NextResponse.json(updated);
   } catch (error) {
     console.error("PUT discount error:", error);
@@ -45,6 +51,7 @@ export async function DELETE(
     }
 
     await deleteDiscountCode(code);
+    await logActivity({ action: "discount.delete", summary: `Deleted discount code ${code}`, ref: code });
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error("DELETE discount error:", error);
