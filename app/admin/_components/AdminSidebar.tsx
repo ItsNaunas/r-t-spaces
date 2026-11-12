@@ -5,7 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
+  { href: "/admin/upcoming", label: "Upcoming" },
   { href: "/admin/bookings", label: "Bookings" },
+  { href: "/admin/customers", label: "Customers" },
+  { href: "/admin/analytics", label: "Analytics" },
   { href: "/admin/discounts", label: "Discount Codes" },
   { href: "/admin/packages", label: "Packages" },
   { href: "/admin/promotion", label: "Special Offer" },

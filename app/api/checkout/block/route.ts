@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { attributionMetadata } from '@/lib/attribution';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { getPromotion } from '@/lib/promotionStore';
@@ -208,6 +209,7 @@ export async function POST(request: Request) {
           calBookingUid: held[0].uid,
           // Every day, so a refund weeks later can still cancel them all.
           calBookingUids: held.map((b) => b.uid).join(',').slice(0, 500),
+          ...attributionMetadata(request),
         },
       });
     } catch (error) {

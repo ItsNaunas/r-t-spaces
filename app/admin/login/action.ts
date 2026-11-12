@@ -18,7 +18,7 @@ export async function loginAction(
   formData: FormData
 ): Promise<{ error: string }> {
   const password = formData.get("password") as string;
-  const from = (formData.get("from") as string) || "/admin/bookings";
+  const from = (formData.get("from") as string) || "/admin/upcoming";
   const expectedPassword = process.env.ADMIN_PASSWORD;
 
   if (!expectedPassword) {

@@ -6,6 +6,7 @@ export function createFakeRedis() {
   const kv = new Map<string, unknown>();
   const lists = new Map<string, unknown[]>();
   const sets = new Map<string, Set<string>>();
+  const zsets = new Map<string, Map<string, number>>();
   /** Keys whose next `get` should throw once (simulates a Redis blip). */
   const failOnce = new Set<string>();
 
@@ -68,6 +69,19 @@ export function createFakeRedis() {
     },
     async smembers(key: string) {
       return [...(sets.get(key) ?? [])];
+    },
+    async zadd(key: string, entry: { score: number; member: string }) {
+      const z = zsets.get(key) ?? new Map<string, number>();
+      z.set(entry.member, entry.score);
+      zsets.set(key, z);
+      return 1;
+    },
+    /** Only the byScore form, which is all the app uses. */
+    async zrange(key: string, min: number, max: number) {
+      return [...(zsets.get(key) ?? new Map<string, number>())]
+        .filter(([, score]) => score >= min && score <= max)
+        .sort((a, b) => a[1] - b[1])
+        .map(([member]) => member);
     },
     pipeline() {
       const ops: [string, unknown[]][] = [];

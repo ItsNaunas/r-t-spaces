@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { attributionMetadata } from "@/lib/attribution";
 import Stripe from "stripe";
 import { MEMBERSHIP_TIERS } from "@/lib/membership";
 
@@ -52,7 +53,7 @@ export async function POST(request: Request) {
       subscription_data: {
         metadata: { tierId },
       },
-      metadata: { tierId },
+      metadata: { tierId, ...attributionMetadata(request) },
     });
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
