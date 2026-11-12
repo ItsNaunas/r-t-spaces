@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { attributionMetadata } from '@/lib/attribution';
 import Stripe from 'stripe';
 import {
   calculateHours,
@@ -202,6 +203,8 @@ export async function POST(request: Request) {
         calBookingUid,
         discountCode: appliedDiscountCode,
         discountAmount: discountAmount.toFixed(2),
+        // Where the customer came from (Instagram, TikTok, Google, ...).
+        ...attributionMetadata(request),
       },
     });
 

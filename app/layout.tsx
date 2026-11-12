@@ -5,6 +5,7 @@ import "./globals.css";
 import { PublicChrome } from "@/app/_components/PublicChrome";
 import { BookingProvider } from "@/components/booking/BookingProvider";
 import { Analytics } from "@vercel/analytics/next";
+import { AttributionCapture } from "@/components/AttributionCapture";
 
 // Space Grotesk (Display / Heading Font — modern geometric sans)
 const spaceGrotesk = Space_Grotesk({
@@ -95,6 +96,7 @@ export default function RootLayout({
           {children}
         </BookingProvider>
         <Analytics />
+        <AttributionCapture />
       </body>
     </html>
   );
