@@ -1042,6 +1042,9 @@ export function SiteFooter() {
                 <Link href="/members" className="block text-white/80 hover:text-white transition">
                   Members
                 </Link>
+                <Link href="/gift-vouchers" className="block text-white/80 hover:text-white transition">
+                  Gift Vouchers
+                </Link>
                 <BookNowButton className="block text-left text-white/80 hover:text-white transition">
                   Book Online
                 </BookNowButton>

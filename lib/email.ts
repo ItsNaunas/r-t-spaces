@@ -21,6 +21,11 @@ interface BookingData {
   balanceDue?: string;
   addonsSummary?: string;
   addonsTotal?: string;
+  /** Studio-only warning, e.g. a previous no-show. Never shown to the customer. */
+  studioWarning?: string;
+  /** A gift voucher paid part of it. */
+  voucherCode?: string;
+  voucherAmount?: string;
 }
 
 /** Customer-supplied text goes into HTML email: escape it. */
@@ -109,6 +114,12 @@ export async function sendBookingNotification(raw: BookingData) {
   const stripeLink = raw.stripeUrl
     ? `<p><a href="${esc(raw.stripeUrl)}">View the payment in Stripe</a></p>`
     : '';
+  const warning = raw.studioWarning
+    ? `<div style="margin: 15px 0; padding: 12px; background-color: #fff4e5; border: 1px solid #f5d0a0; border-radius: 6px;"><p><strong>&#9888; ${esc(raw.studioWarning)}</strong></p></div>`
+    : '';
+  const voucherLine = raw.voucherCode
+    ? `<p><strong>Gift voucher:</strong> ${esc(raw.voucherCode)} paid £${esc(raw.voucherAmount)}</p>`
+    : '';
 
   const studioSubject = unconfirmed
     ? `ACTION NEEDED: paid but NOT confirmed in Cal.com - ${booking.name}`
@@ -134,12 +145,14 @@ export async function sendBookingNotification(raw: BookingData) {
       html: `
         <h2>${unconfirmed ? 'Paid booking - needs confirming' : `New Booking ${paid ? '(Paid)' : 'Request'}`}</h2>
         ${actionNeeded}
+        ${warning}
         <p><strong>Name:</strong> ${booking.name}</p>
         <p><strong>Email:</strong> ${booking.email}</p>
         ${booking.packageTitle ? `<p><strong>Package:</strong> ${booking.packageTitle}</p>` : ''}
         ${booking.date ? `<p><strong>Date:</strong> ${booking.date}</p>` : ''}
         ${booking.hours ? `<p><strong>Hours:</strong> ${booking.hours}</p>` : ''}
         ${pricingSection}
+        ${voucherLine}
         ${booking.notes ? `<p><strong>Notes:</strong> ${booking.notes}</p>` : ''}
         ${stripeLink}
       `,
@@ -419,6 +432,200 @@ export async function sendReviewRequestEmail(raw: { name: string; email: string;
         </p>
         <p>Want to book again? <a href="${siteUrl()}/book-online">Pick your next session here</a>.</p>
         <p>Thank you!<br>RT Spaces Team</p>
+      `,
+    },
+  ]);
+}
+
+/** To the developer when something breaks (lib/alerts.ts). */
+export async function sendAlertEmail(
+  to: string,
+  entry: { at: string; kind: string; message: string; detail?: string },
+  suppressed: number
+) {
+  const m = mailer();
+  if (!m) return;
+  await sendAll(m, [
+    {
+      to,
+      subject: `[RT Spaces alert] ${entry.kind}: ${entry.message}`.slice(0, 200),
+      html: `
+        <p><strong>${esc(entry.message)}</strong></p>
+        <p>Kind: ${esc(entry.kind)}<br>When: ${esc(entry.at)}</p>
+        ${entry.detail ? `<pre style="white-space:pre-wrap;font-size:12px;background:#f5f5f5;padding:8px;">${esc(entry.detail)}</pre>` : ''}
+        ${suppressed ? `<p>${suppressed} more alert(s) of this kind in the last hour were not emailed.</p>` : ''}
+        <p>All recent alerts: <a href="${siteUrl()}/admin/activity">${siteUrl()}/admin/activity</a></p>
+      `,
+    },
+  ]);
+}
+
+export interface VoucherEmailData {
+  code: string;
+  amount: string;
+  expires: string;
+  buyerName: string;
+  buyerEmail: string;
+  recipientName?: string;
+  recipientEmail?: string;
+  message?: string;
+}
+
+function voucherCard(d: VoucherEmailData, forRecipient: boolean) {
+  return `
+    <div style="border:1px solid #ddd;border-radius:8px;padding:20px;margin:20px 0;text-align:center;">
+      <p style="margin:0;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:#666;">RT Spaces Gift Voucher</p>
+      <p style="margin:12px 0;font-size:32px;font-weight:bold;">£${esc(d.amount)}</p>
+      ${forRecipient && d.recipientName ? `<p style="margin:0;">For ${esc(d.recipientName)}, from ${esc(d.buyerName)}</p>` : ''}
+      ${d.message ? `<p style="margin:12px 0;font-style:italic;">&ldquo;${esc(d.message)}&rdquo;</p>` : ''}
+      <p style="margin:16px 0 4px;font-size:13px;color:#666;">Your code</p>
+      <p style="margin:0;font-size:22px;font-family:monospace;letter-spacing:0.1em;">${esc(d.code)}</p>
+      <p style="margin:12px 0 0;font-size:12px;color:#666;">Valid until ${esc(d.expires)}</p>
+    </div>
+    <p>To use it, book at <a href="${siteUrl()}/book-online">${siteUrl()}/book-online</a> and enter the code in the discount box. Any value left over stays on the code for next time.</p>
+  `;
+}
+
+/** A gift voucher was bought: receipt and code to the buyer, the voucher to the recipient, a note to the studio. */
+export async function sendVoucherEmails(d: VoucherEmailData) {
+  const m = mailer();
+  if (!m) return;
+  const toRecipient = d.recipientEmail && d.recipientEmail !== d.buyerEmail;
+  const messages: Message[] = [
+    {
+      to: d.buyerEmail,
+      subject: `Your RT Spaces gift voucher (£${d.amount})`,
+      html: `
+        <h2>Thank you for your purchase</h2>
+        <p>Hi ${esc(d.buyerName)},</p>
+        <p>${toRecipient ? `We've emailed this voucher to ${esc(d.recipientName || d.recipientEmail)}. Here's a copy for you:` : "Here's your gift voucher:"}</p>
+        ${voucherCard(d, false)}
+        <p>Best regards,<br>RT Spaces Team</p>
+      `,
+    },
+    {
+      to: m.studioEmail,
+      replyTo: d.buyerEmail,
+      subject: `Gift voucher sold: £${d.amount}`,
+      html: `
+        <h2>Gift voucher sold</h2>
+        <p><strong>Code:</strong> ${esc(d.code)}<br><strong>Amount:</strong> £${esc(d.amount)}<br><strong>Valid until:</strong> ${esc(d.expires)}</p>
+        <p><strong>Bought by:</strong> ${esc(d.buyerName)} (${esc(d.buyerEmail)})</p>
+        ${d.recipientName || d.recipientEmail ? `<p><strong>For:</strong> ${esc(d.recipientName)} ${d.recipientEmail ? `(${esc(d.recipientEmail)})` : ''}</p>` : ''}
+      `,
+    },
+  ];
+  if (toRecipient) {
+    messages.push({
+      to: d.recipientEmail!,
+      replyTo: m.studioEmail,
+      subject: `${d.buyerName} sent you an RT Spaces gift voucher`,
+      html: `
+        <h2>You've been given studio time</h2>
+        <p>Hi ${esc(d.recipientName || 'there')},</p>
+        <p>${esc(d.buyerName)} has sent you a gift voucher for RT Spaces, a photo and video studio.</p>
+        ${voucherCard(d, true)}
+        <p>See you soon!<br>RT Spaces Team</p>
+      `,
+    });
+  }
+  await sendAll(m, messages);
+}
+
+/** A voucher the studio gave away (prize, apology, partnership): to the recipient only. */
+export async function sendComplimentaryVoucherEmail(d: VoucherEmailData & { recipientEmail: string }) {
+  const m = mailer();
+  if (!m) return;
+  await sendAll(m, [
+    {
+      to: d.recipientEmail,
+      subject: `A £${d.amount} RT Spaces gift voucher for you`,
+      html: `
+        <h2>Studio time, on us</h2>
+        <p>Hi ${esc(d.recipientName || 'there')},</p>
+        ${voucherCard({ ...d, buyerName: 'RT Spaces' }, false)}
+        <p>See you soon!<br>RT Spaces Team</p>
+      `,
+    },
+  ]);
+}
+
+/** The studio charged an extra (overtime, backdrop, damage...): the customer's pay link. */
+export async function sendExtraChargeEmail(raw: BalanceEmailData & { payUrl: string; reason: string }) {
+  const m = mailer();
+  if (!m) return;
+  await sendAll(m, [
+    {
+      to: raw.email,
+      subject: `RT Spaces: £${raw.amount} for ${raw.reason}`.slice(0, 200),
+      html: `
+        <h2>An extra charge for your booking</h2>
+        <p>Hi ${esc(raw.name)},</p>
+        <p>There's an extra charge of <strong>£${esc(raw.amount)}</strong> for: ${esc(raw.reason)}.</p>
+        ${sessionLines(raw)}
+        <p style="margin: 24px 0;">
+          <a href="${esc(raw.payUrl)}" style="background:#111;color:#fff;padding:12px 20px;border-radius:6px;text-decoration:none;">Pay £${esc(raw.amount)} now</a>
+        </p>
+        <p>If the button doesn't work, copy this link into your browser:<br>${esc(raw.payUrl)}</p>
+        <p>Questions? Just reply to this email.</p>
+        <p>Best regards,<br>RT Spaces Team</p>
+      `,
+    },
+  ]);
+}
+
+/** An extra charge was paid online: studio notice and customer receipt. */
+export async function sendExtraPaidNotification(raw: BalanceEmailData & { reason: string; stripeUrl?: string }) {
+  const m = mailer();
+  if (!m) return;
+  await sendAll(m, [
+    {
+      to: m.studioEmail,
+      replyTo: raw.email || undefined,
+      subject: `Extra Paid: £${raw.amount} from ${raw.name}`,
+      html: `
+        <h2>Extra charge paid</h2>
+        <p><strong>Name:</strong> ${esc(raw.name)}<br><strong>Email:</strong> ${esc(raw.email)}</p>
+        <p><strong>For:</strong> ${esc(raw.reason)}<br><strong>Amount:</strong> £${esc(raw.amount)}</p>
+        ${sessionLines(raw)}
+        ${raw.stripeUrl ? `<p><a href="${esc(raw.stripeUrl)}">View the payment in Stripe</a></p>` : ''}
+      `,
+    },
+    {
+      to: raw.email,
+      subject: 'Payment received - RT Spaces',
+      html: `
+        <h2>Thank you</h2>
+        <p>Hi ${esc(raw.name)},</p>
+        <p>We've received <strong>£${esc(raw.amount)}</strong> for ${esc(raw.reason)}.</p>
+        ${sessionLines(raw)}
+        <p>Best regards,<br>RT Spaces Team</p>
+      `,
+    },
+  ]);
+}
+
+/** The studio moved a booking: tell the customer the new time. */
+export async function sendBookingMovedEmail(raw: {
+  name: string;
+  email: string;
+  packageTitle?: string;
+  oldWhen: string;
+  newWhen: string;
+}) {
+  const m = mailer();
+  if (!m) return;
+  await sendAll(m, [
+    {
+      to: raw.email,
+      subject: 'Your RT Spaces booking has moved',
+      html: `
+        <h2>Your booking has a new time</h2>
+        <p>Hi ${esc(raw.name)},</p>
+        <p>As agreed, we've moved your ${raw.packageTitle ? esc(raw.packageTitle) : 'booking'}.</p>
+        <p><strong>Was:</strong> ${esc(raw.oldWhen)}<br><strong>Now:</strong> ${esc(raw.newWhen)}</p>
+        <p>Everything you've paid carries over. If this doesn't look right, just reply to this email.</p>
+        <p>See you soon!<br>RT Spaces Team</p>
       `,
     },
   ]);

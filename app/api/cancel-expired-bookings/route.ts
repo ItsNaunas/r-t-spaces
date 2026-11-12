@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { cancelExpiredPendingBookings } from "@/lib/pendingBookings";
 import { sendDueBalanceLinks } from "@/lib/balance";
 import { sendAbandonedFollowUps, sendReviewRequests } from "@/lib/followUps";
+import { alert, markCronSuccess } from "@/lib/alerts";
 
 // Paging Stripe sessions and sending emails can take a little while.
 export const maxDuration = 60;
@@ -57,6 +58,18 @@ export async function GET() {
   if (balance.status === "rejected") console.error("[BALANCE] daily run failed:", balance.reason);
 
   const ok = [expiry, balance, abandoned, reviews].every((r) => r.status === "fulfilled");
+
+  // Anything that failed, whole job or single email, goes to the alert email.
+  const named = { "release holds": expiry, "balance links": balance, "abandoned follow-ups": abandoned, "review requests": reviews };
+  const problems: string[] = [];
+  for (const [name, result] of Object.entries(named)) {
+    if (result.status === "rejected") problems.push(`${name} failed: ${String(result.reason).slice(0, 300)}`);
+    else if (typeof result.value === "object" && result.value && "failed" in result.value && Number(result.value.failed) > 0) {
+      problems.push(`${name}: ${result.value.failed} failed`);
+    }
+  }
+  if (problems.length) await alert("daily-job", `The daily 08:00 job had problems: ${problems.join("; ")}`.slice(0, 300));
+  else await markCronSuccess().catch(() => {});
   return NextResponse.json(
     {
       success: ok,

@@ -10,6 +10,9 @@ import {
 } from '@/lib/pendingBookings';
 import { getRedis } from '@/lib/redis';
 import { finalizePaidSession } from '@/lib/finalizeBooking';
+import { resolveCalUids } from '@/lib/calMoves';
+import { alert } from '@/lib/alerts';
+import { voidVoucher } from '@/lib/vouchers';
 import { MEMBERSHIP_TIERS } from '@/lib/membership';
 
 function tierName(tierId: string | undefined): string {
@@ -169,6 +172,14 @@ export async function POST(request: Request) {
 
         const sessions = await stripe.checkout.sessions.list({ payment_intent: paymentIntent, limit: 1 });
         const meta = sessions.data[0]?.metadata ?? {};
+
+        // A refunded gift voucher purchase: switch the voucher off.
+        if (meta.kind === 'voucher' && sessions.data[0]) {
+          const code = await getRedis().get<string>(`voucher:session:${sessions.data[0].id}`);
+          if (code) await voidVoucher(code);
+          console.log('Gift voucher purchase refunded, voucher switched off:', code ?? '(not issued)');
+          break;
+        }
         const uids = (meta.calBookingUids || meta.calBookingUid || '')
           .split(',')
           .map((u) => u.trim())
@@ -177,7 +188,8 @@ export async function POST(request: Request) {
           console.log('Refund with no linked Cal.com booking:', charge.id);
           break;
         }
-        for (const uid of uids) {
+        // A booking moved since it was paid lives under a new Cal.com uid.
+        for (const uid of await resolveCalUids(uids)) {
           const ok = await cancelCalBooking(uid, 'Payment refunded');
           if (!ok) console.error('Refunded, but could not cancel in Cal.com (check it is not still booked):', uid);
         }
@@ -198,6 +210,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error('Webhook error:', error);
+    await alert('stripe-webhook', 'A Stripe webhook failed (Stripe will retry)', error);
     return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 });
   }
 }

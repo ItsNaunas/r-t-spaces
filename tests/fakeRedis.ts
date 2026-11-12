@@ -45,6 +45,16 @@ export function createFakeRedis() {
       kv.set(key, n);
       return n;
     },
+    async incrby(key: string, by: number) {
+      const n = Number(kv.get(key) ?? 0) + by;
+      kv.set(key, n);
+      return n;
+    },
+    async decrby(key: string, by: number) {
+      const n = Number(kv.get(key) ?? 0) - by;
+      kv.set(key, n);
+      return n;
+    },
     async expire() {
       return 1;
     },
@@ -54,8 +64,20 @@ export function createFakeRedis() {
       lists.set(key, list);
       return list.length;
     },
-    async lrange(key: string) {
-      return structuredClone(lists.get(key) ?? []);
+    async lpush(key: string, ...values: unknown[]) {
+      const list = lists.get(key) ?? [];
+      list.unshift(...values.map(decode).reverse());
+      lists.set(key, list);
+      return list.length;
+    },
+    async ltrim(key: string, start: number, stop: number) {
+      const list = lists.get(key) ?? [];
+      lists.set(key, list.slice(start, stop + 1));
+      return "OK";
+    },
+    async lrange(key: string, start = 0, stop = -1) {
+      const list = lists.get(key) ?? [];
+      return structuredClone(list.slice(start, stop === -1 ? undefined : stop + 1));
     },
     async sadd(key: string, ...members: string[]) {
       const s = sets.get(key) ?? new Set<string>();
@@ -75,6 +97,9 @@ export function createFakeRedis() {
       z.set(entry.member, entry.score);
       zsets.set(key, z);
       return 1;
+    },
+    async zrem(key: string, member: string) {
+      return zsets.get(key)?.delete(member) ? 1 : 0;
     },
     /** Only the byScore form, which is all the app uses. */
     async zrange(key: string, min: number, max: number) {

@@ -28,5 +28,7 @@ export type ValidateDiscountResponse =
       discountAmount: number;
       finalPrice: number;
       finalDeposit: number;
+      /** A gift voucher (money) rather than a discount code. */
+      voucher?: boolean;
     }
   | { valid: false; error: string };

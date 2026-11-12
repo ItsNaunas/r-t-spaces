@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logActivity } from "@/lib/activity";
 import { getAllDiscountCodes, saveDiscountCode, getDiscountCode } from "@/lib/admin/kv";
 import type { DiscountCode } from "@/lib/admin/types";
 
@@ -52,6 +53,11 @@ export async function POST(request: Request) {
     };
 
     await saveDiscountCode(newCode);
+    await logActivity({
+      action: "discount.create",
+      summary: `Created discount code ${newCode.code} (${newCode.type === "percentage" ? `${newCode.value}%` : `£${newCode.value}`} off)`,
+      ref: newCode.code,
+    });
     return NextResponse.json(newCode, { status: 201 });
   } catch (error) {
     console.error("POST discounts error:", error);

@@ -8,6 +8,8 @@ export type BookingRow = {
   /** Stripe Checkout session id, or the manual booking's "manual_" id. */
   sessionId: string;
   kind: "online" | "manual";
+  /** Set when a gift voucher paid some or all of it. */
+  voucherCode: string;
   customerName: string;
   customerEmail: string;
   phone: string;
@@ -35,7 +37,17 @@ export type BookingRow = {
   stripeUrl: string | null;
   /** Its Cal.com booking(s); block bookings have one per day. */
   calBookingUids: string[];
+  /** Filled in by loadBookingRows. */
+  extras: { id: string; amount: number; reason: string; paid: boolean; inPerson: boolean }[];
+  /** True when the booking was moved since it was made. */
+  moved: boolean;
+  /** This booking was marked a no-show. */
+  noShowHere: boolean;
+  /** How many no-shows this customer has in total. */
+  customerNoShows: number;
 };
+
+export const NOT_BOOKINGS = ["balance", "extra", "voucher"];
 
 const pounds = (n: number) => `£${n.toFixed(2)}`;
 
@@ -52,7 +64,8 @@ function balanceState(owed: number, status: BalanceStatus | null | undefined): B
  * Shared by the admin pages and /api/admin/bookings.
  */
 export async function toBookingRows(sessions: Stripe.Checkout.Session[]): Promise<BookingRow[]> {
-  const paid = sessions.filter((s) => s.payment_status === "paid" && s.metadata?.kind !== "balance");
+  // Balance, extra-charge and voucher-sale payments aren't bookings of their own.
+  const paid = sessions.filter((s) => s.payment_status === "paid" && !NOT_BOOKINGS.includes(s.metadata?.kind ?? ""));
   const statuses = await getBalanceStatuses(paid.map((s) => s.id)).catch((error) => {
     console.error("Could not load balance statuses:", error);
     return {} as Awaited<ReturnType<typeof getBalanceStatuses>>;
@@ -64,6 +77,7 @@ export async function toBookingRows(sessions: Stripe.Checkout.Session[]): Promis
     return {
       sessionId: s.id,
       kind: "online",
+      voucherCode: s.metadata?.voucherCode ?? "",
       customerName: s.metadata?.customerName ?? s.customer_details?.name ?? "—",
       customerEmail: s.metadata?.customerEmail ?? s.customer_email ?? "—",
       phone: s.customer_details?.phone ?? "",
@@ -91,6 +105,10 @@ export async function toBookingRows(sessions: Stripe.Checkout.Session[]): Promis
         .split(",")
         .map((u) => u.trim())
         .filter(Boolean),
+      extras: [],
+      moved: false,
+      noShowHere: false,
+      customerNoShows: 0,
     };
   });
 }
@@ -106,6 +124,7 @@ export async function manualBookingRows(bookings: ManualBooking[]): Promise<Book
     return {
       sessionId: b.id,
       kind: "manual",
+      voucherCode: b.voucherCode ?? "",
       customerName: b.name,
       customerEmail: b.email || "—",
       phone: b.phone,
@@ -122,13 +141,17 @@ export async function manualBookingRows(bookings: ManualBooking[]): Promise<Book
       addonsSummary: "",
       discountCode: "",
       discountAmount: "",
-      source: "manual",
+      source: b.via === "voucher" ? b.source || "" : "manual",
       campaign: "",
       notes: b.notes,
       paidAt: Math.floor(Date.parse(b.createdAt) / 1000),
       cancelled: Boolean(b.cancelledAt),
       stripeUrl: null,
       calBookingUids: [b.calBookingUid],
+      extras: [],
+      moved: false,
+      noShowHere: false,
+      customerNoShows: 0,
     };
   });
 }

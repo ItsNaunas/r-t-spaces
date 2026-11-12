@@ -34,6 +34,11 @@ export type ManualBooking = {
   /** Set when the rest was paid, in person or through the balance link. */
   paidInFullAt?: string;
   cancelledAt?: string;
+  /** "voucher": booked online with a gift voucher covering the deposit. Absent: added by the studio. */
+  via?: "voucher";
+  voucherCode?: string;
+  /** Attribution, for bookings made online. */
+  source?: string;
 };
 
 export const isManualId = (id: string) => id.startsWith("manual_");

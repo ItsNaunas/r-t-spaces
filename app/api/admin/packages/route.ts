@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logActivity } from "@/lib/activity";
 import { BOOKING_PACKAGES } from "@/lib/pricing";
 import { getMergedPackages } from "@/lib/admin/pricing-merged";
 import { upsertPackageOverride, deletePackageOverride } from "@/lib/admin/kv";
@@ -39,6 +40,13 @@ export async function POST(request: Request) {
       });
     }
 
+    await logActivity({
+      action: "package.update",
+      summary: `Changed ${BOOKING_PACKAGES.find((p) => p.id === packageId)?.title ?? packageId}: ${
+        enabled === false ? "hidden from the website" : "shown on the website"
+      }, ${typeof priceOverride === "number" ? `price £${priceOverride}` : "standard price"}`,
+      ref: packageId,
+    });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("POST admin packages error:", error);

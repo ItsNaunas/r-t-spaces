@@ -118,6 +118,8 @@ export function BookingWizard({
     discountAmount: number;
     finalPrice: number;
     finalDeposit: number;
+    /** A gift voucher (money) rather than a discount code. */
+    voucher?: boolean;
   } | null>(null);
   const [discountLoading, setDiscountLoading] = useState(false);
   const [discountError, setDiscountError] = useState("");
@@ -857,7 +859,7 @@ export function BookingWizard({
                 )}
                 {appliedDiscount && (
                   <div className="flex justify-between text-emerald-700">
-                    <span>Discount ({appliedDiscount.code})</span>
+                    <span>{appliedDiscount.voucher ? "Gift voucher" : "Discount"} ({appliedDiscount.code})</span>
                     <span className="font-semibold">-£{appliedDiscount.discountAmount.toFixed(2)}</span>
                   </div>
                 )}
@@ -1011,7 +1013,9 @@ export function BookingWizard({
                   : "Sending…"
                 : paymentMode === "pay"
                   ? displayDeposit != null
-                    ? `Pay £${displayDeposit.toFixed(2)} deposit`
+                    ? displayDeposit < 0.3
+                      ? "Confirm booking (paid by voucher)"
+                      : `Pay £${displayDeposit.toFixed(2)} deposit`
                     : "Pay deposit"
                   : "Send enquiry"}
             </button>

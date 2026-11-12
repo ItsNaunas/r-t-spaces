@@ -1,6 +1,8 @@
 import { getBalanceStatuses, IN_PERSON, balanceOwed } from "@/lib/balance";
 import { listManualBookings, type ManualBooking } from "@/lib/manualBookings";
 import { recentSessions } from "@/lib/admin/loadBookings";
+import { NOT_BOOKINGS } from "@/lib/admin/bookingRows";
+import { getCustomerNotes } from "@/lib/customerNotes";
 
 export type Customer = {
   email: string;
@@ -13,6 +15,9 @@ export type Customer = {
   lastAt: string;
   sources: string[];
   member: boolean;
+  /** The studio's private notes, and how many no-shows they've had. */
+  notes: string;
+  noShows: number;
 };
 
 const HISTORY_DAYS = 730;
@@ -30,7 +35,7 @@ export async function loadCustomers(): Promise<Customer[]> {
   ]);
   const paid = sessions.filter((s) => s.payment_status === "paid");
   const statuses = await getBalanceStatuses([
-    ...paid.filter((s) => s.metadata?.kind !== "balance").map((s) => s.id),
+    ...paid.filter((s) => !NOT_BOOKINGS.includes(s.metadata?.kind ?? "")).map((s) => s.id),
     ...manual.map((b) => b.id),
   ]).catch(() => ({}) as Awaited<ReturnType<typeof getBalanceStatuses>>);
 
@@ -40,7 +45,7 @@ export async function loadCustomers(): Promise<Customer[]> {
     if (!key || key === "—") return;
     const c =
       byEmail.get(key) ??
-      ({ email: key, name: "", phone: "", bookings: 0, totalPaid: 0, firstAt: at, lastAt: at, sources: [], member: false } as Customer);
+      ({ email: key, name: "", phone: "", bookings: 0, totalPaid: 0, firstAt: at, lastAt: at, sources: [], member: false, notes: "", noShows: 0 } as Customer);
     if (at < c.firstAt) c.firstAt = at;
     if (at >= c.lastAt) c.lastAt = at;
     patch(c);
@@ -58,7 +63,7 @@ export async function loadCustomers(): Promise<Customer[]> {
       c.totalPaid += amount;
       if (m.source && !c.sources.includes(m.source)) c.sources.push(m.source);
       if (s.mode === "subscription") c.member = true;
-      else if (m.kind !== "balance") {
+      else if (!NOT_BOOKINGS.includes(m.kind ?? "")) {
         c.bookings += 1;
         // A balance marked paid in person never went through Stripe.
         if (statuses[s.id]?.paidSessionId === IN_PERSON) c.totalPaid += balanceOwed(s);
@@ -73,12 +78,20 @@ export async function loadCustomers(): Promise<Customer[]> {
       c.name = c.name || b.name;
       c.phone = c.phone || b.phone;
       c.bookings += 1;
-      c.totalPaid += b.paidUpfront + inPerson;
+      // Voucher-paid bookings: the money was counted when the voucher was sold.
+      c.totalPaid += (b.via === "voucher" ? 0 : b.paidUpfront) + inPerson;
+      if (b.source && !c.sources.includes(b.source)) c.sources.push(b.source);
     });
   }
 
+  const notes = await getCustomerNotes([...byEmail.keys()]).catch(() => ({}) as Awaited<ReturnType<typeof getCustomerNotes>>);
   return [...byEmail.values()]
-    .map((c) => ({ ...c, totalPaid: Math.round(c.totalPaid * 100) / 100 }))
+    .map((c) => ({
+      ...c,
+      totalPaid: Math.round(c.totalPaid * 100) / 100,
+      notes: notes[c.email]?.notes ?? "",
+      noShows: notes[c.email]?.noShows.length ?? 0,
+    }))
     .sort((a, b) => b.lastAt.localeCompare(a.lastAt));
 }
 
@@ -89,9 +102,9 @@ export function customersCsv(customers: Customer[]): string {
     if (/^[=+\-@]/.test(s)) s = `'${s}`;
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
-  const header = ["Name", "Email", "Phone", "Bookings", "Total paid (GBP)", "First booked", "Last booked", "Sources", "Member"];
+  const header = ["Name", "Email", "Phone", "Bookings", "Total paid (GBP)", "First booked", "Last booked", "Sources", "Member", "No-shows"];
   const lines = customers.map((c) =>
-    [c.name, c.email, c.phone, c.bookings, c.totalPaid.toFixed(2), c.firstAt.slice(0, 10), c.lastAt.slice(0, 10), c.sources.join(" "), c.member ? "yes" : ""]
+    [c.name, c.email, c.phone, c.bookings, c.totalPaid.toFixed(2), c.firstAt.slice(0, 10), c.lastAt.slice(0, 10), c.sources.join(" "), c.member ? "yes" : "", c.noShows || ""]
       .map(cell)
       .join(",")
   );

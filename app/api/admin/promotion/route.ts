@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logActivity } from "@/lib/activity";
 import { getPromotion, savePromotion } from "@/lib/promotionStore";
 import { checkPromotion, parsePromotion } from "@/lib/promotion";
 
@@ -22,6 +23,7 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: check.errors.join(" "), check }, { status: 400 });
     }
     const saved = await savePromotion(promotion);
+    await logActivity({ action: "promotion.update", summary: "Changed the special offer settings" });
     return NextResponse.json({ promotion: saved, check });
   } catch (error) {
     console.error("PUT admin promotion error:", error);

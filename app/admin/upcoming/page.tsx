@@ -5,6 +5,11 @@ import { listCalBookings, type CalBooking } from "@/lib/calcom";
 import { loadBookingRows } from "@/lib/admin/loadBookings";
 import type { BookingRow } from "@/lib/admin/bookingRows";
 import { getMergedPackages } from "@/lib/admin/pricing-merged";
+import { getMoves, resolveCalUid } from "@/lib/calMoves";
+import { BLOCK_EVENT_SLUG, BLOCK_MAX_HOURS, BLOCK_MIN_HOURS, listBlocks, type Block } from "@/lib/admin/blocks";
+import { getCustomerNotes } from "@/lib/customerNotes";
+import { lastCronSuccess, listAlerts } from "@/lib/alerts";
+import { BlockOutForm, ReopenButton } from "./BlockControls";
 
 const DAYS_AHEAD = 14;
 
@@ -15,8 +20,10 @@ type Item = {
   name: string;
   email: string;
   packageTitle: string;
-  kind: "booked" | "hold";
+  kind: "booked" | "hold" | "block";
   row: BookingRow | null;
+  block?: Block;
+  noShows?: number;
 };
 
 const dayKey = (iso: string) => new Date(iso).toLocaleDateString("en-CA", { timeZone: "Europe/London" });
@@ -30,6 +37,7 @@ function dayHeading(key: string, today: string, tomorrow: string) {
 }
 
 function Payment({ item }: { item: Item }) {
+  if (item.kind === "block") return item.block ? <ReopenButton id={item.block.id} /> : null;
   if (item.kind === "hold") {
     return <span className="text-xs px-1.5 py-0.5 rounded border bg-gray-50 text-gray-500 border-gray-200">Held, not paid yet</span>;
   }
@@ -58,7 +66,7 @@ export default async function UpcomingPage() {
   // Include sessions already under way today; ones that ended over an hour ago are dropped below.
   const startOfToday = new Date(now.getTime() - 12 * 60 * 60 * 1000);
 
-  const [bookedOrNull, holds, rows, packages] = await Promise.all([
+  const [bookedOrNull, holds, rows, packages, blocks, cronOk, alerts] = await Promise.all([
     listCalBookings("upcoming", startOfToday, until).catch((e) => {
       console.error("[ADMIN] upcoming: Cal.com list failed", e);
       return null;
@@ -66,13 +74,25 @@ export default async function UpcomingPage() {
     listCalBookings("unconfirmed", now, until).catch(() => [] as CalBooking[]),
     loadBookingRows(180),
     getMergedPackages(),
+    listBlocks(startOfToday, until).catch(() => [] as Block[]),
+    lastCronSuccess().catch(() => null),
+    listAlerts().catch(() => []),
   ]);
 
   const error = bookedOrNull ? "" : "Couldn't load bookings from Cal.com. Refresh to try again.";
   const booked = bookedOrNull ?? [];
 
+  // Bookings moved since they were paid live under a new Cal.com uid.
   const byUid = new Map<string, BookingRow>();
-  for (const r of rows) for (const uid of r.calBookingUids) byUid.set(uid, r);
+  const moves = await getMoves(rows.flatMap((r) => r.calBookingUids)).catch(() => ({}) as Record<string, never>);
+  for (const r of rows) {
+    for (const uid of r.calBookingUids) {
+      byUid.set(uid, r);
+      if (!r.cancelled && moves[uid]) byUid.set((await resolveCalUid(uid)).uid, r);
+    }
+  }
+  const blockByUid = new Map(blocks.map((b) => [b.calBookingUid, b]));
+  const notes = await getCustomerNotes(rows.map((r) => r.customerEmail)).catch(() => ({}) as Record<string, never>);
   const titles = new Map(packages.map((p) => [p.id, p.title]));
 
   const items: Item[] = [
@@ -80,8 +100,14 @@ export default async function UpcomingPage() {
     ...holds.map((b) => ({ b, kind: "hold" as const })),
   ]
     .map(({ b, kind }) => {
+      const block = blockByUid.get(b.uid);
+      if (block) {
+        return { uid: b.uid, start: b.start, end: b.end, name: "Studio closed", email: "", packageTitle: block.reason, kind: "block" as const, row: null, block };
+      }
       const row = byUid.get(b.uid) ?? null;
+      const email = (row?.customerEmail ?? b.attendees?.[0]?.email ?? "").toLowerCase();
       return {
+        noShows: (notes as Record<string, { noShows: unknown[] }>)[email]?.noShows.length ?? 0,
         uid: b.uid,
         start: b.start,
         end: b.end,
@@ -104,16 +130,35 @@ export default async function UpcomingPage() {
   }
 
   const bookedItems = items.filter((i) => i.kind === "booked");
+  const cronAgeHours = cronOk ? (now.getTime() - Date.parse(cronOk)) / 3600_000 : null;
+  const recentAlerts = alerts.filter((a) => now.getTime() - Date.parse(a.at) < 24 * 3600_000);
   const owing = bookedItems.filter((i) => i.row && ["owed", "link_sent", "refunded"].includes(i.row.balanceState));
   const owedTotal = owing.reduce((sum, i) => sum + (Number(i.row!.balanceDue.replace(/[^0-9.]/g, "")) || 0), 0);
   const unknown = bookedItems.filter((i) => !i.row).length;
+  const holdCount = items.filter((i) => i.kind === "hold").length;
 
   return (
     <div className="p-6 max-w-4xl space-y-6">
       <div>
         <h1 className="text-xl font-semibold text-gray-900">Upcoming</h1>
         <p className="text-sm text-gray-500 mt-1">The next {DAYS_AHEAD} days, from Cal.com, with what each customer has paid.</p>
+        <p className={`text-xs mt-2 ${cronAgeHours == null || cronAgeHours > 26 || recentAlerts.length ? "text-amber-700" : "text-gray-400"}`}>
+          {cronAgeHours == null
+            ? "The daily 08:00 job hasn't reported a clean run yet."
+            : cronAgeHours > 26
+              ? `The daily 08:00 job last finished cleanly ${Math.round(cronAgeHours)} hours ago: check Activity.`
+              : "Daily 08:00 job: all clear."}
+          {recentAlerts.length > 0 && (
+            <>
+              {" "}
+              {recentAlerts.length} problem{recentAlerts.length > 1 ? "s" : ""} logged in the last 24 hours:{" "}
+              <Link href="/admin/activity" className="underline">see Activity</Link>.
+            </>
+          )}
+        </p>
       </div>
+
+      <BlockOutForm eventSlug={BLOCK_EVENT_SLUG} minHours={BLOCK_MIN_HOURS} maxHours={BLOCK_MAX_HOURS} />
 
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="bg-white border border-gray-200 rounded-lg p-4">
@@ -128,7 +173,7 @@ export default async function UpcomingPage() {
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-4">
           <p className="text-xs text-gray-500">Held, awaiting payment</p>
-          <p className="text-2xl font-semibold text-gray-900 mt-1">{items.length - bookedItems.length}</p>
+          <p className="text-2xl font-semibold text-gray-900 mt-1">{holdCount}</p>
         </div>
       </div>
 
@@ -150,14 +195,20 @@ export default async function UpcomingPage() {
             <h2 className="text-sm font-semibold text-gray-900 mb-2">{dayHeading(key, today, tomorrow)}</h2>
             <ul className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-100">
               {dayItems.map((i) => (
-                <li key={i.uid} className={`px-4 py-3 flex flex-wrap items-start gap-x-4 gap-y-1 ${i.kind === "hold" ? "opacity-60" : ""}`}>
+                <li key={i.uid} className={`px-4 py-3 flex flex-wrap items-start gap-x-4 gap-y-1 ${i.kind === "hold" ? "opacity-60" : ""} ${i.kind === "block" ? "bg-gray-50" : ""}`}>
                   <p className="w-28 shrink-0 text-sm font-medium text-gray-900 tabular-nums">
                     {time(i.start)}–{time(i.end)}
                   </p>
                   <div className="flex-1 min-w-48">
                     <p className="text-sm text-gray-900">
                       {i.name}
-                      {i.row?.kind === "manual" && <span className="ml-1.5 text-[10px] uppercase tracking-wide text-violet-700">Manual</span>}
+                      {i.row?.kind === "manual" && !i.row.voucherCode && <span className="ml-1.5 text-[10px] uppercase tracking-wide text-violet-700">Manual</span>}
+                      {i.row?.voucherCode && <span className="ml-1.5 text-[10px] uppercase tracking-wide text-amber-800">Voucher</span>}
+                      {(i.noShows ?? 0) > 0 && (
+                        <span className="ml-1.5 text-[10px] uppercase tracking-wide text-rose-700" title="Didn't turn up to a previous booking">
+                          ⚠ {i.noShows} no-show{(i.noShows ?? 0) > 1 ? "s" : ""}
+                        </span>
+                      )}
                     </p>
                     <p className="text-xs text-gray-500">
                       {i.packageTitle}

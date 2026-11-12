@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getManualBooking } from "@/lib/manualBookings";
 import { SiteFooter } from "@/components/StudioSections";
 import { BookingWizard } from "@/components/booking/BookingWizard";
 import { BookingSuccessMessage } from "@/components/BookingSuccessMessage";
@@ -73,11 +74,19 @@ export default async function BookOnlinePage({
   searchParams,
 }: {
   // Next 16 passes search params as a promise; reading it directly is always undefined.
-  searchParams: Promise<{ success?: string; cancelled?: string; session_id?: string; balance?: string }>;
+  searchParams: Promise<{ success?: string; cancelled?: string; session_id?: string; balance?: string; booking?: string }>;
 }) {
   const params = await searchParams;
   // Finalise the booking here too, so a missed Stripe webhook can't lose it.
-  const outcome = params?.success === "true" ? await resolveCheckout(params.session_id) : null;
+  // A booking paid in full by gift voucher never went through Stripe.
+  const outcome =
+    params?.success !== "true"
+      ? null
+      : params.booking
+        ? (await getManualBooking(params.booking).catch(() => null))?.via === "voucher"
+          ? "confirmed"
+          : "processing"
+        : await resolveCheckout(params.session_id);
   return (
     <div className="bg-[var(--base)]">
       {/* Hero band */}
